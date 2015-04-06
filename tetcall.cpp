@@ -46,7 +46,7 @@ void tetgen_function::TetGen_elastic(mpsconfig &CON, vector<mpselastic> &PART, i
 	vector<tetgen_node> NODE;
 	vector<tetgen_facet> FACE;
 
-	
+
 	////////////エラストマー領域////////////
 	NODE.clear();
 	FACE.clear();

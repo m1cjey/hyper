@@ -51,7 +51,8 @@ public:
 	void SetTRANS(vector<tetgen_node>&, vector<int>&);
 
 	
-	void SetElastBoundary					(mpsconfig &CON, vector<mpselastic>&, tetgen_config&, vector<tetgen_node>&, vector<tetgen_facet>&);
+	void SetElastBoundary(mpsconfig &CON, vector<mpselastic>&, tetgen_config&, vector<tetgen_node>&, vector<tetgen_facet>&);
+
 	void SetAirBoundary(mpsconfig &CON, tetgen_config&, vector<tetgen_node>&, vector<tetgen_facet>&);
 	void SetAirFineBoundary(mpsconfig &CON, vector<mpselastic>&, tetgen_config&, vector<tetgen_node>&, vector<tetgen_facet>&);
 	void SetPlateElectrodeBoundary(mpsconfig &CON, tetgen_config&, vector<tetgen_node>&, vector<tetgen_facet>&);

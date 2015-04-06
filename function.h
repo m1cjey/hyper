@@ -17,8 +17,8 @@ void culan(mpsconfig *CON,vector<mpsparticle> &PART,int fluid_number,int t,doubl
 ///
 
 //粒子数カウント関数 & 並び替え
-//void calc_numbers_of_particles_and_change_the_order(mpsconfig *CON, vector <mpselastic> &PART, int *fluid_number,int *hyper_number,int *magnetic_number,int *out,int *order_sw);	//main_another仕様	15/2/10
-void calc_numbers_of_particles_and_change_the_order(mpsconfig *CON, vector <mpselastic> &PART, int *fluid_number,int *out,int *order_sw);	//main仕様	15/2/10
+void calc_numbers_of_particles_and_change_the_order(mpsconfig *CON, vector <mpselastic> &PART, int *fluid_number,int *hyper_number,int *magnetic_number,int *out,int *order_sw);	//main_another仕様	15/2/10
+//void calc_numbers_of_particles_and_change_the_order(mpsconfig *CON, vector <mpselastic> &PART, int *fluid_number,int *out,int *order_sw);	//main仕様	15/2/10
 int check_position(mpsconfig *CON,vector<mpselastic> &PART, int fluid_number, int *particle_number);
 
 //粒子法におけるモデル作成
