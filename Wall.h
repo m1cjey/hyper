@@ -1,0 +1,20 @@
+#pragma once
+//
+//粒子クラス
+//
+
+class Wall
+{
+	double box_node[8][3];
+	double box_eleID[6][3];
+	
+public:
+	
+	////////////ボックスメッシュ壁/////////////
+	virtual void Set_boxmeshuWall(double size[3], double core[3]);
+	///////////////////////////////////////////
+	//////////////////平面壁///////////////////
+	virtual void Set_flatWall();
+	///////////////////////////////////////////
+	
+};
