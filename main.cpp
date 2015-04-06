@@ -156,10 +156,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	ofstream pt("PART_model.dat");
 	for(int i=0;i<PART.size();i++)
 	{
-		if(PART[i].r[A_X]>(0-CON.get_distancebp()/2) && PART[i].r[A_X]>(0+CON.get_distancebp()/2))
+		if(PART[i].r[A_X]>0-CON.get_distancebp()/2 && PART[i].r[A_X]>0+CON.get_distancebp()/2)
 		{
 			pt<<PART[i].r[A_Y]<<PART[i].r[A_Z]<<endl;
 		}
+	
 	}
 
 	pt.close();
