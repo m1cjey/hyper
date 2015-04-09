@@ -46,7 +46,7 @@ mpsconfig::mpsconfig()
 	ave_P_for_FEM_flag=8000000000;//80.0;//75.0;//70.0;
 
 //モデル
-	model_number=6;			//4:引っ張り試験片 7:MREアクチュエータ 12:剛体
+	model_number=21;			//4:引っ張り試験片 7:MREアクチュエータ 12:剛体
 	model_set_way=0;		//modelをセットする方法　0=正方格子 1=MD
 
 //モデル１,11専用
@@ -216,9 +216,9 @@ mpsconfig::mpsconfig()
 	m_force=1;//1			//電磁力計算方式 1=節点力法 2=kelvin 3=積分面 4=divT(マクスウェルの応力テンソル) 5=VAG 6=積分つき節点力法 7=MC
 	NLBHI=0;				//体積力において、要素Ｂから要素Ｈを求める際に非線形性を考慮するか、しないか(non linier B H inverter)
 	NLMH=OFF;				//Ｍの算出に非線形性を考慮するか、しないか
-	magnet_H=5.0*distancebp;			//永久磁石の高さ0.005
-	magnet_r=2.5*distancebp;//0.01	//永久磁石の半径0.005 　　　　　　　　　　　//J_input_way=2:半径ではなく直径、J_put_way=0:半径　と思われる。
-	magnet_Z=-11.5*distancebp; //-45*0.0005-0.005; //-(fluidwidth)*distancebp-0.01; //-0.0125*0.8		//永久磁石の中心のZ座標 42*0.0005 //-magnet_H/2-(15*distancebp+0.002) モデル5:-0.035
+	magnet_H=3.0*distancebp;			//永久磁石の高さ0.005
+	magnet_r=1.5*distancebp;//0.01	//永久磁石の半径0.005 　　　　　　　　　　　//J_input_way=2:半径ではなく直径、J_put_way=0:半径　と思われる。
+	magnet_Z=-6*distancebp; //-45*0.0005-0.005; //-(fluidwidth)*distancebp-0.01; //-0.0125*0.8		//永久磁石の中心のZ座標 42*0.0005 //-magnet_H/2-(15*distancebp+0.002) モデル5:-0.035
 	magnet_angle=0.0;			//永久磁石の着磁方向 0なら+Z方向となる。そこから角度をつけたいなら、その角度[deg]を入力する
 	magnet_B=2.0;//0.145;//1.20;			//永久磁石の強さ[T] Avector3D()で指定
 	magnetic_layers=1;	//永久磁石周辺の空気層の数1層はすでにある 1+
@@ -328,8 +328,8 @@ mpsconfig::mpsconfig()
 
 
 //超弾性計算 
-	flag_ELAST=ON;
-	flag_HYPER=OFF;
+	flag_ELAST=OFF;
+	flag_HYPER=ON;
 	hyper_density=1000;          //water:997.04  エタノール:798[kg/m3]
 	c10=30000;
 	c01=20000;

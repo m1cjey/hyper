@@ -309,7 +309,7 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 
 
 		//超弾性計算
-		if(CON.get_flag_ELAST()==ON)	calc_hyper(CON,PART,HYPER,HYPER1,hyper_number,t);//if分の追加15/2/10
+		if(CON.get_flag_HYPER()==ON)	calc_hyper(CON,PART,HYPER,HYPER1,hyper_number,t);//if分の追加15/2/10
 
 		cout<<"陽解析終了"<<endl;
 //		cout<<"陽解析終了 umax="<<sqrt(Umax)<<"  limit U="<<0.2*mindis/dt<<endl;
@@ -2684,7 +2684,7 @@ void TetGenInterface(mpsconfig &CON, vector<mpselastic> &PART, double **F, int f
 	}//*/
 
 	//HYPERELAST適用のための工夫
-	for(int i=0;i<particle_number;i++)	if(flag_hyper[i]==ON)	PART[i].type==HYPERELAST;
+	for(int i=0;i<particle_number;i++)	if(flag_hyper[i]==ON)	PART[i].type=HYPERELAST;
 
 }
 

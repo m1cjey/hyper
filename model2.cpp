@@ -1199,11 +1199,11 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 	 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-	 ///////////////////////////////////////////モデル21　超弾性///////////////////////////////////////////////////////////
-	 else if(model==21)
+	 ///////////////////////////////////////////モデル21　超弾性体///////////////////////////////////////////////////////////
+	 else if(model==21)	//越塚先生先行研究の角柱
 	 {
-		 double height=18;
-		 double base=3;
+		 double height=6;
+		 double base=6;
 
 		 for(int i=0;i<base;i++)
 		 {
@@ -1211,7 +1211,7 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 			 {
 				 for(int k=0;k<height;k++)
 				 {
-					 writedata2(fq,number,(i-(base-1)/2)*le,(j-(base-1)/2)*le,(k-(height-1)/2)*le,MAGELAST,1,ON,0,0,0,0,0,0,0,0,0,0);
+					 writedata2(fq,number,(i-(base-1)/2)*le,(j-(base-1)/2)*le,(k-(height-1)/2)*le,HYPERELAST,1,ON,0,0,0,0,0,0,0,0,0,0);
 					 number++;
 
 				 }
@@ -1222,7 +1222,7 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 
 	 ///////////////////////////////////////
 
-	 else if(model==22)
+	 else if(model==22)	//越塚先生先行研究の円筒型
 	 {
 		 double height=3;
 		 double r1=1;
