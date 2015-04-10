@@ -22,7 +22,7 @@ mpsconfig::mpsconfig()
 
 	fin.close();*/
 	
-	step=500;				//全step数
+	step=10000;				//全step数
 	switch_FEM=true;		//FEMを実行するかしないか false
 	nonlinear_elastic=false;	//弾性体非線形計算するかtrue
 	switch_vis=OFF;			//粘性項計算するかしないか・・・これはあとで消す

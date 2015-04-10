@@ -66,6 +66,8 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 //	Model model;
 //	particle_number=model.Model_set();
 
+	
+
 	//INDEX関係
     int *INDEX=new int[CON.get_number_of_mesh()];	//各格子に含まれる粒子数を格納(格子の数だけ配列が必要)
     cout<<"X_mesh="<<CON.get_X_mesh()<<" Y_mesh="<<CON.get_Y_mesh()<<" Z_mesh="<<CON.get_Z_mesh()<<endl;
@@ -116,32 +118,6 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 	//各粒子数をカウント or 並び替え．※ほとんど意味がない．実行しなくてもOK(2012/02/21)
 	calc_numbers_of_particles_and_change_the_order(&CON, PART, &fluid_number,&hyper_number,&magnetic_number, &out, &order_sw);
 
-	
-	//HYPERクラスに粒子情報格納
-	hyperelastic HYPER0;
-	hyperelastic2 HYPER10;
-	vector<hyperelastic> HYPER;
-	vector<hyperelastic2> HYPER1;
-
-	for(int i=0;i<hyper_number*hyper_number;i++)	HYPER1.push_back(HYPER10);
-	for(int i=0;i<hyper_number;i++)	HYPER.push_back(HYPER0);
-
-
-/*	//剛体クラスに粒子情報格納
-	for(int i=0;i<particle_number;i++){
-		if(PART[i].type==TERMINAL1){
-			PART2.push_back(PART[i]);
-			}		
-		if(PART[i].type==TERMINAL2){
-			PART3.push_back(PART[i]);
-			}
-	}
-	rigids[0].Get_initial_particle(PART2);
-	rigids[1].Get_initial_particle(PART3);//
-
-	PART2.clear();
-	PART3.clear();//*/
-	//初期粒子配置で解析領域外に粒子がないかチェック
 
 	check_initial_position(&CON, PART);
 
@@ -180,6 +156,33 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 		elastic ELAST(PART);
 		for(int i=0;i<PART.size();i++) PART[i].initialize_particles(ELAST, t);
 		ELAST.set_ground_position(CON.get_ground_position());
+	
+	//HYPERクラスに粒子情報格納
+		hyperelastic HYPER0;
+		hyperelastic2 HYPER10;
+		vector<hyperelastic> HYPER;
+		vector<hyperelastic2> HYPER1;
+
+		for(int i=0;i<hyper_number*hyper_number;i++)	HYPER1.push_back(HYPER10);
+		for(int i=0;i<hyper_number;i++)	HYPER.push_back(HYPER0);
+
+/*	//剛体クラスに粒子情報格納
+	for(int i=0;i<particle_number;i++){
+		if(PART[i].type==TERMINAL1){
+			PART2.push_back(PART[i]);
+			}		
+		if(PART[i].type==TERMINAL2){
+			PART3.push_back(PART[i]);
+			}
+	}
+	rigids[0].Get_initial_particle(PART2);
+	rigids[1].Get_initial_particle(PART3);//
+
+	PART2.clear();
+	PART3.clear();//*/
+	//初期粒子配置で解析領域外に粒子がないかチェック
+
+
 	//プリプロセス終了
 
 
@@ -197,8 +200,8 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 			pt<<PART[i].r[A_Y]<<PART[i].r[A_Z]<<endl;
 		}
 	}
-
 	pt.close();
+
 	double L=0;
 	double W=100;
 	double P=0;
@@ -242,6 +245,7 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 		//陽解析の前にreloadINDEX（粒子は移動するので毎ステップ実行する必要がある）
 		reload_INDEX(CON, PART, INDEX);	//格子内の粒子数更新
 		cout<<"reload_INDEX_OK"<<endl;
+
 		//MESHはmpsconfigのメンバ関数にするのが良い。new/delete危険なのでshared_ptrかvectorを使うべき
 		int **MESH = new int *[CON.get_number_of_mesh()];	//get_number_of_mesh() {return (int)((maxX-minX)/(distancebp*dx)*(maxY-minY)/(distancebp*dx)*(maxZ-minZ)/(distancebp*dx)+0.001);}//格子数：X_mesh*Y_mesh*Z_mesh
 		count=0;
@@ -307,9 +311,11 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 
 		cout<<"hyper_number="<<hyper_number<<endl;
 
-
 		//超弾性計算
 		if(CON.get_flag_HYPER()==ON)	calc_hyper(CON,PART,HYPER,HYPER1,hyper_number,t);//if分の追加15/2/10
+
+		cout<<"hyper_calculation is ended."<<endl;
+
 
 		cout<<"陽解析終了"<<endl;
 //		cout<<"陽解析終了 umax="<<sqrt(Umax)<<"  limit U="<<0.2*mindis/dt<<endl;

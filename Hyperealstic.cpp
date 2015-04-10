@@ -386,7 +386,7 @@ void calc_constant(mpsconfig &CON,vector<mpselastic>PART,vector<hyperelastic>&HY
 			dis=sqrt(HYPER1[i*num+j].aiin[A_X]*HYPER1[i*num+j].aiin[A_X]+HYPER1[i*num+j].aiin[A_Y]*HYPER1[i*num+j].aiin[A_Y]+HYPER1[i*num+j].aiin[A_Z]*HYPER1[i*num+j].aiin[A_Z]);
 			if(dis<r && j!=i)
 			{				
-//				HYPER1[i*num+j].wiin=kernel4(r,dis);	//ˆêŽžÁ‹Ž15/2/10
+				HYPER1[i*num+j].wiin=kernel4(r,dis);
 				HYPER[i].NEI[N]=j;
 				N++;
 			}

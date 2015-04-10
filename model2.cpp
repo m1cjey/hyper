@@ -1213,7 +1213,6 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 				 {
 					 writedata2(fq,number,(i-(base-1)/2)*le,(j-(base-1)/2)*le,(k-(height-1)/2)*le,HYPERELAST,1,ON,0,0,0,0,0,0,0,0,0,0);
 					 number++;
-
 				 }
 			 }
 		 }
