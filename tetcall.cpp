@@ -55,16 +55,16 @@ void tetgen_function::TetGen_elastic(mpsconfig &CON, vector<mpselastic> &PART, i
 	AddBoundaryData(CON, NODEall, FACEall, NODE, FACE, MAGELAST);//*
 
 
-/*	//////////////電磁石領域/////////////
+	//////////////電磁石領域/////////////
 	NODE.clear();
 	FACE.clear();
 	SetMagnetBoundary(CON, TET, NODE, FACE);
-	AddBoundaryData(CON, NODEall, FACEall, NODE, FACE, MAGNET);//*/
+	AddBoundaryData(CON, NODEall, FACEall, NODE, FACE, MAGNET);//
 	/////////////コイル領域//////////////
-	NODE.clear();
+	/*NODE.clear();
 	FACE.clear();
 	SetCOILBoundary(CON, TET, NODE, FACE);
-	AddBoundaryData(CON, NODEall, FACEall, NODE, FACE, COIL);
+	AddBoundaryData(CON, NODEall, FACEall, NODE, FACE, COIL);*/
 	////////////鉄心領域////////////////*/
 /*	NODE.clear();
 	FACE.clear();

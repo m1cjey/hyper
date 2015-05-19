@@ -126,13 +126,6 @@ void calc_hyper(mpsconfig &CON,vector<mpselastic>&PART,vector<hyperelastic>&HYPE
 
 	if(t!=1)
 	{
-/*		for(int i=0;i<N;i++)
-		{
-			cout<<"PART["<<i<<"].r= ";
-			for(int D=0;D<DIMENSION;D++)	cout<<PART[i].r[D]<<"	";
-			cout<<endl;
-		}
-		cout<<endl;*/
 
 		po<<"Position"<<t<<endl;		
 		stress<<"Stress"<<t<<endl;
@@ -167,8 +160,16 @@ void calc_hyper(mpsconfig &CON,vector<mpselastic>&PART,vector<hyperelastic>&HYPE
 	newton_raphson(CON,PART,HYPER,HYPER1,N,t);
 	cout<<"Newton_raphson is ended."<<endl;
 
+	for(int i=0;i<hyper_number;i++)	
+	{
+		cout<<"座標"<<i<<"	";
+		for(int D=0;D<DIMENSION;D++)	cout<<PART[i].r[D]<<"	";
+		cout<<endl;
+	}
+
 	calc_half_p(CON,PART,HYPER,HYPER1,N,0,t);
 
+	cout<<"half_p is ended."<<endl;
 	for(int i=0;i<N;i++)
 	{
 		shm<<"half_p"<<i<<"	";
@@ -185,9 +186,25 @@ void calc_hyper(mpsconfig &CON,vector<mpselastic>&PART,vector<hyperelastic>&HYPE
 	}
 	rf<<endl;*/
 
+
 	calc_F(PART,HYPER,HYPER1,N,t);
 
+	cout<<"calc_F is ended."<<endl;
+	for(int i=0;i<hyper_number;i++)	
+	{
+		cout<<"座標"<<i<<"	";
+		for(int D=0;D<DIMENSION;D++)	cout<<PART[i].r[D]<<"	";
+		cout<<endl;
+	}
+
 	calc_stress(CON,PART,HYPER,HYPER1,N);
+	cout<<"calc_stress is ended."<<endl;
+	for(int i=0;i<hyper_number;i++)	
+	{
+		cout<<"座標"<<i<<"	";
+		for(int D=0;D<DIMENSION;D++)	cout<<PART[i].r[D]<<"	";
+		cout<<endl;
+	}
 
 /*	for(int i=0;i<N;i++)
 	{
@@ -239,6 +256,14 @@ void calc_hyper(mpsconfig &CON,vector<mpselastic>&PART,vector<hyperelastic>&HYPE
 
 	calc_differential_p(CON,PART,HYPER,HYPER1,N);
 	cout<<"Differential_p is calculated."<<endl;
+	for(int i=0;i<hyper_number;i++)	
+	{
+		cout<<"座標"<<i<<"	";
+		for(int D=0;D<DIMENSION;D++)	cout<<PART[i].r[D]<<"	";
+		cout<<endl;
+	}
+
+
 
 	sdm<<"Differential_p"<<t<<endl;
 	for(int i=0;i<N;i++)	sdm<<i<<"	"<<HYPER[i].differential_p[A_X]<<"	"<<HYPER[i].differential_p[A_Y]<<"	"<<HYPER[i].differential_p[A_Z]<<endl;
@@ -386,7 +411,7 @@ void calc_constant(mpsconfig &CON,vector<mpselastic>PART,vector<hyperelastic>&HY
 			dis=sqrt(HYPER1[i*num+j].aiin[A_X]*HYPER1[i*num+j].aiin[A_X]+HYPER1[i*num+j].aiin[A_Y]*HYPER1[i*num+j].aiin[A_Y]+HYPER1[i*num+j].aiin[A_Z]*HYPER1[i*num+j].aiin[A_Z]);
 			if(dis<r && j!=i)
 			{				
-				HYPER1[i*num+j].wiin=kernel4(r,dis);
+				HYPER1[i*num+j].wiin=kernel4(r,dis);	//一時消去15/2/10
 				HYPER[i].NEI[N]=j;
 				N++;
 			}
@@ -742,7 +767,7 @@ void newton_raphson(mpsconfig &CON,vector<mpselastic>&PART,vector<hyperelastic>&
 		else if(calc_type==1)//逆行列を用いない、安定するはずだが、遅くなるはず
 		{
 			gauss(DfDx,fx,N);
-			if(count%100==1)
+			if(count%200==1)
 			{
 				stringstream ss5;
 				ss5<<"./Newton_raphson/transition "<<"t"<<t<<" count"<<count<<".dat";
@@ -770,8 +795,6 @@ void newton_raphson(mpsconfig &CON,vector<mpselastic>&PART,vector<hyperelastic>&
 //		for(int i=0;i<N;i++)	cout<<"XX["<<i<<"]="<<XX[i]<<endl;
 		for(int i=0;i<N;i++)	HYPER[i].lambda=XX[i];
 //		for(int i=0;i<N;i++)	cout<<"lambda["<<i<<"]="<<HYPER[i].lambda<<endl;
-		lam<<"lambda"<<"t"<<t<<"count"<<count<<endl;
-		for(int i=0;i<N;i++)	lam<<i<<"	"<<HYPER[i].lambda<<endl;
 
 		//誤差の評価	
 		E=0;
@@ -781,15 +804,24 @@ void newton_raphson(mpsconfig &CON,vector<mpselastic>&PART,vector<hyperelastic>&
 		for(int i=0;i<N;i++)	sum+=fabs(XX[i]);
 		E/=sum;
 
-		newton<<"反復回数"<<count<<"E"<<" "<<E<<endl;
-		if(count%100==1)	cout<<"反復回数="<<count<<" E="<<E<<endl;
+		if(count%200==1)	cout<<"反復回数="<<count<<" E="<<E<<endl;
 
-		lam.close();
 //		fs1.close();
 //		fDfDx.close();
 //		i_fDfDx.close();
-		if(count>CON.get_nr())	break;	//15/2/8
+		if(count>CON.get_nr()/2)
+		{
+			if(count==1||count%200==1)
+			{
+				lam<<"lambda"<<"t"<<t<<"count"<<count<<endl;
+				for(int i=0;i<N;i++)	lam<<i<<"	"<<HYPER[i].lambda<<endl;	
+				newton<<"反復回数"<<count<<"E"<<" "<<E<<endl;
+			}
+			lam.close();
+			break;	//15/2/8
+		}
 
+		if(count>CON.get_nr())	break;
 	}
 //	end=clock();
 

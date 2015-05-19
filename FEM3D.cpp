@@ -2125,14 +2125,14 @@ void smoothingF3D(mpsconfig &CON, vector<mpselastic> &PART,int fluid_number,doub
 		{
 		    for(size_t i=0;i<PART.size();i++) //HYPERELAST追加15/2/4
 		    {  
-				if(PART[i].type!=WALL && (PART[i].type==MAGELAST||PART[i].type==HYPERELAST))
+				if(PART[i].type!=WALL && (PART[i].type==MAGELAST))
 				{
 					for(int D=0;D<3;D++) newF[D][i]=F[D][i];
 					int num=1; //自分自身をカウントするから1
 					for(int k=0;k<PART[i].N;k++)
 					{       
 						int j=PART[i].NEI[k];
-						if(PART[j].type==FLUID || PART[j].type==MAGELAST || PART[j].type==HYPERELAST)
+						if(PART[j].type==FLUID || PART[j].type==MAGELAST)
 						{
 							num++;
 							for(int D=0;D<3;D++) newF[D][i]+=F[D][j];
@@ -2143,7 +2143,7 @@ void smoothingF3D(mpsconfig &CON, vector<mpselastic> &PART,int fluid_number,doub
 			} 
 			for(size_t i=0;i<PART.size();i++)
 			{
-				if(PART[i].type!=WALL && (PART[i].type==MAGELAST||PART[i].type==HYPERELAST))	for(int D=0;D<3;D++) F[D][i]=newF[D][i];
+				if(PART[i].type!=WALL && PART[i].type==MAGELAST)	for(int D=0;D<3;D++) F[D][i]=newF[D][i];
 			}
 		}
 	}
@@ -2163,7 +2163,7 @@ void smoothingF3D(mpsconfig &CON, vector<mpselastic> &PART,int fluid_number,doub
 						for(int k=0;k<PART[i].N;k++)
 						{       
 							int j=PART[i].NEI[k];
-							if(PART[j].surface==ON && (PART[j].type==FLUID || PART[j].type==MAGELAST ||PART[j].type==HYPERELAST))//HYPERELAST追加15/2/4
+							if(PART[j].surface==ON && (PART[j].type==FLUID || PART[j].type==MAGELAST))//HYPERELAST追加15/2/4
 							{
 								num++;
 								for(int D=0;D<3;D++) newF[D][i]+=F[D][j];
@@ -5029,7 +5029,7 @@ void NODE_F3D(mpsconfig &CON,vector<point3D> &NODE,vector<element3D> &ELEM,int n
 	{
 		for(int I=1;I<=node;I++)
 		{
-			if(NODE[I].material==FLUID || NODE[I].material==MAGELAST  || NODE[I].material==ELASTIC || NODE[I].material==IRON||NODE[I].material==HYPERELAST)//HYPERELAST追加15/2/4
+			if(NODE[I].material==FLUID || NODE[I].material==MAGELAST  || NODE[I].material==ELASTIC || NODE[I].material==IRON)
 			{			
 				for(int k=1;k<=jnb[I];k++)
 				{
@@ -5092,7 +5092,7 @@ void NODE_F3D(mpsconfig &CON,vector<point3D> &NODE,vector<element3D> &ELEM,int n
 	{
 		for(int I=1;I<=node;I++)
 		{
-			if(NODE[I].material==FLUID || NODE[I].material==MAGELAST || NODE[I].material==ELASTIC || NODE[I].material==IRON||NODE[I].material==HYPERELAST)//HYPERELAST追加15/2/4
+			if(NODE[I].material==FLUID || NODE[I].material==MAGELAST || NODE[I].material==ELASTIC || NODE[I].material==IRON)
 			{
 				for(int k=1;k<=jnb[I];k++)
 				{
@@ -5158,7 +5158,7 @@ void NODE_F3D(mpsconfig &CON,vector<point3D> &NODE,vector<element3D> &ELEM,int n
 	{
 	for(int I=1;I<=node;I++)
 	{
-		if(NODE[I].material==FLUID || NODE[I].material==ELASTIC || NODE[I].material==MAGELAST || NODE[I].material==IRON||NODE[I].material==HYPERELAST)	//HYPERELAST追加15/2/4
+		if(NODE[I].material==FLUID || NODE[I].material==ELASTIC || NODE[I].material==MAGELAST || NODE[I].material==IRON)	//HYPERELAST追加15/2/4
 			{
 				for(int k=1;k<=jnb[I];k++)
 				{

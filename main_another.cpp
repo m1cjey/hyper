@@ -142,7 +142,6 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 	}
 	reload_INDEX2(&CON, PART, MESH0);
 
-
 	//表面判定（弾性計算の場合最初だけやればOK！）
 
 	freeon(CON, PART, n0_4, INDEX, MESH0, &mindis, t);
@@ -152,12 +151,11 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 	delete [] MESH0;
 
 	//初期化も同時に行うのでこの位置(ePND[i]=PART[i].PNDなのでこの位置でなければ)
-
 		elastic ELAST(PART);
 		for(int i=0;i<PART.size();i++) PART[i].initialize_particles(ELAST, t);
 		ELAST.set_ground_position(CON.get_ground_position());
-	
-	//HYPERクラスに粒子情報格納
+
+		//HYPERクラスに粒子情報格納
 		hyperelastic HYPER0;
 		hyperelastic2 HYPER10;
 		vector<hyperelastic> HYPER;
@@ -193,13 +191,7 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 	file_initialization();
 	/////////////////////
 	ofstream pt("PART_model.dat");
-	for(int i=0;i<PART.size();i++)
-	{
-		if(PART[i].r[A_X]>(0-CON.get_distancebp()/2) && PART[i].r[A_X]>(0+CON.get_distancebp()/2))
-		{
-			pt<<PART[i].r[A_Y]<<PART[i].r[A_Z]<<endl;
-		}
-	}
+	for(int i=0;i<PART.size();i++)	pt<<PART[i].r[A_Y]<<PART[i].r[A_Z]<<endl;
 	pt.close();
 
 	double L=0;
@@ -211,22 +203,19 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 	bool ff=0;
 
 	
-	int count_suf=0;
-	for(int i=0 ;i<PART.size();i++)
-	{
-		if(PART[i].surface==ON) count_suf++;
-	}
-	cout<<count_suf<<endl;
 	//表面だけ表示//表面初期化
+	/*
 	if(bool cat=ON)
 	{
-		for(int i=0 ;i<PART.size();i++){
+		for(int i=0 ;i<PART.size();i++)
+		{
 			PART[i].surface=OFF;	
-			if(PART[i].PND<=18){
+			if(PART[i].PND<=18)
+			{
 				PART[i].surface=ON;
 			}
 		}
-	}
+	}*/
 
 	//表面粒子の存在確認
 /*	count_suf=0;
@@ -290,7 +279,7 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 				if(t==1 || (t-1)%CON.get_EM_interval()==0)
 				{
 					//自作デローニ分割
-					FEM3D(CON, PART, F, &node_FEM3D, &nelm_FEM3D, NODE_FEM3D, ELEM_FEM3D, t, TIME, fluid_number);
+					FEM3D(CON, PART, F, &node_FEM3D, &nelm_FEM3D, NODE_FEM3D, ELEM_FEM3D, t, TIME, fluid_number);	//HYPERELASTに対応できていない
 				}
 			}
 			else if(CON.get_mesh_input()==2)
@@ -2570,13 +2559,14 @@ void FEM3D(mpsconfig &CON, vector<mpselastic> &PART, double **F, int *static_nod
 			////電磁力読み取り
 			for(int i=0;i<PART.size();i++)
 			{
-				if(PART[i].type!=WALL){
-				for(int D=0;D<3;D++)
+				if(PART[i].type!=WALL)
 				{
-					fin5>>F_val;
-					F[D][i]+=F_val;//F[D][i]は宣言した直後にゼロセットしてある
+					for(int D=0;D<3;D++)
+					{
+						fin5>>F_val;
+						F[D][i]+=F_val;//F[D][i]は宣言した直後にゼロセットしてある
+					}
 				}
-			}
 			}
 			fin5.close();
 		}
@@ -2627,7 +2617,6 @@ void TetGenInterface(mpsconfig &CON, vector<mpselastic> &PART, double **F, int f
 		}
 	}
 
-
 	/////////////////////////////////////////////////
 	if(CON.get_EM_interval()==1 || t==1 || (t-1)%CON.get_EM_interval()==0){
 
@@ -2642,17 +2631,20 @@ void TetGenInterface(mpsconfig &CON, vector<mpselastic> &PART, double **F, int f
 			////電磁力読み取り
 			for(int i=0;i<PART.size();i++)
 			{
-				if(PART[i].type==MAGELAST){//MAGELAST
-				for(int D=0;D<3;D++)
-				{
-					fin5>>F_val;
-					F[D][i]+=F_val;//F[D][i]は宣言した直後にゼロセットしてある
+				if(PART[i].type==MAGELAST)
+				{//MAGELAST
+						for(int D=0;D<3;D++)
+						{
+							fin5>>F_val;
+							F[D][i]+=F_val;//F[D][i]は宣言した直後にゼロセットしてある
+						}
+					}
 				}
-			}
-			}
 			fin5.close();			
 			}
-	}else{ //何ステップかに一度だけ電磁場計算を行う場合
+	}
+	else
+	{ //何ステップかに一度だけ電磁場計算を行う場合
 	
 		if(CON.get_dir_for_P()!=2 && CON.get_dir_for_P()!=3)//電磁力が圧力ディリクレ値のときはここでは計算しない
 		{
@@ -2689,8 +2681,9 @@ void TetGenInterface(mpsconfig &CON, vector<mpselastic> &PART, double **F, int f
 		if(t==1 || t%CON.get_avs_eforce_interval()==0) plot_avs_eforce(CON,PART,fluid_number,t);
 	}//*/
 
+
 	//HYPERELAST適用のための工夫
-	for(int i=0;i<particle_number;i++)	if(flag_hyper[i]==ON)	PART[i].type=HYPERELAST;
+	for(int i=0;i<particle_number;i++)		if(flag_hyper[i]==ON) 	PART[i].type=HYPERELAST;
 
 }
 

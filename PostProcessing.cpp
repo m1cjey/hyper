@@ -178,7 +178,7 @@ void plot_stress_distribution(mpsconfig &CON, vector<mpselastic> &PART)
 	int timestep=CON.get_current_step();
 	double den=CON.get_density();
 
-/*	stringstream sstre;
+	stringstream sstre;
 	sstre<<"./Stress/Stress"<<timestep<<".fld";
 	string stForce=sstre.str();
 
@@ -190,9 +190,9 @@ void plot_stress_distribution(mpsconfig &CON, vector<mpselastic> &PART)
 			cout<<"./Stressフォルダを開けませんでした"<<endl;
 			exit(1);
 		}
-	}*/
+	}
 
-/*	fout3 << "# AVS field file" << endl;
+	fout3 << "# AVS field file" << endl;
 	fout3 << "ndim=1" << endl;
 	fout3 << "dim1=" << PART.size() <<endl;
 	fout3 << "nspace=3" << endl;
@@ -206,10 +206,10 @@ void plot_stress_distribution(mpsconfig &CON, vector<mpselastic> &PART)
 	fout3 << "coord    1 file=./Stress"<<timestep<<" filetype=ascii skip=1 offset=3 stride=6" << endl;
 	fout3 << "coord    2 file=./Stress"<<timestep<<" filetype=ascii skip=1 offset=4 stride=6" << endl;
 	fout3 << "coord    3 file=./Stress"<<timestep<<" filetype=ascii skip=1 offset=5 stride=6" << endl;
-	fout3.close();*/
+	fout3.close();
 
 	//データファイル
-/*	stringstream ss;
+	stringstream ss;
 	ss<<"./Stress/Stress"<<timestep;
 	string filename=ss.str();
 
@@ -219,17 +219,17 @@ void plot_stress_distribution(mpsconfig &CON, vector<mpselastic> &PART)
 		exit(1);
 	}
 
-	fout<<"e-x e-y e-z x y z"<<endl;*/
+	fout<<"e-x e-y e-z x y z"<<endl;
 	for(size_t i=0;i<PART.size();i++)
     {
 		if(PART[i].type!=WALL){
-			Micro_avs.make_list(PART[i].r[A_X], PART[i].r[A_Y], PART[i].r[A_Z], PART[i].get_stress_accel(A_X)*den, PART[i].get_stress_accel(A_Y)*den, PART[i].get_stress_accel(A_Z)*den);
+//			Micro_avs.make_list(PART[i].r[A_X], PART[i].r[A_Y], PART[i].r[A_Z], PART[i].get_stress_accel(A_X)*den, PART[i].get_stress_accel(A_Y)*den, PART[i].get_stress_accel(A_Z)*den);
 //		fout<<F[A_X][i]*times<<" "<<F[A_Y][i]*times<<" "<<F[A_Z][i]*times<<" "<<PART[i].r[A_X]<<" "<<PART[i].r[A_Y]<<" "<<PART[i].r[A_Z]<<endl;
-//		fout<<PART[i].get_stress_accel(A_X)*den<<" "<<PART[i].get_stress_accel(A_Y)*den<<" "<<PART[i].get_stress_accel(A_Z)*den<<" "<<PART[i].r[A_X]<<" "<<PART[i].r[A_Y]<<" "<<PART[i].r[A_Z]<<endl;
+		fout<<PART[i].get_stress_accel(A_X)*den<<" "<<PART[i].get_stress_accel(A_Y)*den<<" "<<PART[i].get_stress_accel(A_Z)*den<<" "<<PART[i].r[A_X]<<" "<<PART[i].r[A_Y]<<" "<<PART[i].r[A_Z]<<endl;
 		}
 	}
-	Micro_avs.Output_vector_MicroAVS("Stress",CON.get_current_step());
-//	fout.close();
+//	Micro_avs.Output_vector_MicroAVS("Stress",CON.get_current_step());
+	fout.close();
 }
 
 
@@ -1311,7 +1311,7 @@ void particle_movie_AVS2(mpsconfig &CON,int t,vector<mpselastic> &PART,double TI
 	{
 		for(int i=0;i<particle_number;i++)
 		{
-			if(PART[i].surface==ON || PART[i].type!=FLUID)
+			if(PART[i].type!=WALL || PART[i].type!=ELASTIC)
 			{
 				input[i]=ON;
 				num++;//3次元の場合、内部流体は表示しない
