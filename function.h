@@ -227,3 +227,5 @@ void momentum_movie_AVS(mpsconfig &CON,int t,vector<mpselastic> &PART,vector<hyp
 void calc_vis_f(mpsconfig &CON,vector<mpselastic>PART,vector<hyperelastic>&HYPER,vector<hyperelastic2>&HYPER1,int hyper_number,int t);
 void calc_spl_f(mpsconfig &CON,vector<mpselastic>PART,vector<hyperelastic2>&HYPER1,int hyper_number);
 
+//‰—Ío—ÍŠÖ”
+void force_movie_AVS(mpsconfig *CON,int t,vector<mpselastic> &PART,int particle_number,double m);
