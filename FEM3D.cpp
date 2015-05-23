@@ -77,7 +77,7 @@ void FEM3D_calculation(mpsconfig &CON, int *static_node, int *static_nelm, vecto
 		{
 			data_avs(node,nelm,NODE,ELEM,KTJ,val,CON);
 			data_avs2(CON,node,nelm,NODE,ELEM,KTJ,t);//断面図
-			data_avs3(node,nelm,NODE,ELEM,CON);//材質	//選択肢にHYPERELAST追加15/2/4
+			data_avs3(node,nelm,NODE,ELEM,CON);//材質	
 		}
 
 		if(CON.get_remesh_sw()==ON)//remesh領域を想定するなら、静的節点・要素情報を記憶しておく
@@ -113,7 +113,7 @@ void FEM3D_calculation(mpsconfig &CON, int *static_node, int *static_nelm, vecto
 			//cout<<"jnb=0 i="<<i<<" material="<<NODE[i].material<<" particle="<<NODE[i].particleID<<endl;
 			NODE[i].boundary_condition=1;//境界条件をディリクレ型にすることで、ICCGに参加させない
 			//if(NODE[i].material==FLUID) NODE[i].particleID=-1;//流体節点が消失する場合、必要な値が計算されないため、粒子にフィードバックできない(してはいけない)
-			if(NODE[i].material==FLUID || NODE[i].material==ELASTIC || NODE[i].material==HYPERELAST) if(NODE[i].particleID>=0) cout<<"suf="<<PART[NODE[i].particleID].surface<<endl; //HYPERELAST追加15/2/3
+			if(NODE[i].material==FLUID || NODE[i].material==ELASTIC) if(NODE[i].particleID>=0) cout<<"suf="<<PART[NODE[i].particleID].surface<<endl; 
 		}
 	}
 
@@ -1747,8 +1747,10 @@ void Incomplete_Cholesky_Decomposition(mpsconfig &CON,double *L,double *D1,doubl
 //行列の対称性検査関数
 void check_matrix_symmetry(int pn,int *NUM,int **ROW,double **G)
 {
+	ofstream sym("symmetry_out.csv");
 	for(int i=1;i<=pn;i++)
 	{
+		int flag_sym=0;
 		for(int j=1;j<=NUM[i];j++)
 		{
 			int J=ROW[i][j];
@@ -1760,13 +1762,16 @@ void check_matrix_symmetry(int pn,int *NUM,int **ROW,double **G)
 					flag=1;
 					if(G[i][j]!=G[J][k])
 					{
-						cout<<"対称性エラー "<<i<<" "<<G[i][j]<<" "<<G[J][k]<<endl;
+						flag_sym=ON;
+						cout<<"対称性エラー "<<i<<" "<<G[i][j]<<" "<<G[J][k]<<endl;							
 					}
 				}
 			}
 			if(flag==0)cout<<"DDD"<<endl;
 		}
+		if(flag_sym==ON)	sym<<i<<endl;
 	}
+	sym.close();
 }
 
 //電界計算関数
@@ -2123,9 +2128,9 @@ void smoothingF3D(mpsconfig &CON, vector<mpselastic> &PART,int fluid_number,doub
 	{
 		for(int n=0;n<CON.get_FEM_smn();n++)//これを１以上にする必要ある？？？
 		{
-		    for(size_t i=0;i<PART.size();i++) //HYPERELAST追加15/2/4
+		    for(size_t i=0;i<PART.size();i++) 
 		    {  
-				if(PART[i].type!=WALL && (PART[i].type==MAGELAST))
+				if(PART[i].type!=WALL && PART[i].type==MAGELAST)
 				{
 					for(int D=0;D<3;D++) newF[D][i]=F[D][i];
 					int num=1; //自分自身をカウントするから1
@@ -2163,7 +2168,7 @@ void smoothingF3D(mpsconfig &CON, vector<mpselastic> &PART,int fluid_number,doub
 						for(int k=0;k<PART[i].N;k++)
 						{       
 							int j=PART[i].NEI[k];
-							if(PART[j].surface==ON && (PART[j].type==FLUID || PART[j].type==MAGELAST))//HYPERELAST追加15/2/4
+							if(PART[j].surface==ON && (PART[j].type==FLUID || PART[j].type==MAGELAST))
 							{
 								num++;
 								for(int D=0;D<3;D++) newF[D][i]+=F[D][j];
@@ -2380,7 +2385,7 @@ void calc_transitional_EM_field(mpsconfig &CON,int node,int nelm,vector<point3D>
 	//透磁率決定
 	for(int i=1;i<=nelm;i++)
 	{
-		if(ELEM[i].material==FLUID || ELEM[i].material==MAGELAST || ELEM[i].material==MAGELAST2||ELEM[i].material==HYPERELAST) RP[i]=CON.get_RP();	//HYPERELAST追加15/2/4
+		if(ELEM[i].material==FLUID || ELEM[i].material==MAGELAST || ELEM[i].material==MAGELAST2) RP[i]=CON.get_RP();	
 		else if(ELEM[i].material==ELASTIC) RP[i]=1;
 		else if(ELEM[i].material==AIR) RP[i]=1;
 		else if(ELEM[i].material==COIL) RP[i]=1;
@@ -4923,16 +4928,11 @@ void coroid_pole(mpsconfig &CON, vector<mpselastic> &PART,vector<point3D> &NODE,
 			
 				double MMi=sqrt(M[A_X][i]*M[A_X][i]+M[A_Y][i]*M[A_Y][i]+M[A_Z][i]*M[A_Z][i]);//Miの大きさ
 				double MMj=sqrt(M[A_X][j]*M[A_X][j]+M[A_Y][j]*M[A_Y][j]+M[A_Z][j]*M[A_Z][j]);//Mjの大きさ
-
 				double cos1=(dX[A_X]*M[A_X][i]+dX[A_Y]*M[A_Y][i]+dX[A_Z]*M[A_Z][i])/(r*MMi);		//rとMiのなす角度
 				double cos2=(dX[A_X]*M[A_X][j]+dX[A_Y]*M[A_Y][j]+dX[A_Z]*M[A_Z][j])/(r*MMj);		//rとMjのなす角度
 				double cos3=(M[A_X][i]*M[A_X][j]+M[A_Y][i]*M[A_Y][j]+M[A_Z][i]*M[A_Z][j])/(MMj*MMi);		//MjとMiのなす角度
-
-
 				for(int D=0;D<3;D++) F_di[D][i]+=-co*3*MMi*MMj/pow(r,4.0)*(3*cos1*cos2-cos3)*dX[D]/r;
-
 				//for(int D=0;D<3;D++) F_di[D][i]+=co*3*MMi*MMj/pow(r,4.0)*(cos1+cos2-5*cos1*cos2+cos3)*dX[D]/r;
-
 				for(int D=0;D<3;D++) f[D]+=-co*3*MMi*MMj/pow(r,4.0)*(3*cos1*cos2-cos3)*dX[D]/r;*/
 
 				double Xnp[6];
@@ -5158,7 +5158,7 @@ void NODE_F3D(mpsconfig &CON,vector<point3D> &NODE,vector<element3D> &ELEM,int n
 	{
 	for(int I=1;I<=node;I++)
 	{
-		if(NODE[I].material==FLUID || NODE[I].material==ELASTIC || NODE[I].material==MAGELAST || NODE[I].material==IRON)	//HYPERELAST追加15/2/4
+		if(NODE[I].material==FLUID || NODE[I].material==ELASTIC || NODE[I].material==MAGELAST || NODE[I].material==IRON)
 			{
 				for(int k=1;k<=jnb[I];k++)
 				{
@@ -5288,7 +5288,6 @@ void plot_magnetic_flux_density(mpsconfig &CON, vector<mpselastic> &PART, vector
 
 	/*  double *newB[3];
 	for(int D=0;D<3;D++) newB[D]=new double [nelm+1];
-
 	if(CON.get_FEM_smn()>0)
 	{
 		for(int n=0;n<CON.get_FEM_smn();n++)
@@ -5337,7 +5336,6 @@ void plot_magnetic_flux_density(mpsconfig &CON, vector<mpselastic> &PART, vector
 			for(int i=1;i<=nelm;i++) for(int D=0;D<3;D++) B[D][i]=newB[D][i];
 		}
 	}
-
     for(int D=0;D<3;D++) delete [] newB[D];
 */
 	ofstream fp("./FluxAVS/Flux.dat");
@@ -5506,20 +5504,16 @@ void plot_magnetic_flux_density(mpsconfig &CON, vector<mpselastic> &PART, vector
 	ffc << "coord    1 file=./FluxContour"<<t<<" filetype=ascii skip=1 offset=1 stride=4" << endl;
 	ffc << "coord    2 file=./FluxContour"<<t<<" filetype=ascii skip=1 offset=2 stride=4" << endl;
 	ffc << "coord    3 file=./FluxContour"<<t<<" filetype=ascii skip=1 offset=3 stride=4" << endl;
-
 	ffc.close();
-
 	//データファイル
 	stringstream ssfc;
 	ssfc<<"./FluxContour/FluxContour"<<t;
 	string datafluxcontour=ssfc.str();
-
 	ofstream fout3(datafluxcontour);
 	if(fout3.fail()){
 		cout<<"./FluxContourフォルダを開けませんでした"<<endl;
 		exit(1);
 	}
-
 	fout3<<"e-x e-y e-z x y z"<<endl;
 	for(int i=1;i<=nelm;i++)
     {
@@ -5635,7 +5629,6 @@ void usingTetGen(mpsconfig &CON,vector<mpselastic> &PART, double **F, int fluid_
 		int ib=ELEM[i].node[2];
 		int ic=ELEM[i].node[3];
 		int ip=ELEM[i].node[4];
-
 		//要素体積計算
 		ELEM[i].volume=volume3D(NODE,ia,ib,ic,ip);
 		
@@ -5693,22 +5686,17 @@ void usingTetGen(mpsconfig &CON,vector<mpselastic> &PART, double **F, int fluid_
     //節点-要素関係
 	int *jnb=new int[node+1]; //各節点に隣接する要素数格納
 	set_jnb3D(NODE, ELEM, node, nelm, jnb); //delaun3Dにset_jnb3Dのバグ対策が書いてある
-
 	int **nei=new int*[node+1]; //各節点の周辺要素番号格納
 	for(int i=1;i<=node;i++) nei[i]=new int[jnb[i]+1]; 
     set_nei3D(NODE, ELEM, node, nelm, jnb, nei);
-
 	cout<<"要素数="<<nelm<<" 節点数="<<node<<endl;
-
 //メッシュ生成完了
-
 	//表面メッシュ出力
 	if(t==1 || t%CON.get_avs_mesh3_interval()==0)
 	{
 		t_data_avs3(node,nelm,NODE,ELEM,CON,t);//材質
 	}
     //ここまではOK, 2012-10-30, 14:14
-
 	//モデル毎の設定(境界条件など)
 	//静電霧化
 	if(CON.get_model_number()==14)
@@ -5720,11 +5708,9 @@ void usingTetGen(mpsconfig &CON,vector<mpselastic> &PART, double **F, int fluid_
 			else if(NODEall[i].boundary==ELECTRODE2) NODE[i+1].boundary_condition=2;	//平板電極
 			else NODE[i+1].boundary_condition=0;	//その他の節点は未知数
 		}
-
 		//要素-要素関係による飛散判定
 	//	if(CON.get_fly_judge()==2)	fly_judge_FEMelement(CON,PART,NODE,ELEM,node,nelm,TRANS);
 	}
-
 	//磁性エラストマーの境界条件指定・・・実際の境界条件は？
 	//AIRは？
 	if(CON.get_model_number()==5)
@@ -5740,13 +5726,9 @@ void usingTetGen(mpsconfig &CON,vector<mpselastic> &PART, double **F, int fluid_
 			}
 		}
 	}
-
 	//set_material()＠delaun3D.cpp　これがないと要素材質定義できない？？？
-
 //有限要素法計算開始
-
 	//配列確保
-
 	//磁場計算の準備
 	double *V=new double[node+1];
 	//vector<double> V(node+1);	//電位
@@ -5758,7 +5740,6 @@ void usingTetGen(mpsconfig &CON,vector<mpselastic> &PART, double **F, int fluid_
 		//data_avs(node,nelm,NODE,ELEM,KTJ,V,CON);
 		//data_avs2(CON,node,nelm,NODE,ELEM,KTJ,t);
 	}
-
 	//磁場解析
 	if(CON.get_FEM_calc_type()==2 || CON.get_FEM_calc_type()==3 || CON.get_FEM_calc_type()==5)
 	{
@@ -5768,18 +5749,14 @@ void usingTetGen(mpsconfig &CON,vector<mpselastic> &PART, double **F, int fluid_
 		int** nei2=new int*[node+1];
 		for(int i=1;i<=node;i++) nei2[i]=new int[max];//イコールに注意
 		int side_num=0;	//全辺数格納
-
 		//辺要素生成 (節点要素を使用する場合でも、電流密度を求めるときに辺要素がほしい)
 		side_num=make_edge_element(CON,NODE,ELEM,node,nelm,jnb,nei,SIDE,branch_num,nei2,KTE);
 		cout<<"辺要素生成終了"<<endl;
-
 		//磁場計算の準備
 		double *B[3]; //要素内磁界
 		for(int D=0;D<3;D++) B[D]=new double [nelm+1];
-
 		double** current=new double*[DIMENSION];
 		for(int D=0;D<3;D++) current[D]=new double[nelm+1];
-
 		if(CON.get_J_input_way()==0){
 			for(int D=0;D<3;D++){
 				for(int i=0;i<=nelm;i++){
@@ -5787,18 +5764,15 @@ void usingTetGen(mpsconfig &CON,vector<mpselastic> &PART, double **F, int fluid_
 				}
 			}
 		}
-
 		for(int n=1;n<=nelm;n++)
 		{
 			RP[n]=1;
 			if(ELEM[n].material==ELASTIC) RP[n]=CON.get_RP();
 		}
-
 		if(CON.get_ele_type()==0){
 			cout<<"節点要素による磁場計算は未定義！"<<endl;
 			exit(EXIT_FAILURE);
 		}
-
 		if(CON.get_ele_type()==1)//辺要素
 		{
 			double *A=new double[side_num+1];//ベクトルポテンシャル
@@ -5820,10 +5794,8 @@ void usingTetGen(mpsconfig &CON,vector<mpselastic> &PART, double **F, int fluid_
 //			else if(CON.get_m_force()==5) virtual_air_gap_F3D(&CON,NODE,ELEM,node,nelm,B,jnb,nei,RP,PART,N,TRANS,fluid_number,depth);
 //			else if(CON.get_m_force()==6) NODE_F3D_with_integral(&CON,NODE,ELEM,node,nelm,B,jnb,nei,RP,PART,N,TRANS,fluid_number);//節点力法
 //			else if(CON.get_m_force()==7) Magnetic_Charge_Method_F3D(&CON,NODE,ELEM,node,nelm,B,jnb,nei,RP,PART,N,TRANS,fluid_number);
-
 			delete [] A;
 		}
-
 		delete [] SIDE;
 		delete [] branch_num;
 		for(int i=0;i<=node;i++) delete [] nei2[i];
@@ -5832,10 +5804,8 @@ void usingTetGen(mpsconfig &CON,vector<mpselastic> &PART, double **F, int fluid_
 		delete [] current;
 		for(int D=0;D<3;D++) delete [] B[D];
 	}
-
 	//電磁力スムージング
 	smoothingF3D(CON,PART,fluid_number,F,t);
-
 	//断面メッシュ出力
 	if(t==1 || t%CON.get_avs_mesh2_interval()==0)
 	{
@@ -5844,7 +5814,6 @@ void usingTetGen(mpsconfig &CON,vector<mpselastic> &PART, double **F, int fluid_
 		data_avs2(CON,node,nelm,NODE,ELEM,KTJ,t); //物理量Vなどを指定すれば値が確認できる
 		//data_avs2_movie(CON,node,nelm,NODE,ELEM,KTJ,V,t);
 	}
-
 	//表面メッシュ出力
 	if(t==1 || t%CON.get_avs_mesh3_interval()==0)
 	{
@@ -5852,7 +5821,6 @@ void usingTetGen(mpsconfig &CON,vector<mpselastic> &PART, double **F, int fluid_
 //		data_avs3(node,nelm,NODE,ELEM,CON,t);//材質
 	}
  
-
 	delete [] V;
 	delete [] RP;
     delete [] jnb;

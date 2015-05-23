@@ -25,6 +25,7 @@ public:
 	double differential_Fi[DIMENSION][DIMENSION];
 	double t_differential_Fi[DIMENSION][DIMENSION];
 	double vis_force[DIMENSION];
+	double old_F[DIMENSION];
 	int stress0;
 	int highest;	//ˆø‚Á’£‚èŒ±‰ğÍ—p15/2/8
 };

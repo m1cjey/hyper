@@ -1,4 +1,5 @@
-﻿//#fasetは#facetの間違い？？？
+﻿
+//#fasetは#facetの間違い？？？
 //ファイル読み込みこれでできている？？？
 
 #include "stdafx.h"
@@ -302,7 +303,7 @@ void tetgen_function::MakePolyFile(mpsconfig &CON, tetgen_config &TET, vector<te
 		REGION.push_back(temp);
 	}
 	//磁性エラストマー
-	if(CON.get_model_number()==7&& CON.get_model_number()==1 && CON.get_model_number()==11) //if(CON.get_model_number()==7 && CON.get_model_number()==1 && CON.get_model_number()==11) 
+	if(CON.get_model_number()==7 && CON.get_model_number()==1 && CON.get_model_number()==11) 
 	{
 		//空気
 		temp.id+=1;
@@ -357,16 +358,6 @@ void tetgen_function::MakePolyFile(mpsconfig &CON, tetgen_config &TET, vector<te
 		temp.region_attribute=AIR;
 		REGION.push_back(temp);
 
-		//MAGNET
-		temp.id+=1;
-		temp.r[A_X]=0;
-		temp.r[A_Y]=0;
-		temp.r[A_Z]=CON.get_magnet_Z();	//磁石の中心点
-		temp.region_number=MAGNET;
-		temp.region_attribute=MAGNET;
-		REGION.push_back(temp);
-
-
 		//コイル
 		temp.id+=1;
 		temp.r[A_X]=0;
@@ -390,8 +381,7 @@ void tetgen_function::MakePolyFile(mpsconfig &CON, tetgen_config &TET, vector<te
 		REGION.push_back(temp);//*/
 	}
 
-	//超弾性体立方体モデル
-	if(CON.get_model_number()==23)
+		if(CON.get_model_number()==23)
 	{
 		//空気
 		temp.id+=1;
@@ -411,22 +401,21 @@ void tetgen_function::MakePolyFile(mpsconfig &CON, tetgen_config &TET, vector<te
 		temp.region_attribute=MAGNET;
 		REGION.push_back(temp);
 
-		
 		int i_no;
-		for(int i=0;i<NODE.size();i++)
-		{
-			if(NODE[i].part_no==1)  i_no=i;//95
+		for(int i=0;i<NODE.size();i++){
+			if(NODE[i].part_no==2)  i_no=i;//
 		}
-		double le=CON.get_distancebp();
 		//MAGELAST
 		temp.id+=1;
-		temp.r[A_X]=NODE[i_no].r[A_X]-le;//-0.0001; //MAGELASTのノードが最初に追加される
-		temp.r[A_Y]=NODE[i_no].r[A_Y]-le;
-		temp.r[A_Z]=NODE[i_no].r[A_Z]-le;
+		temp.r[A_X]=NODE[i_no].r[A_X]+0.00001; //MAGELASTのノードが最初に追加される
+		temp.r[A_Y]=NODE[i_no].r[A_Y]+0.00001;
+		temp.r[A_Z]=NODE[i_no].r[A_Z]+0.00001;
 		temp.region_number=MAGELAST;
 		temp.region_attribute=MAGELAST;
 		REGION.push_back(temp);
 	}
+
+
 	////////////////////////////////////////////////////////////////////*/
 
 	//region attribute list
@@ -531,11 +520,12 @@ void tetgen_function::SetElastBoundary(mpsconfig &CON, vector<mpselastic> &PART,
 				{
 					temp.attribute=MAGELAST;
 					count++;
+					
 				}
 				else if(PART[i].surface==1) 
 				{
 					temp.attribute=FACE_P;
-					temp.boundary=1;
+					//temp.boundary=1;
 				}
 				trans.push_back(part_no);
 				NODEe.push_back(temp);
@@ -799,7 +789,6 @@ void tetgen_function::SetRelation_NodeElem(mpsconfig &CON, vector<tetgen_node> &
 	/*//出力 および最大数・最小数の出力
 	//int max=0;
 	//int min=(int)NODE[0].nei_elem.size();
-
 	ofstream fout("neigh_node-elem.dat");
 	for(int i=0;i<(int)NODE.size();i++)
 	{
@@ -809,13 +798,11 @@ void tetgen_function::SetRelation_NodeElem(mpsconfig &CON, vector<tetgen_node> &
 			fout<<" "<<NODE[i].nei_elem[n];
 		}
 		fout<<endl;
-
 		//最大最小更新
 		//if(max<(int)NODE[i].nei_elem.size())	max=(int)NODE[i].nei_elem.size();
 		//if(min>(int)NODE[i].nei_elem.size())	min=(int)NODE[i].nei_elem.size();
 	}
 	fout.clear();
-
 	//cout<<"最大数: "<<max<<endl;
 	//cout<<"最小数: "<<min<<endl;
 	//*/

@@ -1241,14 +1241,13 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 					 int suf=0;
 					 if(i==0||j==0||k==0)	suf=1;
 					 if(i==base-1||j==base-1||k==height-1)	suf=1;
-					 writedata2(fq,number,(i-base/2)*le,(j-base/2)*le,(k+2)*le,HYPERELAST,1,suf,0,0,0,0,0,0,0,0,0,ON);
-					 cout<<number<<"	"<<suf<<"	"<<i<<"	"<<j<<"	"<<k<<endl;
+					 writedata2(fq,number,(i-(base-1)/2)*le,(j-(base-1)/2)*le,(k+2)*le,HYPERELAST,1,suf,0,0,0,0,0,0,0,0,0,ON);
 					 number++;
 				 }
 			 }
 		 }
-
-		 int number2=0;
+		 
+		 /*int number2=0;
 		 int w_base=8;
 		 int r_z=CON->get_r_z_wall();	//15/2/8
 
@@ -1256,11 +1255,11 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 		 {
 			 for(int j=0;j<w_base;j++)
 			 {
-				 writedata2(fq,number2+number,(i-w_base/2)*le,(j-w_base/2)*le,r_z*le,WALL,1,0,0,0,0,0,0,0,0,0,0,0);
+				 writedata2(fq,number2+number,(i-(w_base-1)/2)*le,(j-(w_base-1)/2)*le,r_z*le,WALL,1,0,0,0,0,0,0,0,0,0,0,0);
 				 number2++;
 			 }
 		 }
-		 number+=number2;
+		 number+=number2;*/
 		 cout<<"model完成\n";
 	 }
 	 /////////////////////////

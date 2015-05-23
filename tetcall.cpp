@@ -59,12 +59,12 @@ void tetgen_function::TetGen_elastic(mpsconfig &CON, vector<mpselastic> &PART, i
 	NODE.clear();
 	FACE.clear();
 	SetMagnetBoundary(CON, TET, NODE, FACE);
-	AddBoundaryData(CON, NODEall, FACEall, NODE, FACE, MAGNET);//
+	AddBoundaryData(CON, NODEall, FACEall, NODE, FACE, MAGNET);//*/
 	/////////////ÉRÉCÉãóÃàÊ//////////////
-	/*NODE.clear();
+/*	NODE.clear();
 	FACE.clear();
 	SetCOILBoundary(CON, TET, NODE, FACE);
-	AddBoundaryData(CON, NODEall, FACEall, NODE, FACE, COIL);*/
+	AddBoundaryData(CON, NODEall, FACEall, NODE, FACE, COIL);
 	////////////ìSêSóÃàÊ////////////////*/
 /*	NODE.clear();
 	FACE.clear();

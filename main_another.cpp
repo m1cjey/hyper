@@ -270,6 +270,22 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 
 		if(CON.get_FEM_flag()==true && t>wait)
 		{
+			//HYPERの場合差分をFは足す & 初期化
+			if(CON.get_flag_HYPER()==ON)
+			{
+				if(t==1)
+				{
+					for(int i=0;i<hyper_number;i++)
+					{
+						for(int D=0;D<DIMENSION;D++)
+						{
+							HYPER[i].p[D]=0;
+							HYPER[i].old_F[D]=0;
+						}
+					}
+				}
+				else{for(int i=0;i<hyper_number;i++)for(int D=0;D<DIMENSION;D++)HYPER[i].old_F[D]=F[D][i];}
+			}
 
 			//ELASTからCONの関数呼び出せるので二系統要らない・・・
 			if(ELAST.get_FEM_switch()==true && CON.get_mesh_input()!=2)
@@ -290,8 +306,21 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 					TetGenInterface(CON, PART, F, fluid_number, dt, t, particle_number, n0, TIME);
 				}	
 			}
-			if(t==1)	for(int i=0;i<hyper_number;i++)	for(int D=0;D<DIMENSION;D++)	HYPER[i].p[D]=0;
-			for(int i=0;i<hyper_number;i++)	for(int D=0;D<DIMENSION;D++)	HYPER[i].p[D]+=Dt*F[D][i];
+
+			////////超弾性体計算の場合は、ローレンツ力の変化分を運動量に追加する15/05/23
+			if(CON.get_flag_HYPER()==ON)
+			{
+				double det_F[DIMENSION];
+				for(int i=0;i<hyper_number;i++)
+				{
+					for(int D=0;D<DIMENSION;D++)	det_F[D]=0;
+					for(int D=0;D<DIMENSION;D++)
+					{
+						det_F[D]=F[D][i]-HYPER[i].old_F[D];
+						HYPER[i].p[D]+=Dt*det_F[D];
+					}
+				}
+			}
 		}
 		
 
