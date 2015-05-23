@@ -1217,8 +1217,6 @@ void tetgen_function::SetAirBoundary(mpsconfig &CON, tetgen_config &TET, vector<
 //	SetRelation_ElemElem(CON, NODEa, ELEMa);
 	//要素-要素関係より弾性体表面取得
 //	GetFacetList_from_neigh(CON, ELEMa, FACEa);
-	
-
 }
 
 
@@ -1536,7 +1534,6 @@ void tetgen_function::SetBaseBoundary(mpsconfig &CON, tetgen_config &TET, vector
 	double	L = TET.length_base;
 	double	dL = TET.fine_base;						//xy方向メッシュ粗さ
 	int		nL = int((TET.length_base/2+0.1*dL)/dL);	//xy方向分割数(片側)
-
 
 	//上面接続部分
 	temp.r[A_X]=0;
