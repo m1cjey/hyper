@@ -889,6 +889,11 @@ void calc_newton_q(mpsconfig &CON,vector<mpselastic>&PART,vector<hyperelastic>&H
 	double **p_Fi=new double *[DIMENSION];
 	for(int D=0;D<DIMENSION;D++)	p_Fi[D]=new double [DIMENSION];
 	for(int D=0;D<DIMENSION;D++)	for(int D2=0;D2<DIMENSION;D2++)	p_Fi[D][D2]=0;
+	////qiinとFiの更新
+	//初期化
+	double fi[3][3];
+	double fi2[3][3];
+	double fi0[3][3];
 
 /*	stringstream s;
 	s<<"./Fi/Fi "<<"t"<<t<<" count"<<count<<".csv";
@@ -900,11 +905,6 @@ void calc_newton_q(mpsconfig &CON,vector<mpselastic>&PART,vector<hyperelastic>&H
 	filename=s3.str();
 	ofstream fss3(filename);*/
 
-	////qiinとFiの更新
-	//初期化
-	double fi[3][3];
-	double fi2[3][3];
-	double fi0[3][3];
 
 	for(int D=0;D<DIMENSION;D++)	for(int D2=0;D2<DIMENSION;D2++)	fi0[D][D2]=0;
 

@@ -128,7 +128,6 @@ void tetgen_function::GetFacetList(vector<tetgen_facet> &FACE, tetgenio &in, tet
 void tetgen_function::MakeNodeFile(mpsconfig &CON, vector<tetgen_node> &NODE, char *filename)
 {
 	//cout<<filename<<" 出力"<<endl;
-
 	ofstream fout(filename);
 	
 	fout<<"#node"<<endl;
@@ -137,7 +136,6 @@ void tetgen_function::MakeNodeFile(mpsconfig &CON, vector<tetgen_node> &NODE, ch
 	{
 		fout<<NODE[i].id<<" "<<NODE[i].r[A_X]<<" "<<NODE[i].r[A_Y]<<" "<<NODE[i].r[A_Z]<<" "<<NODE[i].attribute<<" "<<NODE[i].boundary<<endl;
 	}
-
 	fout.close();
 }
 
@@ -381,8 +379,9 @@ void tetgen_function::MakePolyFile(mpsconfig &CON, tetgen_config &TET, vector<te
 		REGION.push_back(temp);//*/
 	}
 
-		if(CON.get_model_number()==23)
+	if(CON.get_model_number()==23	|| CON.get_model_number()==24)
 	{
+		double le=CON.get_distancebp();
 		//空気
 		temp.id+=1;
 		temp.r[A_X]=0;
@@ -407,9 +406,9 @@ void tetgen_function::MakePolyFile(mpsconfig &CON, tetgen_config &TET, vector<te
 		}
 		//MAGELAST
 		temp.id+=1;
-		temp.r[A_X]=NODE[i_no].r[A_X]+0.00001; //MAGELASTのノードが最初に追加される
-		temp.r[A_Y]=NODE[i_no].r[A_Y]+0.00001;
-		temp.r[A_Z]=NODE[i_no].r[A_Z]+0.00001;
+		temp.r[A_X]=NODE[i_no].r[A_X]+le; //MAGELASTのノードが最初に追加される
+		temp.r[A_Y]=NODE[i_no].r[A_Y]+le;
+		temp.r[A_Z]=NODE[i_no].r[A_Z]+le;
 		temp.region_number=MAGELAST;
 		temp.region_attribute=MAGELAST;
 		REGION.push_back(temp);
@@ -520,7 +519,6 @@ void tetgen_function::SetElastBoundary(mpsconfig &CON, vector<mpselastic> &PART,
 				{
 					temp.attribute=MAGELAST;
 					count++;
-					
 				}
 				else if(PART[i].surface==1) 
 				{
@@ -575,7 +573,39 @@ void tetgen_function::SetElastBoundary(mpsconfig &CON, vector<mpselastic> &PART,
 	//要素-要素関係
 	SetRelation_ElemElem(CON, NODEe, ELEMe);
 	//要素-要素関係より弾性体表面取得
-	GetFacetList_from_neigh(CON, ELEMe, FACEe);
+	if(CON.get_model_number()==23)
+	{
+		cout<<"要素除去後の流体表面定義";
+		{
+			//初期化
+			FACEe.clear();	
+			int id=0;	//id用(表面の数)
+			for(int i=0;i<(int)ELEMe.size();i++)
+			{
+				for(int n=0;n<4;n++)
+				{
+					if(int j=0;j<(int)NODEe[ELEMe[i].node[n]].nei_elem.size();j++)
+					{
+						tetgen_facet temp;	
+						int c=0;
+						for(int f=0;f<4;f++)
+						{
+							if(n!=f)
+							{
+								temp.node[c]=ELEMe[i].node[f];
+								c++;	
+							}
+						}
+						temp.id=id;
+						temp.boundary=MAGELAST;
+						FACEe.push_back(temp);
+						id++;
+					}
+				}	
+			}
+			cout<<"----------OK"<<endl;}
+	}
+	else{GetFacetList_from_neigh(CON, ELEMe, FACEe);}
 
 	//粒子番号をNODEe側に代入
 	for(int i=0;i<NODEe.size();i++)	NODEe[i].part_no=trans[i];
@@ -914,7 +944,7 @@ void tetgen_function::GetFacetList_from_neigh(mpsconfig &CON, vector<tetgen_elem
 	{
 		for(int n=0;n<4;n++)
 		{
-			if(ELEM[i].nei_elem[n]==-1)//対面が存在しない→表面
+			if(ELEM[i].nei_elem[n]==-1)==-1//対面が存在しない→表面
 			{
 				tetgen_facet temp;	
 				int c=0;
@@ -1643,7 +1673,7 @@ void tetgen_function::SetMagnetBoundary(mpsconfig &CON, tetgen_config &TET, vect
 
 	//上下側面でテーパーを付けたい時は分けるべきだがまとめてもいいかも・・・
 
-	//中心
+	//上面中心
 	temp.r[A_X]=0;
 	temp.r[A_Y]=0;	
 	temp.r[A_Z]=Zmax;

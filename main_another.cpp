@@ -270,7 +270,7 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 
 		if(CON.get_FEM_flag()==true && t>wait)
 		{
-			//HYPER‚Ìê‡·•ª‚ðF‚Í‘«‚· & ‰Šú‰»
+			///////HYPER‚Ìê‡·•ª‚ðF‚Í‘«‚· & ‰Šú‰»
 			if(CON.get_flag_HYPER()==ON)
 			{
 				if(t==1)
@@ -313,9 +313,9 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 				double det_F[DIMENSION];
 				for(int i=0;i<hyper_number;i++)
 				{
-					for(int D=0;D<DIMENSION;D++)	det_F[D]=0;
 					for(int D=0;D<DIMENSION;D++)
 					{
+						det_F[D]=0;
 						det_F[D]=F[D][i]-HYPER[i].old_F[D];
 						HYPER[i].p[D]+=Dt*det_F[D];
 					}

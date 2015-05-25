@@ -47,5 +47,4 @@ tetgen_config::tetgen_config(mpsconfig &CON)
 
 	//’·‚Ά—¬‘Μ—v‘f‚πν‚·‚ιθ‡’l 
 	del_length=2.0;		//le‚Μ‰½”{Θγ‚Μ•Σ‚π‚Β—v‘f‚πΑ‚·‚©
-
 }

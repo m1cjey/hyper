@@ -1241,7 +1241,7 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 					 int suf=0;
 					 if(i==0||j==0||k==0)	suf=1;
 					 if(i==base-1||j==base-1||k==height-1)	suf=1;
-					 writedata2(fq,number,(i-(base-1)/2)*le,(j-(base-1)/2)*le,(k+2)*le,HYPERELAST,1,suf,0,0,0,0,0,0,0,0,0,ON);
+					 writedata2(fq,number,(i-2.5)*le,(j-2.5)*le,(k+2)*le,HYPERELAST,1,suf,0,0,0,0,0,0,0,0,0,ON);
 					 number++;
 				 }
 			 }
@@ -1284,14 +1284,14 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 			set_cylinder_face(X,Y,Z,&number,le,R,height,circle_start_id,circle_end_id,top_flag);//円柱表面座標作成
 			int face_n=number; //
 			///////
-			for(int s=0;s<face_n;s++)writedata2(fq,s,X[s],Y[s],Z[s]-height/2,ELASTIC,1,1,0,0,0,vz,0,0,0,0,0,1);//粒子は,FACE
+			for(int s=0;s<face_n;s++)writedata2(fq,s,X[s],Y[s],Z[s]-height/2,HYPERELAST,1,1,0,0,0,vz,0,0,0,0,0,1);//粒子は,FACE
 			///////////////////////////////////////////////////////////////////////////////
 			set_cylinder_in(X,Y,Z,&number,le,R,height,1,circle_start_id);//内部にパッキング
 
 			int beforeNumber=number;
 			
 			//円柱表面+下壁の書き込み
-			for(int i=face_n;i<number;i++) writedata2(fq,i,X[i],Y[i],Z[i]-height/2,ELASTIC,1,0,0,0,0,vz,0,0,0,0,0,1);
+			for(int i=face_n;i<number;i++) writedata2(fq,i,X[i],Y[i],Z[i]-height/2,HYPERELAST,1,0,0,0,0,vz,0,0,0,0,0,1);
 			//下壁
 			//double Width=27*le;
 			double Rw=CON->get_fluidwidth()*le*1.8/2;

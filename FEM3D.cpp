@@ -1992,7 +1992,7 @@ void calc_static_magnetic_field(mpsconfig &CON,int node,int nelm,vector<point3D>
 		double *A=new double [side_num+1];//ベクトルポテンシャル
 		
 		//ベクトルポテンシャルを計算する
-		if(CON.get_EM_calc_type()==2) Avector3D(CON,NODE,ELEM,SIDE,node,nelm,side_num,A,jnb,branch_num,current,RP);
+		if(CON.get_EM_calc_type()==2) Avector3D(CON,NODE,ELEM,SIDE,node,nelm,side_num,A,jnb,branch_num,current,RP);	
 
 		//磁束密度を計算する
 		Bflux3D_side(CON,NODE,ELEM,SIDE,node,nelm,side_num,A,Be,RP);
@@ -3057,10 +3057,7 @@ void Avector3D(mpsconfig &CON,vector<point3D> &NODE,vector<element3D> &ELEM,side
 					B[I-1]+=u0*((b[k1]*d[k2]-b[k2]*d[k1])+(c[k1]*d[k2]-d[k1]*c[k2])*Xs+(e[k1]*d[k2]-d[k1]*e[k2])*Zs)*j0y*delta6/6;
 					B[I-1]+=u0*((b[k1]*e[k2]-b[k2]*e[k1])+(c[k1]*e[k2]-e[k1]*c[k2])*Xs+(d[k1]*e[k2]-e[k1]*d[k2])*Ys)*j0z*delta6/6;
 				}//////////
-				else if(ELEM[je].material==MAGNET)
-				{
-					B[I-1]+=1.0/18.0/delta*((d[k1]*e[k2]-e[k1]*d[k2])*Mx+(e[k1]*c[k2]-c[k1]*e[k2])*My+(c[k1]*d[k2]-d[k1]*c[k2])*Mz);
-				}
+				else if(ELEM[je].material==MAGNET)	B[I-1]+=1.0/18.0/delta*((d[k1]*e[k2]-e[k1]*d[k2])*Mx+(e[k1]*c[k2]-c[k1]*e[k2])*My+(c[k1]*d[k2]-d[k1]*c[k2])*Mz);
 			}
 		}   	
     }
