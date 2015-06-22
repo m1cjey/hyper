@@ -60,8 +60,8 @@ void tetgen_function::TetGen_elastic(mpsconfig &CON, vector<mpselastic> &PART, i
 	FACE.clear();
 	SetMagnetBoundary(CON, TET, NODE, FACE);
 	AddBoundaryData(CON, NODEall, FACEall, NODE, FACE, MAGNET);//*/
-	/////////////コイル領域//////////////
-/*	NODE.clear();
+	/*/////////////コイル領域//////////////
+	NODE.clear();
 	FACE.clear();
 	SetCOILBoundary(CON, TET, NODE, FACE);
 	AddBoundaryData(CON, NODEall, FACEall, NODE, FACE, COIL);
@@ -91,7 +91,7 @@ void tetgen_function::TetGen_elastic(mpsconfig &CON, vector<mpselastic> &PART, i
 	cout<<"polyファイル読み込み"<<endl;
 	in.load_poly("all_boundary");	//.polyを読み込んだら自動的に.nodeも読み込むらしい
 	cout<<"自動分割開始"<<endl;
-	tetrahedralize("pq1.1a1.0e-4AYYn", &in, &out);	//("pq1.1a2.0e-7AYYn", &in, &out);//1.1未満では切れない デフォルトはrqa1.1AYYn  pq1.3a1.67e-7AYYn
+	tetrahedralize("pq1.1a1.0e-4AYYn", &in, &out);	//1.1未満では切れない デフォルトはrqa1.1AYYn  pq1.3a1.67e-7AYYn
 	out.save_nodes("output");
 	out.save_elements("output");
 	//out.save_faces("output");

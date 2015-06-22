@@ -222,6 +222,7 @@ void inverse(double **a,int N);
 void ludcmp(double **a,int N,int *index,double *d);
 void lubksb(double **a,int N,int *index,double b[]);
 void momentum_movie_AVS(mpsconfig &CON,int t,vector<mpselastic> &PART,vector<hyperelastic>&HYPER,int particle_number);
+void contact_judge_hyper(mpsconfig &CON,vector<mpselastic> &PART, vector<hyperelastic>&HYPER,int t);
 
 //îSê´çÄåvéZ
 void calc_vis_f(mpsconfig &CON,vector<mpselastic>PART,vector<hyperelastic>&HYPER,vector<hyperelastic2>&HYPER1,int hyper_number,int t);

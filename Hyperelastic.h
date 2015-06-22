@@ -7,12 +7,14 @@ public:
 
 	unsigned ID;
 	int NEI[200];
+	int NEI_w[200];
 	int N;
-	int Nw;
+	int N_w;
 	double lambda;
 	double n_q[DIMENSION];
 	double half_p[DIMENSION];
 	double stress[DIMENSION][DIMENSION];
+	double P_wall[DIMENSION];
 	double differential_p[DIMENSION];
 	double p[DIMENSION];
 	double ang_p[DIMENSION];
@@ -28,6 +30,10 @@ public:
 	double old_F[DIMENSION];
 	int stress0;
 	int highest;	//à¯Ç¡í£ÇËééå±âêÕóp15/2/8
+
+
+
+
 };
 
 class hyperelastic2

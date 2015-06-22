@@ -5264,7 +5264,7 @@ void NODE_F3D(mpsconfig &CON,vector<point3D> &NODE,vector<element3D> &ELEM,int n
 		{
 			if(bound[n]==ON)
 			{
-				int i=NODE[n].particleID;
+				int i=NODE[n].particleID;		
 				if(i>=0) for(int D=0;D<3;D++) F[D][i]=Fn[D][n];
 			}
 		}

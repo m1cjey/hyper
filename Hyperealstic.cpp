@@ -12,8 +12,8 @@ void calc_hyper(mpsconfig &CON,vector<mpselastic>&PART,vector<hyperelastic>&HYPE
 		system("mkdir d_Momentum");
 		system("mkdir Newton_raphson");
 		system("mkdir Position");
-		system("mkdir Ai");
 		system("mkdir Fi");
+
 		system("mkdir renew_Lambda");
 		system("mkdir Hy_stress");
 	}
@@ -35,7 +35,6 @@ void calc_hyper(mpsconfig &CON,vector<mpselastic>&PART,vector<hyperelastic>&HYPE
 
 	stringstream ss4;
 	ss4<<"./Hy_stress/Stress"<<"t"<<t<<".csv";
-	cout<<PART.size();
 	string fl4=ss4.str();
 	ofstream stress(fl4);
 
@@ -73,7 +72,9 @@ void calc_hyper(mpsconfig &CON,vector<mpselastic>&PART,vector<hyperelastic>&HYPE
 			}
 		}
 
-		calc_constant(CON,PART,HYPER,HYPER1,N);
+		 calc_constant(CON,PART,HYPER,HYPER1,N);
+
+		contact_judge_hyper(CON,PART,HYPER,t);
 
 		calc_stress(CON,PART,HYPER,HYPER1,N);
 
@@ -149,6 +150,8 @@ void calc_hyper(mpsconfig &CON,vector<mpselastic>&PART,vector<hyperelastic>&HYPE
 
 	calc_half_p(CON,PART,HYPER,HYPER1,N,0,t);
 	cout<<"half_p is ended."<<endl;
+
+	
 
 	/*	rf<<"Renewed position"<<endl;
 	for(int i=0;i<N;i++)
@@ -246,7 +249,7 @@ void calc_constant(mpsconfig &CON,vector<mpselastic>PART,vector<hyperelastic>&HY
 {
 	double le=CON.get_distancebp();
 	double r=CON.get_h_dis();
-	double Dt=CON.get_dt()*CON.get_interval();
+	double Dt=CON.get_dt();
 	double V=get_volume(&CON);
 	double mi=V*CON.get_hyper_density();
 	int num=particle_number;
@@ -308,15 +311,8 @@ void calc_constant(mpsconfig &CON,vector<mpselastic>PART,vector<hyperelastic>&HY
 		HYPER[i].ang_p[A_Z]=PART[i].r[A_X]*HYPER[i].p[A_Y]-PART[i].r[A_Y]*HYPER[i].p[A_X];
 	}
 
-	stringstream ss;
-	ss<<"./Ai/Ai.csv";
-	string fl=ss.str();
-	ofstream ai(fl);
-
-	stringstream ss2;
-	ss2<<"./Ai/inverse_Ai.csv";
-	string fl2=ss2.str();
-	ofstream inai(fl2);
+	ofstream ai("Ai.csv");
+	ofstream inai("inverse_Ai.csv");
 
 	ofstream aii("aiin.csv");
 	ofstream n0("noij.csv");
@@ -355,8 +351,9 @@ void calc_constant(mpsconfig &CON,vector<mpselastic>PART,vector<hyperelastic>&HY
 			}
 			aii<<",";
 			dis=sqrt(HYPER1[i*num+j].aiin[A_X]*HYPER1[i*num+j].aiin[A_X]+HYPER1[i*num+j].aiin[A_Y]*HYPER1[i*num+j].aiin[A_Y]+HYPER1[i*num+j].aiin[A_Z]*HYPER1[i*num+j].aiin[A_Z]);
+			
 			if(dis<r && j!=i)
-			{				
+			{	
 				HYPER1[i*num+j].wiin=kernel4(r,dis);	//一時消去15/2/10
 				HYPER[i].NEI[N]=j;
 				N++;
@@ -561,7 +558,7 @@ void newton_raphson(mpsconfig &CON,vector<mpselastic>&PART,vector<hyperelastic>&
 	double *DfDx=new double [N*N];//関数の偏微分値。
 	double *XX=new double [N];//現在の解。	
 	double *XX_old=new double [N];//1ステップ前の解。
-	double ep=1e-4;//収束判定
+	double ep=1e-3;//収束判定
 	double E=1;//現在の誤差
 /*	double start=0;
 	double end=0;
@@ -585,7 +582,7 @@ void newton_raphson(mpsconfig &CON,vector<mpselastic>&PART,vector<hyperelastic>&
 	ofstream newton(filename);
 
 	//	for(int i=0; i<N; i++) XX[i]=1;///初期値を与える。とりあえず1で
-//	cout<<"NR法開始----";
+	cout<<"NR法開始----";
 //	start=clock();
 	while(E>ep)
 	{
@@ -719,36 +716,47 @@ void newton_raphson(mpsconfig &CON,vector<mpselastic>&PART,vector<hyperelastic>&
 		for(int i=0;i<N;i++)	HYPER[i].lambda=XX[i];
 //		for(int i=0;i<N;i++)	cout<<"lambda["<<i<<"]="<<HYPER[i].lambda<<endl;
 
-		//誤差の評価	
-		E=0;
-		for(int i=0; i<N; i++) E+=fabs(XX[i]-XX_old[i]);
-		double sum;
-		sum=0;
-		for(int i=0;i<N;i++)	sum+=fabs(XX[i]);
-		E/=sum;
+		//誤差の評価
+		int dec_flag=OFF;
 
-		if(count%200==1)	cout<<"反復回数="<<count<<" E="<<E<<endl;
+			E=0;
+			for(int i=0; i<N; i++) E+=fabs(XX[i]-XX_old[i]);
+			double sum;
+			sum=0;
+			for(int i=0;i<N;i++)	sum+=fabs(XX[i]);
+			E/=sum;
 
-//		fs1.close();
-//		fDfDx.close();
-//		i_fDfDx.close();
-		if(count>CON.get_nr()/2)
-		{
-			if(count==1||count%200==1)
+			if(count%200==1)	cout<<"反復回数="<<count<<" E="<<E<<endl;
+
+	//		fs1.close();
+	//		fDfDx.close();
+	//		i_fDfDx.close();
+			if(count>CON.get_nr()/2)
 			{
-				stringstream ss4;
-				ss4<<"./Newton_raphson/lambda "<<"t"<<t<<" count"<<count<<".dat";
-				string filename2=ss4.str();
-				ofstream lam(filename2);
+				if(count==1||count%200==1)
+				{
+					stringstream ss4;
+					ss4<<"./Newton_raphson/lambda "<<"t"<<t<<" count"<<count<<".dat";
+					string filename2=ss4.str();
+					ofstream lam(filename2);
 
 
-				lam<<"lambda"<<"t"<<t<<"count"<<count<<endl;
-				for(int i=0;i<N;i++)	lam<<i<<"	"<<HYPER[i].lambda<<endl;	
-				newton<<"反復回数"<<count<<"E"<<" "<<E<<endl;
-				lam.close();
-			}		
+					lam<<"lambda"<<"t"<<t<<"count"<<count<<endl;
+					for(int i=0;i<N;i++)	lam<<i<<"	"<<HYPER[i].lambda<<endl;	
+					newton<<"反復回数"<<count<<"E"<<" "<<E<<endl;
+					lam.close();
+				}		
+			}
+		if(dec_flag==ON)
+		{
+			double det_E=0;
+			if(count==1)	det_E=E;
+			else	det_E-=E;
+			if(det_E>0)	break;
+			else	det_E=E;		
 		}
-		if(count>CON.get_nr())	break;
+
+		if(count>CON.get_nr())	break;			
 	}
 //	end=clock();
 
@@ -1027,15 +1035,16 @@ void calc_half_p(mpsconfig &CON,vector<mpselastic>&PART,vector<hyperelastic>&HYP
 			HYPER[i].ang_p[A_Y]=PART[i].r[A_Z]*HYPER[i].p[A_X]-PART[i].r[A_X]*HYPER[i].p[A_Z];
 			HYPER[i].ang_p[A_Z]=PART[i].r[A_X]*HYPER[i].p[A_Y]-PART[i].r[A_Y]*HYPER[i].p[A_X];
 
+			/*
 			if((PART[i].r[A_Z]<CON.get_r_z_wall()*le)&&(CON.get_flag_wall()==ON))//試験作15/2/5
 			{
 				HYPER[wall].Nw=i;
 				wall++;
-			}	
+			}	*/
 //			for(int D=0;D<DIMENSION;D++)cout<<"p["<<i<<"]="<<HYPER[i].half_p[D]<<"+"<<Dt<<"/2*"<<p_half_p3[D]<<" = "<<HYPER[i].p[D]<<endl;
 		}
 	}//iに関するfor文の終わり
-	
+	/*
 	if(repetation!=0 && CON.get_flag_wall()==ON && wall>0)	//試験的に壁モデルを作成15/2/5
 	{
 		for(int i=0;i<particle_number;i++)	
@@ -1050,7 +1059,7 @@ void calc_half_p(mpsconfig &CON,vector<mpselastic>&PART,vector<hyperelastic>&HYP
 			}
 			if(count>0)	HYPER[i].p[A_Z]-=HYPER[i].p[A_Z];
 		}
-	}
+	}*/
 
 //	if(flag_wall>0)	for(int i=0;i<particle_number;i++)	HYPER[i].p[A_Z]-=HYPER[i].p[A_Z];	//運動量の与え方を壁を通り抜けた粒子のみから全体に改良　15/2/5
 /*	if(repetation==0)
@@ -1696,4 +1705,113 @@ void momentum_movie_AVS(mpsconfig &CON,int t,vector<mpselastic> &PART,vector<hyp
 	cout<<"OK"<<endl;
 	fp.close();
 
+	stringstream s;
+	s<<"./P/p "<<"t"<<t<<".csv";
+	string filename=s.str();
+	ofstream fss(filename);
 }
+
+
+void contact_judge_hyper(mpsconfig &CON,vector<mpselastic>&PART,vector<hyperelastic>&HYPER,int t)
+{
+	//アルゴリズム
+	// 0. i周辺の粒子数密度が増加した場合，影響半径内にある粒子を探索し，以下を行う
+	// 1. 「接触の可能性がある粒子」（(PART[j].PND>PART[j].PND0)が真？）を調べる
+	// 2. 圧力を置換
+	// 3. 初期配置の粒子と重複しないように接触の可能性がある粒子との間で力を計算する
+	int dim=3;
+	double re=CON.get_h_dis();
+	double le=CON.get_distancebp();
+	double V=get_volume(&CON);
+	double mi=V*CON.get_hyper_density();
+	double Dt=CON.get_dt();
+	double dis_temp=0;
+
+	double *pnd=new double [PART.size()];
+
+	double **w=new double *[HYPER.size()];
+	double **dis=new double *[HYPER.size()];
+	for(int i=0;i<HYPER.size();i++)
+	{
+		w[i]=new double [PART.size()-HYPER.size()];
+		dis[i]=new double [PART.size()-HYPER.size()];
+	}
+
+
+
+	if(t!=1)	for(int i=0;i<PART.size()-HYPER.size();i++)	for(int D=0;D<DIMENSION;D++)	PART[i].r[D]+=PART[i].u[D]*Dt;
+		
+
+	#pragma omp parallel for
+//		if(PART[i].type==ELASTIC || PART[i].type==MAGELAST)
+		for(int i=0;i<HYPER.size();i++)
+		{
+			int N=0;
+			HYPER[i].N_w=0;
+			pnd[i]=0;
+
+			for(int j=0;j<PART.size()-HYPER.size();j++)
+			{
+				HYPER[i].NEI_w[j]=0;
+				dis[i][j]=0;
+				w[i][j]=0;
+			//初期配置の粒子とは普通に圧力勾配を計算（内力計算）
+			//else if(PART[i].contact==true)
+				
+				dis_temp=sqrt(PART[i].r[A_X]*PART[j].r[A_X]+PART[i].r[A_Y]*PART[j].r[A_Y]+PART[i].r[A_Z]*PART[j].r[A_Z]);
+				if(dis_temp<re)
+				{
+					dis[i][j]=dis_temp;
+					w[i][j]=kernel(re,dis_temp);
+					HYPER[i].NEI_w[N]=j;
+					pnd[i]+=w[i][j];
+					N++;
+				}
+				//現在位置での周辺粒子数を取得
+			}
+			HYPER[i].N_w=N;
+
+			if(HYPER[i].N_w>0)
+			{
+				double press_accel_temp[3]={0.0, 0.0, 0.0};
+
+				for(int k=0;k<HYPER[i].N_w;k++)
+				{
+					int j=HYPER[i].NEI_w[k];
+
+					//初期配置では近くに存在しない粒子との圧力勾配を計算する
+					//現在配置での相対座標
+					double r_ij[3], r_ji[3];
+					for(int D=0;D<3;D++)
+					{
+						r_ij[D]=PART[j].r[D]-PART[i].r[D];
+						r_ji[D]=-r_ij[D];
+					}
+
+					
+	//				if(PART[j].type!=WALL){
+					for(int D=0;D<3;D++){
+						press_accel_temp[D]+=(PART[i].P*r_ij[D]-PART[j].P*r_ji[D])*w[i][j]/dis[i][j]/dis[i][j];
+					}
+		//				}
+				}//for(int k=0;k<neighbourN;k++)
+
+				double coef=-dim/PART[i].get_density()/pnd[i];//これは弾性変形とは限らないのでPNDで割る
+				for(int D=0;D<3;D++) press_accel_temp[D]*=coef;
+
+				for(int D=0;D<DIMENSION;D++)	HYPER[i].p[D]+=mi*Dt*press_accel_temp[D];
+			}
+		}
+//			if(PART[i].r_temp[A_Z]<ground+0.5*le) PART[i].set_stop_on_floor(true);  //接触確認フラグ
+//			else PART[i].set_stop_on_floor(false);
+	
+	for(int i=0;i<HYPER.size();i++)
+	{
+		delete[] w[i];
+		delete[] dis[i];
+	}
+	delete[] w;
+	delete[] dis;
+	delete[] pnd;
+}
+

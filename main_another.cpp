@@ -132,28 +132,29 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 
 	//陽解析の前にreloadINDEX	
 	//粒子ID更新・粒子数密度更新
-	reload_INDEX(CON,PART, INDEX);//格子内の粒子数更新
+	//reload_INDEX(CON,PART, INDEX);//格子内の粒子数更新
+	/*
 	count=0;
 	int **MESH0=new int *[CON.get_number_of_mesh()];
 	for(int i=0;i<CON.get_number_of_mesh();i++)
 	{       
 		count+=INDEX[i];
 		MESH0[i]=new int [INDEX[i]];
-	}
-	reload_INDEX2(&CON, PART, MESH0);
+	}*/
+	//reload_INDEX2(&CON, PART, MESH0);
 
 	//表面判定（弾性計算の場合最初だけやればOK！）
 
-	freeon(CON, PART, n0_4, INDEX, MESH0, &mindis, t);
+	//freeon(CON, PART, n0_4, INDEX, MESH0, &mindis, t);
 	
 
-	for(int i=0;i<CON.get_number_of_mesh();i++) delete [] MESH0[i];
-	delete [] MESH0;
+//	for(int i=0;i<CON.get_number_of_mesh();i++) delete [] MESH0[i];
+//	delete [] MESH0;
 
 	//初期化も同時に行うのでこの位置(ePND[i]=PART[i].PNDなのでこの位置でなければ)
 		elastic ELAST(PART);
-		for(int i=0;i<PART.size();i++) PART[i].initialize_particles(ELAST, t);
-		ELAST.set_ground_position(CON.get_ground_position());
+		//for(int i=0;i<PART.size();i++) PART[i].initialize_particles(ELAST, t);
+		//ELAST.set_ground_position(CON.get_ground_position());
 
 		//HYPERクラスに粒子情報格納
 		hyperelastic HYPER0;
@@ -232,20 +233,20 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 		cout<<"陽解析 start:step="<<t<<", 粒子数="<<particle_number<<", dt="<<dt<<endl;
 
 		//陽解析の前にreloadINDEX（粒子は移動するので毎ステップ実行する必要がある）
-		reload_INDEX(CON, PART, INDEX);	//格子内の粒子数更新
+		//reload_INDEX(CON, PART, INDEX);	//格子内の粒子数更新
 		cout<<"reload_INDEX_OK"<<endl;
 
 		//MESHはmpsconfigのメンバ関数にするのが良い。new/delete危険なのでshared_ptrかvectorを使うべき
-		int **MESH = new int *[CON.get_number_of_mesh()];	//get_number_of_mesh() {return (int)((maxX-minX)/(distancebp*dx)*(maxY-minY)/(distancebp*dx)*(maxZ-minZ)/(distancebp*dx)+0.001);}//格子数：X_mesh*Y_mesh*Z_mesh
+/*		int **MESH = new int *[CON.get_number_of_mesh()];	//get_number_of_mesh() {return (int)((maxX-minX)/(distancebp*dx)*(maxY-minY)/(distancebp*dx)*(maxZ-minZ)/(distancebp*dx)+0.001);}//格子数：X_mesh*Y_mesh*Z_mesh
 		count=0;
 		for(int i=0;i<CON.get_number_of_mesh();i++)
 		{       
 			count+=INDEX[i];
 			MESH[i]=new int [INDEX[i]];
-		}
-		if(count>PART.size()) cout<<"INDEX error 粒子数増加?"<<endl;
-		if(count<PART.size()) cout<<"INDEX error 粒子数減少?"<<endl;
-		reload_INDEX2(&CON, PART, MESH);
+		}*/
+/*		if(count>PART.size()) cout<<"INDEX error 粒子数増加?"<<endl;
+		if(count<PART.size()) cout<<"INDEX error 粒子数減少?"<<endl;*/
+		//reload_INDEX2(&CON, PART, MESH);
 
 		//陽解析
 		unsigned timeA=GetTickCount();
@@ -254,7 +255,7 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 		//影響半径内の粒子をカウント＋mindisの計算
 		//弾性計算用の関数を使う
 		cout<<"freeon_start"<<endl;
-		if(CON.get_flag_ELAST()==ON)	freeon(ELAST, PART, n0_4, INDEX, MESH, &mindis, t); //表面判定
+		//if(CON.get_flag_ELAST()==ON)	freeon(ELAST, PART, n0_4, INDEX, MESH, &mindis, t); //表面判定
 
 		cout<<"陽解析前の粒子依存関係計算終了　－－time="<<(GetTickCount()-timeA)*0.001<<"[sec]"<<endl;
 
@@ -339,8 +340,8 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 //		cout<<"陽解析終了 umax="<<sqrt(Umax)<<"  limit U="<<0.2*mindis/dt<<endl;
 
 		//粒子が動いたのでINDEX更新
-		for(int i=0;i<CON.get_number_of_mesh();i++) delete [] MESH[i];
-		delete [] MESH;
+//		for(int i=0;i<CON.get_number_of_mesh();i++) delete [] MESH[i];
+	//	delete [] MESH;
 
 		double umax2=0.0;//最大速度
 		for(int i=0;i<PART.size();i++)

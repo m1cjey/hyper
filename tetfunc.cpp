@@ -1,15 +1,14 @@
-ï»¿
-//#fasetã¯#facetã®é–“é•ã„ï¼Ÿï¼Ÿï¼Ÿ
-//ãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿ã“ã‚Œã§ã§ãã¦ã„ã‚‹ï¼Ÿï¼Ÿï¼Ÿ
+//#faset‚Í#facet‚ÌŠÔˆá‚¢HHH
+//ƒtƒ@ƒCƒ‹“Ç‚İ‚İ‚±‚ê‚Å‚Å‚«‚Ä‚¢‚éHHH
 
 #include "stdafx.h"
 
 #define  A_R 0
-#define  A_t 1 //Î¸
+#define  A_t 1 //ƒÆ
 
 
 using namespace std;
-//.nodeãƒ‡ãƒ¼ã‚¿å–å¾—é–¢æ•°
+//.nodeƒf[ƒ^æ“¾ŠÖ”
 void tetgen_function::GetPointList(vector<tetgen_node> &NODE, tetgenio &in, tetgenio &out)
 {
 	NODE.clear();
@@ -27,7 +26,7 @@ void tetgen_function::GetPointList(vector<tetgen_node> &NODE, tetgenio &in, tetg
 }
 
 
-//.eleãƒ‡ãƒ¼ã‚¿å–å¾—é–¢æ•°(ç°¡æ˜“ç‰ˆ)
+//.eleƒf[ƒ^æ“¾ŠÖ”(ŠÈˆÕ”Å)
 void tetgen_function::GetTetrahedronList(vector<tetgen_element> &ELEM, tetgenio &in, tetgenio &out)
 {
 	ELEM.clear();
@@ -37,12 +36,12 @@ void tetgen_function::GetTetrahedronList(vector<tetgen_element> &ELEM, tetgenio 
 	{
 		temp.id=i+out.firstnumber;
 		for(int n=0;n<4;n++)	temp.node[n]=out.tetrahedronlist[i*4+n];
-		temp.attribute=0; //æã‚‰ãã€æœªå®šç¾©ã§ä»£å…¥ã™ã‚‹ã¨å¤‰ãªæ•°å€¤ãŒå…¥ã£ã¦ãƒã‚°ã‚‹ã®ã§ã“ã“ã§ã¯0ã«ã—ã¨ã
+		temp.attribute=0; //‹°‚ç‚­A–¢’è‹`‚Å‘ã“ü‚·‚é‚Æ•Ï‚È”’l‚ª“ü‚Á‚ÄƒoƒO‚é‚Ì‚Å‚±‚±‚Å‚Í0‚É‚µ‚Æ‚­
 
 		ELEM.push_back(temp);
 	}
 }
-//.eleãƒ‡ãƒ¼ã‚¿å–å¾—é–¢æ•°(MAGELASTç”¨)
+//.eleƒf[ƒ^æ“¾ŠÖ”(MAGELAST—p)
 void tetgen_function::GetMTetrahedronList(vector<tetgen_element> &ELEM, tetgenio &in, tetgenio &out)
 {
 	ELEM.clear();
@@ -52,7 +51,7 @@ void tetgen_function::GetMTetrahedronList(vector<tetgen_element> &ELEM, tetgenio
 	{
 		temp.id=i+out.firstnumber;
 		for(int n=0;n<4;n++)	temp.node[n]=out.tetrahedronlist[i*4+n];
-		temp.attribute=MAGELAST; //æã‚‰ãã€æœªå®šç¾©ã§ä»£å…¥ã™ã‚‹ã¨å¤‰ãªæ•°å€¤ãŒå…¥ã£ã¦ãƒã‚°ã‚‹ã®ã§ã“ã“ã§ã¯0ã«ã—ã¨ã
+		temp.attribute=MAGELAST; //‹°‚ç‚­A–¢’è‹`‚Å‘ã“ü‚·‚é‚Æ•Ï‚È”’l‚ª“ü‚Á‚ÄƒoƒO‚é‚Ì‚Å‚±‚±‚Å‚Í0‚É‚µ‚Æ‚­
 
 		ELEM.push_back(temp);
 	}
@@ -67,22 +66,22 @@ void tetgen_function::Geteleattribute(vector<tetgen_node> &NODE,vector<tetgen_el
 		int M3=(int)out.pointattributelist[out.tetrahedronlist[i*4+2]];
 		int M4=(int)out.pointattributelist[out.tetrahedronlist[i*4+3]];
 	
-		///4é ‚ç‚¹ã™ã¹ã¦ãŒåŒã˜æè³ªãªã‚‰è¦ç´ ã‚‚ãã‚Œã«ãªã‚‰ã†ã€‚
-		///ã²ã¨ã¤ã§ã‚‚ç•°ãªã£ã¦ã„ãŸã‚‰ç©ºæ°—ã¨å®šç¾©
+		///4’¸“_‚·‚×‚Ä‚ª“¯‚¶Ş¿‚È‚ç—v‘f‚à‚»‚ê‚É‚È‚ç‚¤B
+		///‚Ğ‚Æ‚Â‚Å‚àˆÙ‚È‚Á‚Ä‚¢‚½‚ç‹ó‹C‚Æ’è‹`
 		if(M1==M2 && M2==M3 && M3==M4) out.tetrahedronattributelist[i]=M1;
 		else if(M1!=AIR && M2!=AIR && M3!=AIR && M4!=AIR) 
 		{
 			if(M1!=ELASTIC && M2!=ELASTIC && M3!=ELASTIC && M4!=ELASTIC) out.tetrahedronattributelist[i]=MAGELAST;
 			//if(CON.get_model_number()==15) ELEM[i].material=AIR;
 			else out.tetrahedronattributelist[i]=ELASTIC; //else ELEM[i].material=FLUID;
-			if(M1==IRON || M2==IRON || M3==IRON || M4==IRON) out.tetrahedronattributelist[i]=IRON;//ã‚³ã‚¤ãƒ«ã®è¦ç´ ã¯ã‚³ã‚¤ãƒ«æ¥ç‚¹ã®å†…å´ã«ãªã‚‹ã‚ˆã†ã«ã™ã‚‹
+			if(M1==IRON || M2==IRON || M3==IRON || M4==IRON) out.tetrahedronattributelist[i]=IRON;//ƒRƒCƒ‹‚Ì—v‘f‚ÍƒRƒCƒ‹Ú“_‚Ì“à‘¤‚É‚È‚é‚æ‚¤‚É‚·‚é
 		}
 		else out.tetrahedronattributelist[i]=AIR;
     }
 }
 
 
-//.eleãƒ‡ãƒ¼ã‚¿å–å¾—é–¢æ•°(æè³ªãƒ»è¦ç´ è¦ç´ é–¢ä¿‚å«ã‚€)
+//.eleƒf[ƒ^æ“¾ŠÖ”(Ş¿E—v‘f—v‘fŠÖŒWŠÜ‚Ş)
 void tetgen_function::GetTetrahedronList_full(vector<tetgen_element> &ELEM, tetgenio &in, tetgenio &out)
 {
 	ELEM.clear();
@@ -90,21 +89,21 @@ void tetgen_function::GetTetrahedronList_full(vector<tetgen_element> &ELEM, tetg
 	tetgen_element temp;
 	for(int i=0;i<out.numberoftetrahedra;i++)
 	{
-		temp.id=i+out.firstnumber;										//ç¯€ç‚¹ç•ªå·
-		for(int n=0;n<4;n++) temp.node[n]=out.tetrahedronlist[i*4+n];	//æ§‹æˆç¯€ç‚¹
-		for(int n=0;n<4;n++) temp.nei_elem[n]=out.neighborlist[i*4+n];	//è¦ç´ -è¦ç´ é–¢ä¿‚
-		temp.attribute=(int)out.tetrahedronattributelist[i];				//æè³ª
-		//temp.volume=out.tetrahedronvolumelist[i];							//ä½“ç©(å–å¾—ã§ããªã„)
+		temp.id=i+out.firstnumber;										//ß“_”Ô†
+		for(int n=0;n<4;n++) temp.node[n]=out.tetrahedronlist[i*4+n];	//\¬ß“_
+		for(int n=0;n<4;n++) temp.nei_elem[n]=out.neighborlist[i*4+n];	//—v‘f-—v‘fŠÖŒW
+		temp.attribute=(int)out.tetrahedronattributelist[i];				//Ş¿
+		//temp.volume=out.tetrahedronvolumelist[i];							//‘ÌÏ(æ“¾‚Å‚«‚È‚¢)
 
 		ELEM.push_back(temp);
 	}
 }
 
 
-//.faceãƒ‡ãƒ¼ã‚¿å–å¾—é–¢æ•°
+//.faceƒf[ƒ^æ“¾ŠÖ”
 void tetgen_function::GetFacetList(vector<tetgen_facet> &FACE, tetgenio &in, tetgenio &out, int boundary)
 {
-	//â€»boundarymarkerã¯å¼•æ•°ã¨ã—ã¦ä¸ãˆã¦ã„ã‚‹ã€‚PLCãƒ¢ãƒ¼ãƒ‰ã§ä½œã£ãŸãƒ¡ãƒƒã‚·ãƒ¥ã§ã¯ãªã„ãŸã‚å¢ƒç•ŒãŒå‡ºåŠ›ã•ã‚Œãªã„ã€‚
+	//¦boundarymarker‚Íˆø”‚Æ‚µ‚Ä—^‚¦‚Ä‚¢‚éBPLCƒ‚[ƒh‚Åì‚Á‚½ƒƒbƒVƒ…‚Å‚Í‚È‚¢‚½‚ß‹«ŠE‚ªo—Í‚³‚ê‚È‚¢B
 
 	FACE.clear();
 
@@ -124,10 +123,11 @@ void tetgen_function::GetFacetList(vector<tetgen_facet> &FACE, tetgenio &in, tet
 }
 
 
-//.nodeãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆé–¢æ•°
+//.nodeƒtƒ@ƒCƒ‹ì¬ŠÖ”
 void tetgen_function::MakeNodeFile(mpsconfig &CON, vector<tetgen_node> &NODE, char *filename)
 {
-	//cout<<filename<<" å‡ºåŠ›"<<endl;
+	//cout<<filename<<" o—Í"<<endl;
+
 	ofstream fout(filename);
 	
 	fout<<"#node"<<endl;
@@ -136,14 +136,15 @@ void tetgen_function::MakeNodeFile(mpsconfig &CON, vector<tetgen_node> &NODE, ch
 	{
 		fout<<NODE[i].id<<" "<<NODE[i].r[A_X]<<" "<<NODE[i].r[A_Y]<<" "<<NODE[i].r[A_Z]<<" "<<NODE[i].attribute<<" "<<NODE[i].boundary<<endl;
 	}
+
 	fout.close();
 }
 
 
-//.nodeãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆé–¢æ•°
+//.nodeƒtƒ@ƒCƒ‹ì¬ŠÖ”
 void tetgen_function::MakeNodeFile_NonAttributeAndBoundary(mpsconfig &CON, vector<tetgen_node> &NODE, char *filename)
 {
-	cout<<filename<<" å‡ºåŠ›"<<endl;
+	cout<<filename<<" o—Í"<<endl;
 
 	ofstream fout(filename);
 	
@@ -158,7 +159,7 @@ void tetgen_function::MakeNodeFile_NonAttributeAndBoundary(mpsconfig &CON, vecto
 }
 
 
-//.eleãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆé–¢æ•°
+//.eleƒtƒ@ƒCƒ‹ì¬ŠÖ”
 void tetgen_function::MakeElemFile(mpsconfig &CON, vector<tetgen_element> &ELEM, char *filename)
 {
 	ofstream fout(filename);
@@ -175,7 +176,7 @@ void tetgen_function::MakeElemFile(mpsconfig &CON, vector<tetgen_element> &ELEM,
 }
 
 
-//.faceãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆé–¢æ•°
+//.faceƒtƒ@ƒCƒ‹ì¬ŠÖ”
 void tetgen_function::MakeFaceFile(mpsconfig &CON, vector<tetgen_facet> &FACE, char *filename)
 {
 	ofstream fout(filename);
@@ -193,14 +194,14 @@ void tetgen_function::MakeFaceFile(mpsconfig &CON, vector<tetgen_facet> &FACE, c
 }
 
 
-//.polyãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆé–¢æ•°
+//.polyƒtƒ@ƒCƒ‹ì¬ŠÖ”
 void tetgen_function::MakePolyFile(mpsconfig &CON, tetgen_config &TET, vector<tetgen_node> &NODE, vector<tetgen_facet> &FACE, char *filename)
 {
-	//cout<<filename<<" å‡ºåŠ›"<<endl;
+	//cout<<filename<<" o—Í"<<endl;
 
 	ofstream fout(filename);
 
-	//node list (ã“ã“ã§ã¯å‡ºåŠ›ã—ãªã„)
+	//node list (‚±‚±‚Å‚Ío—Í‚µ‚È‚¢)
 	fout<<"#node"<<endl;
 	fout<<"0"<<" "<<"3"<<" "<<"1"<<" "<<"1"<<endl;
 	//fout<<(int)NODE.size()<<" "<<"3"<<" "<<"0"<<" "<<"0"<<endl;
@@ -226,10 +227,10 @@ void tetgen_function::MakePolyFile(mpsconfig &CON, tetgen_config &TET, vector<te
 	fout<<"0"<<endl;
 	fout<<endl;
 
-	////////////////////////////region attributeã®æ±ºå®š (é…åˆ—ã«æ ¼ç´ã—ã¦ã‹ã‚‰å‡ºåŠ›ã™ã‚‹)/////////////////////////////
-	//æè³ªã®æŒ‡å®šã¯ï¼Œå¢ƒç•Œå†…ã«ã‚ã‚‹ä¸€ç‚¹ã®åº§æ¨™ã‚’æ±ºã‚ï¼Œãã“ã®æè³ªã‚’æŒ‡å®šã™ã‚‹ã“ã¨ã§ï¼ŒåŒã˜å¢ƒç•Œå†…ã«ã‚ã‚‹è¦ç´ ãŒå…¨ã¦ãã®æè³ªã«ãªã‚‹ï¼
-	//æ°´ã¯åˆ†è£‚ã‚’ä¼´ã„ï¼Œæè³ªã®æŒ‡å®šãŒå›°é›£ã§ã‚ã‚‹ãŸã‚ï¼Œã“ã“ã§ã¯è¡Œã‚ãªã„ï¼
-	//å¾Œã®æè³ªã®ä¿®æ­£ã«ãŠã„ã¦ï¼Œæœªå®šç¾©ã¨ãªã£ã¦ã„ã‚‹è¦ç´ ã‚’æ°´è¦ç´ ã¨ã™ã‚‹ï¼
+	////////////////////////////region attribute‚ÌŒˆ’è (”z—ñ‚ÉŠi”[‚µ‚Ä‚©‚ço—Í‚·‚é)/////////////////////////////
+	//Ş¿‚Ìw’è‚ÍC‹«ŠE“à‚É‚ ‚éˆê“_‚ÌÀ•W‚ğŒˆ‚ßC‚»‚±‚ÌŞ¿‚ğw’è‚·‚é‚±‚Æ‚ÅC“¯‚¶‹«ŠE“à‚É‚ ‚é—v‘f‚ª‘S‚Ä‚»‚ÌŞ¿‚É‚È‚éD
+	//…‚Í•ª—ô‚ğ”º‚¢CŞ¿‚Ìw’è‚ª¢“ï‚Å‚ ‚é‚½‚ßC‚±‚±‚Å‚Ís‚í‚È‚¢D
+	//Œã‚ÌŞ¿‚ÌC³‚É‚¨‚¢‚ÄC–¢’è‹`‚Æ‚È‚Á‚Ä‚¢‚é—v‘f‚ğ…—v‘f‚Æ‚·‚éD
 
 	vector<region_attribute_list> REGION;
 	region_attribute_list temp;
@@ -239,11 +240,11 @@ void tetgen_function::MakePolyFile(mpsconfig &CON, tetgen_config &TET, vector<te
 	
 	if(CON.get_model_number()==2)
 	{
-		//ç©ºæ°—
+		//‹ó‹C
 		temp.id+=1;
 		temp.r[A_X]=0;
 		temp.r[A_Y]=0;
-		temp.r[A_Z]=CON.get_ZU()*0.9;	//è§£æé ˜åŸŸä¸Šé™ã®9å‰²ã®ã¨ã“ã‚
+		temp.r[A_Z]=CON.get_ZU()*0.9;	//‰ğÍ—ÌˆæãŒÀ‚Ì9Š„‚Ì‚Æ‚±‚ë
 		temp.region_number=AIR;
 		temp.region_attribute=AIR;
 		REGION.push_back(temp);
@@ -252,38 +253,38 @@ void tetgen_function::MakePolyFile(mpsconfig &CON, tetgen_config &TET, vector<te
 		temp.id+=1;
 		temp.r[A_X]=0;
 		temp.r[A_Y]=0;
-		temp.r[A_Z]=CON.get_magnet_Z();	//ç£çŸ³ã®ä¸­å¿ƒç‚¹
+		temp.r[A_Z]=CON.get_magnet_Z();	//¥Î‚Ì’†S“_
 		temp.region_number=MAGNET;
 		temp.region_attribute=MAGNET;
 		REGION.push_back(temp);
 	}
 
-	//ç£æ€§ã‚¨ãƒ©ã‚¹ãƒˆãƒãƒ¼
+	//¥«ƒGƒ‰ƒXƒgƒ}[
 	if(CON.get_model_number()==6)
 	{
-		//ç©ºæ°—
+		//‹ó‹C
 		temp.id+=1;
 		temp.r[A_X]=0;
 		temp.r[A_Y]=0;
-		temp.r[A_Z]=CON.get_ZU()*0.9;	//è§£æé ˜åŸŸä¸Šé™ã®9å‰²ã®ã¨ã“ã‚
+		temp.r[A_Z]=CON.get_ZU()*0.9;	//‰ğÍ—ÌˆæãŒÀ‚Ì9Š„‚Ì‚Æ‚±‚ë
 		temp.region_number=AIR;
 		temp.region_attribute=AIR;
 		REGION.push_back(temp);
 
-		//ç©ºæ°—(å†…éƒ¨)
+		//‹ó‹C(“à•”)
 		temp.id+=1;
 		temp.r[A_X]=0;
 		temp.r[A_Y]=CON.get_magnet_r();
-		temp.r[A_Z]=CON.get_magnet_Z()+CON.get_magnet_H()/2+0.0001;	//ç£çŸ³ã®ä¸Šéƒ¨
+		temp.r[A_Z]=CON.get_magnet_Z()+CON.get_magnet_H()/2+0.0001;	//¥Î‚Ìã•”
 		temp.region_number=AIR;
 		temp.region_attribute=AIR;
 		REGION.push_back(temp);
 
-		//ã‚³ã‚¤ãƒ«
+		//ƒRƒCƒ‹
 		temp.id+=1;
 		temp.r[A_X]=0;
 		temp.r[A_Y]=0;
-		temp.r[A_Z]=CON.get_magnet_Z();	//ç£çŸ³ã®ä¸­å¿ƒç‚¹
+		temp.r[A_Z]=CON.get_magnet_Z();	//¥Î‚Ì’†S“_
 		temp.region_number=COIL;
 		temp.region_attribute=COIL;
 		REGION.push_back(temp);
@@ -293,39 +294,39 @@ void tetgen_function::MakePolyFile(mpsconfig &CON, tetgen_config &TET, vector<te
 		}
 		//MAGELAST
 		temp.id+=1;
-		temp.r[A_X]=NODE[i_no].r[A_X]-0.0001; //MAGELASTã®ãƒãƒ¼ãƒ‰ãŒæœ€åˆã«è¿½åŠ ã•ã‚Œã‚‹
+		temp.r[A_X]=NODE[i_no].r[A_X]-0.0001; //MAGELAST‚Ìƒm[ƒh‚ªÅ‰‚É’Ç‰Á‚³‚ê‚é
 		temp.r[A_Y]=NODE[i_no].r[A_Y];
 		temp.r[A_Z]=NODE[i_no].r[A_Z]+0.0001;
 		temp.region_number=MAGELAST;
 		temp.region_attribute=MAGELAST;
 		REGION.push_back(temp);
 	}
-	//ç£æ€§ã‚¨ãƒ©ã‚¹ãƒˆãƒãƒ¼
+	//¥«ƒGƒ‰ƒXƒgƒ}[
 	if(CON.get_model_number()==7 && CON.get_model_number()==1 && CON.get_model_number()==11) 
 	{
-		//ç©ºæ°—
+		//‹ó‹C
 		temp.id+=1;
 		temp.r[A_X]=0;
 		temp.r[A_Y]=0;
-		temp.r[A_Z]=CON.get_ZU()*0.9;	//è§£æé ˜åŸŸä¸Šé™ã®9å‰²ã®ã¨ã“ã‚
+		temp.r[A_Z]=CON.get_ZU()*0.9;	//‰ğÍ—ÌˆæãŒÀ‚Ì9Š„‚Ì‚Æ‚±‚ë
 		temp.region_number=AIR;
 		temp.region_attribute=AIR;
 		REGION.push_back(temp);
 
-		//ç©ºæ°—2
+		//‹ó‹C2
 		temp.id+=1;
 		temp.r[A_X]=0;
 		temp.r[A_Y]=0;
-		temp.r[A_Z]=CON.get_magnet_Z()-CON.get_magnet_H()/2-0.001;	//ç£çŸ³ã®ä¸­å¿ƒç‚¹
+		temp.r[A_Z]=CON.get_magnet_Z()-CON.get_magnet_H()/2-0.001;	//¥Î‚Ì’†S“_
 		temp.region_number=AIR;
 		temp.region_attribute=AIR;
 		REGION.push_back(temp);
 
-		//ã‚³ã‚¤ãƒ«
+		//ƒRƒCƒ‹
 		temp.id+=1;
 		temp.r[A_X]=0;
 		temp.r[A_Y]=0;
-		temp.r[A_Z]=CON.get_magnet_Z();	//ç£çŸ³ã®ä¸­å¿ƒç‚¹
+		temp.r[A_Z]=CON.get_magnet_Z();	//¥Î‚Ì’†S“_
 		temp.region_number=COIL;
 		temp.region_attribute=COIL;
 		REGION.push_back(temp);
@@ -338,7 +339,7 @@ void tetgen_function::MakePolyFile(mpsconfig &CON, tetgen_config &TET, vector<te
 		//MAGELAST
 
 		temp.id+=1;
-		temp.r[A_X]=NODE[i_no].r[A_X]-0.0001; //MAGELASTã®ãƒãƒ¼ãƒ‰ãŒæœ€åˆã«è¿½åŠ ã•ã‚Œã‚‹
+		temp.r[A_X]=NODE[i_no].r[A_X]-0.0001; //MAGELAST‚Ìƒm[ƒh‚ªÅ‰‚É’Ç‰Á‚³‚ê‚é
 		temp.r[A_Y]=NODE[i_no].r[A_Y];
 		temp.r[A_Z]=NODE[i_no].r[A_Z]+0.0001;
 		temp.region_number=MAGELAST;
@@ -347,20 +348,20 @@ void tetgen_function::MakePolyFile(mpsconfig &CON, tetgen_config &TET, vector<te
 	}
 	if(CON.get_model_number()==8)
 	{
-		//ç©ºæ°—
+		//‹ó‹C
 		temp.id+=1;
 		temp.r[A_X]=0;
 		temp.r[A_Y]=0;
-		temp.r[A_Z]=CON.get_ZU()*0.9;	//è§£æé ˜åŸŸä¸Šé™ã®9å‰²ã®ã¨ã“ã‚
+		temp.r[A_Z]=CON.get_ZU()*0.9;	//‰ğÍ—ÌˆæãŒÀ‚Ì9Š„‚Ì‚Æ‚±‚ë
 		temp.region_number=AIR;
 		temp.region_attribute=AIR;
 		REGION.push_back(temp);
 
-		//ã‚³ã‚¤ãƒ«
+		//ƒRƒCƒ‹
 		temp.id+=1;
 		temp.r[A_X]=0;
 		temp.r[A_Y]=0;
-		temp.r[A_Z]=CON.get_magnet_Z();	//ç£çŸ³ã®ä¸­å¿ƒç‚¹
+		temp.r[A_Z]=CON.get_magnet_Z();	//¥Î‚Ì’†S“_
 		temp.region_number=COIL;
 		temp.region_attribute=COIL;
 		REGION.push_back(temp);
@@ -371,7 +372,7 @@ void tetgen_function::MakePolyFile(mpsconfig &CON, tetgen_config &TET, vector<te
 		}
 /*		//MAGELAST
 		temp.id+=1;
-		temp.r[A_X]=NODE[i_no].r[A_X]-0.00001; //MAGELASTã®ãƒãƒ¼ãƒ‰ãŒæœ€åˆã«è¿½åŠ ã•ã‚Œã‚‹
+		temp.r[A_X]=NODE[i_no].r[A_X]-0.00001; //MAGELAST‚Ìƒm[ƒh‚ªÅ‰‚É’Ç‰Á‚³‚ê‚é
 		temp.r[A_Y]=NODE[i_no].r[A_Y];
 		temp.r[A_Z]=NODE[i_no].r[A_Z]+0.00001;
 		temp.region_number=MAGELAST;
@@ -379,14 +380,14 @@ void tetgen_function::MakePolyFile(mpsconfig &CON, tetgen_config &TET, vector<te
 		REGION.push_back(temp);//*/
 	}
 
-	if(CON.get_model_number()==23	|| CON.get_model_number()==24)
+	if(CON.get_model_number()==23 || CON.get_model_number()==24)
 	{
 		double le=CON.get_distancebp();
-		//ç©ºæ°—
+		//‹ó‹C
 		temp.id+=1;
 		temp.r[A_X]=0;
 		temp.r[A_Y]=0;
-		temp.r[A_Z]=CON.get_ZU()*0.9;	//è§£æé ˜åŸŸä¸Šé™ã®9å‰²ã®ã¨ã“ã‚
+		temp.r[A_Z]=CON.get_ZU()*0.9;	//‰ğÍ—ÌˆæãŒÀ‚Ì9Š„‚Ì‚Æ‚±‚ë
 		temp.region_number=AIR;
 		temp.region_attribute=AIR;
 		REGION.push_back(temp);
@@ -395,26 +396,23 @@ void tetgen_function::MakePolyFile(mpsconfig &CON, tetgen_config &TET, vector<te
 		temp.id+=1;
 		temp.r[A_X]=0;
 		temp.r[A_Y]=0;
-		temp.r[A_Z]=CON.get_magnet_Z();	//ç£çŸ³ã®ä¸­å¿ƒç‚¹
+		temp.r[A_Z]=CON.get_magnet_Z();	//¥Î‚Ì’†S“_
 		temp.region_number=MAGNET;
 		temp.region_attribute=MAGNET;
 		REGION.push_back(temp);
 
 		int i_no;
-		for(int i=0;i<NODE.size();i++){
-			if(NODE[i].part_no==2)  i_no=i;//
-		}
+		for(int i=0;i<NODE.size();i++)	if(NODE[i].part_no==0)  i_no=i;
+
 		//MAGELAST
 		temp.id+=1;
-		temp.r[A_X]=NODE[i_no].r[A_X]+le; //MAGELASTã®ãƒãƒ¼ãƒ‰ãŒæœ€åˆã«è¿½åŠ ã•ã‚Œã‚‹
+		temp.r[A_X]=NODE[i_no].r[A_X]+le; //MAGELAST‚Ìƒm[ƒh‚ªÅ‰‚É’Ç‰Á‚³‚ê‚é
 		temp.r[A_Y]=NODE[i_no].r[A_Y]+le;
 		temp.r[A_Z]=NODE[i_no].r[A_Z]+le;
 		temp.region_number=MAGELAST;
 		temp.region_attribute=MAGELAST;
-		REGION.push_back(temp);
+		REGION.push_back(temp);//
 	}
-
-
 	////////////////////////////////////////////////////////////////////*/
 
 	//region attribute list
@@ -428,14 +426,14 @@ void tetgen_function::MakePolyFile(mpsconfig &CON, tetgen_config &TET, vector<te
 	fout.close();
 }
 
-//.smeshãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆé–¢æ•°
+//.smeshƒtƒ@ƒCƒ‹ì¬ŠÖ”
 void tetgen_function::MakeSmeshFile(mpsconfig &CON, vector<tetgen_facet> &FACE, char *filename)
 {
 	double le=CON.get_distancebp();
 
 	ofstream fsmesh(filename);
 
-	//node list (ã“ã“ã§ã¯å‡ºåŠ›ã—ãªã„)
+	//node list (‚±‚±‚Å‚Ío—Í‚µ‚È‚¢)
 	fsmesh<<"#node"<<endl;
 	fsmesh<<"0"<<" "<<"3"<<" "<<"1"<<" "<<"1"<<endl;
 	//fsmesh<<(int)NODE.size()<<" "<<"3"<<" "<<"0"<<" "<<"0"<<endl;
@@ -468,10 +466,10 @@ void tetgen_function::MakeSmeshFile(mpsconfig &CON, vector<tetgen_facet> &FACE, 
 }
 
 
-//å¼¾æ€§ä½“å¢ƒç•Œé¢ä½œæˆ
+//’e«‘Ì‹«ŠE–Êì¬
 void tetgen_function::SetElastBoundary(mpsconfig &CON, vector<mpselastic> &PART, tetgen_config &TET, vector<tetgen_node> &NODEe, vector<tetgen_facet> &FACEe)
 {
-	cout<<"ç£æ€§ã‚¨ãƒ©ã‚¹ãƒˆãƒãƒ¼å¢ƒç•Œä½œæˆ"<<endl;
+	cout<<"¥«ƒGƒ‰ƒXƒgƒ}[‹«ŠEì¬"<<endl;
 
 	tetgenio in, out;
 	in.initialize();
@@ -483,11 +481,11 @@ void tetgen_function::SetElastBoundary(mpsconfig &CON, vector<mpselastic> &PART,
 	tetgen_node temp;
 	temp.id=0;
 
-	double le=CON.get_distancebp();	//ç²’å­é–“è·é›¢
+	double le=CON.get_distancebp();	//—±qŠÔ‹——£
 	int type;
 	int part_no;
 	
-	//ç£æ€§ã‚¨ãƒ©ã‚¹ãƒˆãƒãƒ¼
+	//¥«ƒGƒ‰ƒXƒgƒ}[
 /*		for(int i=0;i<(int)PART.size();i++)
 		{
 			if(PART[i].type==MAGELAST)
@@ -504,13 +502,12 @@ void tetgen_function::SetElastBoundary(mpsconfig &CON, vector<mpselastic> &PART,
 			}
 			
 		}*/
-	//ç£æ€§ã‚¨ãƒ©ã‚¹ãƒˆãƒãƒ¼
+	//¥«ƒGƒ‰ƒXƒgƒ}[
 	int count=0;
 		for(int i=0;i<(int)PART.size();i++)
 		{
 			if(PART[i].type==MAGELAST)
-			{
-				
+			{			
 				part_no=i;
 				for(int d=0;d<3;d++) temp.r[d]=PART[i].r[d];
 				type=PART[i].type;
@@ -529,125 +526,92 @@ void tetgen_function::SetElastBoundary(mpsconfig &CON, vector<mpselastic> &PART,
 				NODEe.push_back(temp);
 				temp.id+=1;
 			}
-			
 		}
 		cout<<"count"<<count<<endl;
-	//nodeãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆ
-	cout<<"MREnodeä½œæˆ-----";
+	//nodeƒtƒ@ƒCƒ‹ì¬
+	cout<<"MREnodeì¬-----";
 	MakeNodeFile(CON, NODEe, "MAGELAST.node");
 	cout<<"OK"<<endl;
 
-	//.nodeãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿å–ã‚Š
+	//.nodeƒtƒ@ƒCƒ‹“Ç‚İæ‚è
 	in.load_node("MAGELAST");
 
-	//ã¾ãšã¯æµä½“ç¯€ç‚¹ã®ã¿ã§åˆ†å‰²
-	cout<<"MREãƒ¡ãƒƒã‚·ãƒ¥åˆ†å‰²-----";
+	//‚Ü‚¸‚Í—¬‘Ìß“_‚Ì‚İ‚Å•ªŠ„
+	cout<<"MREƒƒbƒVƒ…•ªŠ„-----";
 	tetrahedralize("", &in, &out);
 	cout<<"OK"<<endl;
-		// i è¦ç´ å†…ã¸ç¯€ç‚¹ã‚’è¿½åŠ (ä»Šã®æ‰€ç„¡ãã¦ã‚‚æ©Ÿèƒ½ã—ã¦ã„ã‚‹)
-		// f .faceãƒ•ã‚¡ã‚¤ãƒ«ã«å¢ƒç•Œã§ã¯ãªã„é¢ã‚‚å«ã‚ã‚‹
-		// e .edgeãƒ•ã‚¡ã‚¤ãƒ«ã®å‡ºåŠ›(ONã«ã™ã‚‹ã¨ãªãœã‹æ­¢ã¾ã£ã¦ã—ã¾ã†)
-		// n .neighãƒ•ã‚¡ã‚¤ãƒ«ã®å‡ºåŠ›
+		// i —v‘f“à‚Öß“_‚ğ’Ç‰Á(¡‚ÌŠ–³‚­‚Ä‚à‹@”\‚µ‚Ä‚¢‚é)
+		// f .faceƒtƒ@ƒCƒ‹‚É‹«ŠE‚Å‚Í‚È‚¢–Ê‚àŠÜ‚ß‚é
+		// e .edgeƒtƒ@ƒCƒ‹‚Ìo—Í(ON‚É‚·‚é‚Æ‚È‚º‚©~‚Ü‚Á‚Ä‚µ‚Ü‚¤)
+		// n .neighƒtƒ@ƒCƒ‹‚Ìo—Í
 
-	//å‡ºåŠ›
+	//o—Í
 	out.save_nodes("MAGELAST_whole");
 	out.save_elements("MAGELAST_whole");
 
 
 
-	//////////////////ã“ã“ã¾ã§ã§æµä½“ç¯€ç‚¹ã®ã¿ã‚’ä½¿ã£ã¦ã€ã™ã¹ã¦ã®è¦ç´ ãŒç¹‹ãŒã£ãŸå‡¸ãªãƒ¡ãƒƒã‚·ãƒ¥ãŒã§ããŸ(fluid_wholeã§ç¢ºèªå¯èƒ½)*/
+	//////////////////‚±‚±‚Ü‚Å‚Å—¬‘Ìß“_‚Ì‚İ‚ğg‚Á‚ÄA‚·‚×‚Ä‚Ì—v‘f‚ªŒq‚ª‚Á‚½“Ê‚ÈƒƒbƒVƒ…‚ª‚Å‚«‚½(fluid_whole‚ÅŠm”F‰Â”\)*/
 
 
-	///////////////ä¸è¦ãªè¦ç´ ã®å‰Šé™¤
+	///////////////•s—v‚È—v‘f‚Ìíœ
 
-	//.nodeã®å–å¾—
+	//.node‚Ìæ“¾
 	GetPointList(NODEe, in, out);
-	//.eleã®å–å¾—
+	//.ele‚Ìæ“¾
 	GetMTetrahedronList(ELEMe, in, out);
 
-	//é•·ã„è¦ç´ ã®é™¤å»
+	//’·‚¢—v‘f‚Ìœ‹
 	DelThinTetrahedron(CON, TET, NODEe, ELEMe, in, out);
 
-	//ç¯€ç‚¹-è¦ç´ é–¢ä¿‚
+	//ß“_-—v‘fŠÖŒW
 	SetRelation_NodeElem(CON, NODEe, ELEMe);
-	//è¦ç´ -è¦ç´ é–¢ä¿‚
+	//—v‘f-—v‘fŠÖŒW
 	SetRelation_ElemElem(CON, NODEe, ELEMe);
-	//è¦ç´ -è¦ç´ é–¢ä¿‚ã‚ˆã‚Šå¼¾æ€§ä½“è¡¨é¢å–å¾—
-	if(CON.get_model_number()==23)
-	{
-		cout<<"è¦ç´ é™¤å»å¾Œã®æµä½“è¡¨é¢å®šç¾©";
-		{
-			//åˆæœŸåŒ–
-			FACEe.clear();	
-			int id=0;	//idç”¨(è¡¨é¢ã®æ•°)
-			for(int i=0;i<(int)ELEMe.size();i++)
-			{
-				for(int n=0;n<4;n++)
-				{
-					if(int j=0;j<(int)NODEe[ELEMe[i].node[n]].nei_elem.size();j++)
-					{
-						tetgen_facet temp;	
-						int c=0;
-						for(int f=0;f<4;f++)
-						{
-							if(n!=f)
-							{
-								temp.node[c]=ELEMe[i].node[f];
-								c++;	
-							}
-						}
-						temp.id=id;
-						temp.boundary=MAGELAST;
-						FACEe.push_back(temp);
-						id++;
-					}
-				}	
-			}
-			cout<<"----------OK"<<endl;}
-	}
-	else{GetFacetList_from_neigh(CON, ELEMe, FACEe);}
+	//—v‘f-—v‘fŠÖŒW‚æ‚è’e«‘Ì•\–Êæ“¾
+	GetFacetList_from_neigh(CON, ELEMe, FACEe);
 
-	//ç²’å­ç•ªå·ã‚’NODEeå´ã«ä»£å…¥
+	//—±q”Ô†‚ğNODEe‘¤‚É‘ã“ü
 	for(int i=0;i<NODEe.size();i++)	NODEe[i].part_no=trans[i];
 
-	//è¡¨é¢ã‚’æ§‹æˆã™ã‚‹ç¯€ç‚¹ã‚’é¸æŠã—ï¼Œé…åˆ—ç•ªå·ã‚’è©°ã‚ã‚‹ æµä½“å†…éƒ¨ã‚‚ç²’å­ã®ç¯€ç‚¹ã‚’ä½¿ã†å ´åˆã¯ã‚³ãƒ¡ãƒ³ãƒˆã‚¢ã‚¦ãƒˆ
+	//•\–Ê‚ğ\¬‚·‚éß“_‚ğ‘I‘ğ‚µC”z—ñ”Ô†‚ğ‹l‚ß‚é —¬‘Ì“à•”‚à—±q‚Ìß“_‚ğg‚¤ê‡‚ÍƒRƒƒ“ƒgƒAƒEƒg
 	//SelectFaceNode(CON, NODEe, FACEe);
 
-	/////////////////è¦ç´ ç¢ºèªç”¨ãƒ•ã‚¡ã‚¤ãƒ«///////////////////////////////////
-	out.save_nodes("boundary_MAGELAST");	//fluid.2.nodeã¨åŒã˜ãƒ•ã‚¡ã‚¤ãƒ«
+	/////////////////—v‘fŠm”F—pƒtƒ@ƒCƒ‹///////////////////////////////////
+	out.save_nodes("boundary_MAGELAST");	//fluid.2.node‚Æ“¯‚¶ƒtƒ@ƒCƒ‹
 	MakeElemFile(CON, ELEMe, "boundary_MAGELAST.ele");
 	MakeFaceFile(CON, FACEe, "boundary_MAGELAST.face");
-	////////////////ã“ã“ã¾ã§ã§ã‚¨ãƒ©ã‚¹ãƒˆãƒãƒ¼ã®ãƒ¡ãƒƒã‚·ãƒ¥ãŒåˆ‡ã‚ŒãŸ//////////////////////*/
+	////////////////‚±‚±‚Ü‚Å‚ÅƒGƒ‰ƒXƒgƒ}[‚ÌƒƒbƒVƒ…‚ªØ‚ê‚½//////////////////////*/
 //	out.save_elements("boundary_MAGELAST");
 //	out.save_faces("boundary_MAGELAST");
 }
 
 
-//é•·ã„è¦ç´ ã®é™¤å»
+//’·‚¢—v‘f‚Ìœ‹
 void tetgen_function::DelThinTetrahedron(mpsconfig &CON, tetgen_config &TET, vector<tetgen_node> &NODE, vector<tetgen_element> &ELEM, tetgenio &in, tetgenio &out)
 {
-	cout<<"ä¸è¦ãªè¦ç´ ã®å‰Šé™¤  ";
+	cout<<"•s—v‚È—v‘f‚Ìíœ  ";
 
 	double le=CON.get_distancebp();
 	double delL;
 	int flag=0;
 
-	//del_length.datãŒã‚ã‚Œã°èª­ã¿è¾¼ã¿
+	//del_length.dat‚ª‚ ‚ê‚Î“Ç‚İ‚İ
 	ifstream del("del_length.dat");
 	if(!del)
 	{
-		cout<<"tetgen_configã‚ˆã‚Šå‰Šé™¤åˆ¤å®šè¾ºé•·ã•ã‚’æ±ºå®š  ";
+		cout<<"tetgen_config‚æ‚èíœ”»’è•Ó’·‚³‚ğŒˆ’è  ";
 		delL=TET.del_length;
 	}
 	else
 	{
-		cout<<"del_length.datã‚ˆã‚Šå‰Šé™¤åˆ¤å®šè¾ºé•·ã•ã‚’æ±ºå®š  ";
+		cout<<"del_length.dat‚æ‚èíœ”»’è•Ó’·‚³‚ğŒˆ’è  ";
 		del>>delL;
-		flag=1;		//ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰èª­ã¿è¾¼ã‚“ã ã‚‰ãƒ•ãƒ©ã‚°ON
+		flag=1;		//ƒtƒ@ƒCƒ‹‚©‚ç“Ç‚İ‚ñ‚¾‚çƒtƒ‰ƒOON
 	}
 	del.close();
 
-	if(flag==1)//ãƒ•ã‚¡ã‚¤ãƒ«ã®æ•°å­—ã‚’æˆ»ã—ã¦ãŠã
+	if(flag==1)//ƒtƒ@ƒCƒ‹‚Ì”š‚ğ–ß‚µ‚Ä‚¨‚­
 	{
 		ofstream del2("del_length.dat");
 		del2<<TET.del_length<<endl;
@@ -657,7 +621,7 @@ void tetgen_function::DelThinTetrahedron(mpsconfig &CON, tetgen_config &TET, vec
 	cout<<"del_length="<<delL<<endl;
 
 
-	cout<<"é™¤å»å‰è¦ç´ æ•°: "<<(int)ELEM.size()<<endl;
+	cout<<"œ‹‘O—v‘f”: "<<(int)ELEM.size()<<endl;
 
 	int del_count=0;
 	int i=0;
@@ -665,11 +629,11 @@ void tetgen_function::DelThinTetrahedron(mpsconfig &CON, tetgen_config &TET, vec
 	{
 		int flag1=UNDEFINED;
 		int flag2=UNDEFINED;
-		int flag3=UNDEFINED;	//1ã§å‰Šé™¤
+		int flag3=UNDEFINED;	//1‚Åíœ
 		int del=OFF;
 		int count=0;
 
-		//4ç‚¹ãŒè¡¨é¢ç¯€ç‚¹ã§æ§‹æˆã•ã‚Œã¦ã„ã‚Œã°ãƒ•ãƒ©ã‚°1ON
+		/*//4“_‚ª•\–Êß“_‚Å\¬‚³‚ê‚Ä‚¢‚ê‚Îƒtƒ‰ƒO1ON
 		count=0;
 		for(int n=0;n<4;n++)
 		{
@@ -678,7 +642,7 @@ void tetgen_function::DelThinTetrahedron(mpsconfig &CON, tetgen_config &TET, vec
 		if(count==4)	flag1=ON;
 		else			flag1=OFF;//*/
 
-		/*//4ç‚¹ãŒå†…éƒ¨ç¯€ç‚¹ã§æ§‹æˆã•ã‚Œã¦ã„ã‚Œã°ãƒ•ãƒ©ã‚°2ON
+		/*//4“_‚ª“à•”ß“_‚Å\¬‚³‚ê‚Ä‚¢‚ê‚Îƒtƒ‰ƒO2ON
 		count=0;
 		for(int n=0;n<4;n++)
 		{
@@ -687,7 +651,7 @@ void tetgen_function::DelThinTetrahedron(mpsconfig &CON, tetgen_config &TET, vec
 		if(count==4)	flag2=ON;
 		else			flag2=OFF;//*/
 
-		//ä¸€ã¤ã§ã‚‚é•·ã„è¾ºãŒã‚ã‚Œã°ãƒ•ãƒ©ã‚°ON
+		//ˆê‚Â‚Å‚à’·‚¢•Ó‚ª‚ ‚ê‚Îƒtƒ‰ƒOON
 		for(int n1=0;n1<4;n1++)
 		{
 			for(int n2=n1+1;n2<4;n2++)
@@ -701,30 +665,30 @@ void tetgen_function::DelThinTetrahedron(mpsconfig &CON, tetgen_config &TET, vec
 		if(flag1==ON)	del=ON;
 		//if(flag3==2)	del=ON;
 
-		//å‰Šé™¤
+		//íœ
 		if(del==ON)
 		{
-			vector<tetgen_element>::iterator it=ELEM.begin();	//ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿åˆæœŸåŒ–
-			it+=i;				//iã‚’æŒ‡å®š
-			it=ELEM.erase(it);	//å‰Šé™¤ã—ã¦ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã‚’è¿”ã™
+			vector<tetgen_element>::iterator it=ELEM.begin();	//ƒCƒeƒŒ[ƒ^‰Šú‰»
+			it+=i;				//i‚ğw’è
+			it=ELEM.erase(it);	//íœ‚µ‚ÄƒCƒeƒŒ[ƒ^‚ğ•Ô‚·
 			del_count++;
 		}
 		else i++;
 	}
 
-	//è¦ç´ ç•ªå·ã®æŒ¯ã‚Šç›´ã—
+	//—v‘f”Ô†‚ÌU‚è’¼‚µ
 	for(int i=0;i<(int)ELEM.size();i++)	ELEM[i].id=i+out.firstnumber;
 
-	cout<<"é™¤å»å¾Œè¦ç´ æ•°: "<<(int)ELEM.size()<<endl;
-	cout<<del_count<<"ã®è¦ç´ ã‚’å‰Šé™¤ ----------OK"<<endl;
+	cout<<"œ‹Œã—v‘f”: "<<(int)ELEM.size()<<endl;
+	cout<<del_count<<"‚Ì—v‘f‚ğíœ ----------OK"<<endl;
 }
 
 
-//ä¸è¦ãªè¦ç´ ã®é™¤å»(å¤–å´ãƒ€ãƒŸãƒ¼ç¯€ç‚¹æ³•ç”¨)
+//•s—v‚È—v‘f‚Ìœ‹(ŠO‘¤ƒ_ƒ~[ß“_–@—p)
 void tetgen_function::DelTetrahedron_OutsideDummy(mpsconfig &CON, vector<tetgen_node> &NODE, vector<tetgen_element> &ELEM, tetgenio &in, tetgenio &out)
 {
-	cout<<"ä¸è¦ãªè¦ç´ ã®å‰Šé™¤"<<endl;
-	cout<<"é™¤å»å‰è¦ç´ æ•°: "<<(int)ELEM.size()<<endl;
+	cout<<"•s—v‚È—v‘f‚Ìíœ"<<endl;
+	cout<<"œ‹‘O—v‘f”: "<<(int)ELEM.size()<<endl;
 
 	double le=CON.get_distancebp();
 
@@ -732,9 +696,9 @@ void tetgen_function::DelTetrahedron_OutsideDummy(mpsconfig &CON, vector<tetgen_
 	int i=0;
 	while(i<(int)ELEM.size())
 	{
-		int flag=0;	//1ã§å‰Šé™¤
+		int flag=0;	//1‚Åíœ
 		
-		//1ã¤ã§ã‚‚ãƒ€ãƒŸãƒ¼(ç©ºæ°—)ç¯€ç‚¹ãŒã‚ã‚Œã°ãƒ•ãƒ©ã‚°ON
+		//1‚Â‚Å‚àƒ_ƒ~[(‹ó‹C)ß“_‚ª‚ ‚ê‚Îƒtƒ‰ƒOON
 		int count=0;
 		for(int n=0;n<4;n++)
 		{
@@ -745,7 +709,7 @@ void tetgen_function::DelTetrahedron_OutsideDummy(mpsconfig &CON, vector<tetgen_
 			}
 		}//*/
 
-		/*//4ç‚¹ãŒè¡¨é¢ç¯€ç‚¹ã§æ§‹æˆã•ã‚Œã¦ã„ã‚Œã°ãƒ•ãƒ©ã‚°ON
+		/*//4“_‚ª•\–Êß“_‚Å\¬‚³‚ê‚Ä‚¢‚ê‚Îƒtƒ‰ƒOON
 		int count=0;
 		for(int n=0;n<4;n++)
 		{
@@ -756,28 +720,28 @@ void tetgen_function::DelTetrahedron_OutsideDummy(mpsconfig &CON, vector<tetgen_
 
 		if(flag==1)
 		{
-			vector<tetgen_element>::iterator it=ELEM.begin();	//ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿åˆæœŸåŒ–
-			it+=i;				//iã‚’æŒ‡å®š
-			it=ELEM.erase(it);	//å‰Šé™¤ã—ã¦ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã‚’è¿”ã™
+			vector<tetgen_element>::iterator it=ELEM.begin();	//ƒCƒeƒŒ[ƒ^‰Šú‰»
+			it+=i;				//i‚ğw’è
+			it=ELEM.erase(it);	//íœ‚µ‚ÄƒCƒeƒŒ[ƒ^‚ğ•Ô‚·
 			del_count++;
 		}
 		else i++;
 	}
 
-	//è¦ç´ ç•ªå·ã®æŒ¯ã‚Šç›´ã—
+	//—v‘f”Ô†‚ÌU‚è’¼‚µ
 	for(int i=0;i<(int)ELEM.size();i++)	ELEM[i].id=i+out.firstnumber;
 
-	cout<<"é™¤å»å¾Œè¦ç´ æ•°: "<<(int)ELEM.size()<<endl;
-	cout<<del_count<<"ã®è¦ç´ ã‚’å‰Šé™¤ ----------OK"<<endl;
+	cout<<"œ‹Œã—v‘f”: "<<(int)ELEM.size()<<endl;
+	cout<<del_count<<"‚Ì—v‘f‚ğíœ ----------OK"<<endl;
 }
 
 
-//ç¯€ç‚¹-è¦ç´ é–¢ä¿‚(tetgenioã®edgeãƒªã‚¹ãƒˆã‹ã‚‰å–å¾—) â€»ç›´å‰ã«tetgenioã‹ã‚‰ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—ã—ã¦ãŠãã“ã¨
+//ß“_-—v‘fŠÖŒW(tetgenio‚ÌedgeƒŠƒXƒg‚©‚çæ“¾) ¦’¼‘O‚Étetgenio‚©‚çƒf[ƒ^‚ğæ“¾‚µ‚Ä‚¨‚­‚±‚Æ
 void tetgen_function::SetRelation_NodeNode(mpsconfig &CON, vector<tetgen_node> &NODE, vector<tetgen_element> &ELEM, tetgenio &in, tetgenio &out)
 {
-	cout<<"ç¯€ç‚¹-ç¯€ç‚¹é–¢ä¿‚";
+	cout<<"ß“_-ß“_ŠÖŒW";
 
-	//ä¸€å¿œåˆæœŸåŒ–
+	//ˆê‰‰Šú‰»
 	for(int i=0;i<(int)NODE.size();i++)
 	{
 		NODE[i].nei_node.clear();
@@ -796,12 +760,12 @@ void tetgen_function::SetRelation_NodeNode(mpsconfig &CON, vector<tetgen_node> &
 }
 
 
-//ç¯€ç‚¹-è¦ç´ é–¢ä¿‚
+//ß“_-—v‘fŠÖŒW
 void tetgen_function::SetRelation_NodeElem(mpsconfig &CON, vector<tetgen_node> &NODE, vector<tetgen_element> &ELEM)
 {
-	cout<<"ç¯€ç‚¹-è¦ç´ é–¢ä¿‚";
+	cout<<"ß“_-—v‘fŠÖŒW";
 
-	//ä¸€å¿œåˆæœŸåŒ–
+	//ˆê‰‰Šú‰»
 	for(int i=0;i<(int)NODE.size();i++)
 	{
 		NODE[i].nei_node.clear();
@@ -812,13 +776,14 @@ void tetgen_function::SetRelation_NodeElem(mpsconfig &CON, vector<tetgen_node> &
 	{
 		for(int n=0;n<4;n++)
 		{
-			NODE[ELEM[i].node[n]].nei_elem.push_back(i);	//è¦ç´ ã‚’è¿½åŠ 
+			NODE[ELEM[i].node[n]].nei_elem.push_back(i);	//—v‘f‚ğ’Ç‰Á
 		}
 	}
 
-	/*//å‡ºåŠ› ãŠã‚ˆã³æœ€å¤§æ•°ãƒ»æœ€å°æ•°ã®å‡ºåŠ›
+	/*//o—Í ‚¨‚æ‚ÑÅ‘å”EÅ¬”‚Ìo—Í
 	//int max=0;
 	//int min=(int)NODE[0].nei_elem.size();
+
 	ofstream fout("neigh_node-elem.dat");
 	for(int i=0;i<(int)NODE.size();i++)
 	{
@@ -828,35 +793,37 @@ void tetgen_function::SetRelation_NodeElem(mpsconfig &CON, vector<tetgen_node> &
 			fout<<" "<<NODE[i].nei_elem[n];
 		}
 		fout<<endl;
-		//æœ€å¤§æœ€å°æ›´æ–°
+
+		//Å‘åÅ¬XV
 		//if(max<(int)NODE[i].nei_elem.size())	max=(int)NODE[i].nei_elem.size();
 		//if(min>(int)NODE[i].nei_elem.size())	min=(int)NODE[i].nei_elem.size();
 	}
 	fout.clear();
-	//cout<<"æœ€å¤§æ•°: "<<max<<endl;
-	//cout<<"æœ€å°æ•°: "<<min<<endl;
+
+	//cout<<"Å‘å”: "<<max<<endl;
+	//cout<<"Å¬”: "<<min<<endl;
 	//*/
 
 	cout<<"----------OK"<<endl;
 }
 
 
-//è¦ç´ -è¦ç´ é–¢ä¿‚
+//—v‘f-—v‘fŠÖŒW
 void tetgen_function::SetRelation_ElemElem(mpsconfig &CON, vector<tetgen_node> &NODE, vector<tetgen_element> &ELEM)
 {
-	cout<<"è¦ç´ -è¦ç´ é–¢ä¿‚";
+	cout<<"—v‘f-—v‘fŠÖŒW";
 	
 	vector<int> nei_all;
 	
-	//åˆæœŸåŒ–
+	//‰Šú‰»
 	for(int i=0;i<(int)ELEM.size();i++)
 	{
-		for(int n=0;n<4;n++)	ELEM[i].nei_elem[n]=-2;	//æœªå®šç¾©ã‚’-2ã¨ã—ã¦ãŠã
+		for(int n=0;n<4;n++)	ELEM[i].nei_elem[n]=-2;	//–¢’è‹`‚ğ-2‚Æ‚µ‚Ä‚¨‚­
 	}
 
 	for(int i=0;i<(int)ELEM.size();i++)
 	{
-		//4ã¤ã®ç¯€ç‚¹ã®ç¯€ç‚¹-è¦ç´ é–¢ä¿‚ã«ã‚ã‚‹è¦ç´ ã‚’æ ¼ç´ã™ã‚‹
+		//4‚Â‚Ìß“_‚Ìß“_-—v‘fŠÖŒW‚É‚ ‚é—v‘f‚ğŠi”[‚·‚é
 		nei_all.clear();
 		
 		for(int n=0;n<4;n++)
@@ -864,19 +831,19 @@ void tetgen_function::SetRelation_ElemElem(mpsconfig &CON, vector<tetgen_node> &
 			for(int j=0;j<(int)NODE[ELEM[i].node[n]].nei_elem.size();j++)
 			{
 				int elem=NODE[ELEM[i].node[n]].nei_elem[j];
-				if(elem!=i)	nei_all.push_back(elem);	//è¦ç´ iã¯é™¤ã
+				if(elem!=i)	nei_all.push_back(elem);	//—v‘fi‚Íœ‚­
 			}
-		}//nei_allã«æ ¼ç´å®Œäº†(åŒã˜è¦ç´ ç•ªå·ãŒå«ã¾ã‚Œã¦ã„ã‚‹å¯èƒ½æ€§ã‚ã‚Š)
+		}//nei_all‚ÉŠi”[Š®—¹(“¯‚¶—v‘f”Ô†‚ªŠÜ‚Ü‚ê‚Ä‚¢‚é‰Â”\«‚ ‚è)
 
-		//ç¢ºèªç”¨
+		//Šm”F—p
 		//if(i==10000)	for(int j=0;j<(int)nei_all.size();j++)	cout<<nei_all[j]<<endl;
 
-		//é¢ã‚’æ¢ç´¢
+		//–Ê‚ğ’Tõ
 		for(int ni=0;ni<4;ni++)
 		{
-			//ã¾ãšã¯è¦ç´ iã®é¢ã‚’æŒ‡å®š
-			int face[3];	//3ã¤ç•ªå·ã§é¢ã‚’æŒ‡å®š
-			int c=0;//æ•°ãˆä¸Šã’å¤‰æ•°
+			//‚Ü‚¸‚Í—v‘fi‚Ì–Ê‚ğw’è
+			int face[3];	//3‚Â”Ô†‚Å–Ê‚ğw’è
+			int c=0;//”‚¦ã‚°•Ï”
 
 			for(int f=0;f<4;f++)
 			{
@@ -885,13 +852,13 @@ void tetgen_function::SetRelation_ElemElem(mpsconfig &CON, vector<tetgen_node> &
 					face[c]=ELEM[i].node[f];
 					c++;
 				}
-			}//face[3]ã«nç•ªç›®ã®é¢ãŒæ ¼ç´
+			}//face[3]‚Én”Ô–Ú‚Ì–Ê‚ªŠi”[
 
-			//é¢ã‚’æ¢ç´¢
+			//–Ê‚ğ’Tõ
 			int correct_nei=-1;
 			for(int j=0;j<(int)nei_all.size();j++)
 			{
-				int count=0;//ã“ã®ã‚«ã‚¦ãƒ³ãƒˆãŒ3ã«ãªã‚Œã°ç¢ºå®š
+				int count=0;//‚±‚ÌƒJƒEƒ“ƒg‚ª3‚É‚È‚ê‚ÎŠm’è
 
 				for(int nj=0;nj<4;nj++)
 				{
@@ -906,13 +873,13 @@ void tetgen_function::SetRelation_ElemElem(mpsconfig &CON, vector<tetgen_node> &
 					correct_nei=nei_all[j];
 					break;
 				}
-			}//ã‚‚ã—è¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸã‚‰correcr_neiã«ã¯-1ãŒå…¥ã£ã¦ã„ã‚‹
+			}//‚à‚µŒ©‚Â‚©‚ç‚È‚©‚Á‚½‚çcorrecr_nei‚É‚Í-1‚ª“ü‚Á‚Ä‚¢‚é
 
 			ELEM[i].nei_elem[ni]=correct_nei;
 		}
 	}//*/
 
-	/*//å‡ºåŠ›
+	/*//o—Í
 	ofstream fout("neigh.dat");
 	for(int i=0;i<(int)ELEM.size();i++)
 	{
@@ -930,28 +897,28 @@ void tetgen_function::SetRelation_ElemElem(mpsconfig &CON, vector<tetgen_node> &
 }
 
 
-//è¦ç´ é™¤å»å¾Œã®æµä½“è¡¨é¢å®šç¾©
+//—v‘fœ‹Œã‚Ì—¬‘Ì•\–Ê’è‹`
 void tetgen_function::GetFacetList_from_neigh(mpsconfig &CON, vector<tetgen_element> &ELEM, vector<tetgen_facet> &FACE)
 {
-	cout<<"è¦ç´ é™¤å»å¾Œã®æµä½“è¡¨é¢å®šç¾©";
+	cout<<"—v‘fœ‹Œã‚Ì—¬‘Ì•\–Ê’è‹`";
 
-	//åˆæœŸåŒ–
+	//‰Šú‰»
 	FACE.clear();
 	
-	int id=0;	//idç”¨(è¡¨é¢ã®æ•°)
+	int id=0;	//id—p(•\–Ê‚Ì”)
 	
 	for(int i=0;i<(int)ELEM.size();i++)
 	{
 		for(int n=0;n<4;n++)
 		{
-			if(ELEM[i].nei_elem[n]==-1)==-1//å¯¾é¢ãŒå­˜åœ¨ã—ãªã„â†’è¡¨é¢
+			if(ELEM[i].nei_elem[n]==-1)//‘Î–Ê‚ª‘¶İ‚µ‚È‚¢¨•\–Ê
 			{
 				tetgen_facet temp;	
 				int c=0;
 
 				for(int f=0;f<4;f++)
 				{
-					if(n!=f)
+					if(f!=n)
 					{
 						temp.node[c]=ELEM[i].node[f];
 						c++;
@@ -970,17 +937,17 @@ void tetgen_function::GetFacetList_from_neigh(mpsconfig &CON, vector<tetgen_elem
 }
 
 
-//è¡¨é¢ç¯€ç‚¹ä»¥å¤–ã‚’å‰Šé™¤ï¼Œè¡¨é¢ç¯€ç‚¹ã«ç•ªå·ã‚’æŒ¯ã‚ŠãªãŠã™
+//•\–Êß“_ˆÈŠO‚ğíœC•\–Êß“_‚É”Ô†‚ğU‚è‚È‚¨‚·
 void tetgen_function::SelectFaceNode(mpsconfig &CON, vector<tetgen_node> &NODE, vector<tetgen_facet> &FACE)
 {
-	//boundaryã‚’ãƒ•ãƒ©ã‚°ã«ä½¿ã‚ã›ã¦ã‚‚ã‚‰ã†ã€‚
-	//boundary==-1ã¯è¡¨é¢ã‚’æ§‹æˆã—ã¦ã„ãªã„ç¯€ç‚¹â†’å‰Šé™¤
-	//boundary==-2ã¯è¡¨é¢ã‚’æ§‹æˆã—ã¦ã„ã‚‹ç¯€ç‚¹â†’æ–°ã—ã„ç¯€ç‚¹ç•ªå·ã‚’ä¸ãˆã‚‹
+	//boundary‚ğƒtƒ‰ƒO‚Ég‚í‚¹‚Ä‚à‚ç‚¤B
+	//boundary==-1‚Í•\–Ê‚ğ\¬‚µ‚Ä‚¢‚È‚¢ß“_¨íœ
+	//boundary==-2‚Í•\–Ê‚ğ\¬‚µ‚Ä‚¢‚éß“_¨V‚µ‚¢ß“_”Ô†‚ğ—^‚¦‚é
 	
-	//ã¨ã‚Šã‚ãˆãšåˆæœŸåŒ–
+	//‚Æ‚è‚ ‚¦‚¸‰Šú‰»
 	for(int i=0;i<(int)NODE.size();i++)	NODE[i].boundary=-1;
 	
-	//FACEã«ã‚ã‚‹ç¯€ç‚¹ã¯flagã‚’-2ã«
+	//FACE‚É‚ ‚éß“_‚Íflag‚ğ-2‚É
 	for(int i=0;i<(int)FACE.size();i++)
 	{
 		for(int n=0;n<3;n++)
@@ -989,7 +956,7 @@ void tetgen_function::SelectFaceNode(mpsconfig &CON, vector<tetgen_node> &NODE, 
 		}
 	}
 
-	//æ–°ã—ã„ç¯€ç‚¹ç•ªå·ã®æ±ºå®š
+	//V‚µ‚¢ß“_”Ô†‚ÌŒˆ’è
 	int id=0;
 	for(int i=0;i<(int)NODE.size();i++)
 	{
@@ -999,26 +966,26 @@ void tetgen_function::SelectFaceNode(mpsconfig &CON, vector<tetgen_node> &NODE, 
 			id++;
 		}
 	}
-	//è¡¨é¢ç¯€ç‚¹ã«ã¯boundaryã«æ–°ã—ã„ç¯€ç‚¹ç•ªå·ãŒå…¥ã‚‹ã€‚å†…éƒ¨ç¯€ç‚¹ã«ã¯-1ãŒå…¥ã‚‹
+	//•\–Êß“_‚É‚Íboundary‚ÉV‚µ‚¢ß“_”Ô†‚ª“ü‚éB“à•”ß“_‚É‚Í-1‚ª“ü‚é
 
-	//FACEã®æ§‹æˆç¯€ç‚¹ç•ªå·ã®å¤‰æ›
+	//FACE‚Ì\¬ß“_”Ô†‚Ì•ÏŠ·
 	for(int i=0;i<(int)FACE.size();i++)
 	{
 		for(int n=0;n<3;n++)
 		{
-			FACE[i].node[n]=NODE[FACE[i].node[n]].boundary;	//ã“ã“ã§-1ã‚„-2ã¨ãªã‚‹ã‚‚ã®ã¯ãªã„ã¯ãšã€‚ã‚ã‚Œã°ä¸Šã®å‡¦ç†ãŒé–“é•ã£ã¦ã„ã‚‹
+			FACE[i].node[n]=NODE[FACE[i].node[n]].boundary;	//‚±‚±‚Å-1‚â-2‚Æ‚È‚é‚à‚Ì‚Í‚È‚¢‚Í‚¸B‚ ‚ê‚Îã‚Ìˆ—‚ªŠÔˆá‚Á‚Ä‚¢‚é
 		}
 	}
 
-	//å†…éƒ¨ç¯€ç‚¹ã®å‰Šé™¤ NODEã®ç¯€ç‚¹ç•ªå·ã®å¤‰æ› boundaryã‚’å…ƒã«æˆ»ã™
+	//“à•”ß“_‚Ìíœ NODE‚Ìß“_”Ô†‚Ì•ÏŠ· boundary‚ğŒ³‚É–ß‚·
 	int k=0;
 	while(k<(int)NODE.size())
 	{
 		if(NODE[k].boundary==-1)
 		{
-			vector<tetgen_node>::iterator it=NODE.begin();	//ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿åˆæœŸåŒ–
-			it+=k;				//kç•ªç›®ã‚’æŒ‡å®š
-			it=NODE.erase(it);	//å‰Šé™¤ã—ã¦ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã‚’è¿”ã™
+			vector<tetgen_node>::iterator it=NODE.begin();	//ƒCƒeƒŒ[ƒ^‰Šú‰»
+			it+=k;				//k”Ô–Ú‚ğw’è
+			it=NODE.erase(it);	//íœ‚µ‚ÄƒCƒeƒŒ[ƒ^‚ğ•Ô‚·
 		}
 		else
 		{
@@ -1031,13 +998,13 @@ void tetgen_function::SelectFaceNode(mpsconfig &CON, vector<tetgen_node> &NODE, 
 }
 
 
-//ãƒ€ãƒŸãƒ¼ç¯€ç‚¹ã‚’å‰Šé™¤
+//ƒ_ƒ~[ß“_‚ğíœ
 void tetgen_function::DelDummyNode(mpsconfig &CON, vector<tetgen_node> &NODE, vector<tetgen_facet> &FACE, int num_dummy)
 {
-	//NODEã®ä¸­ã«ã¯å‰åŠã«æµä½“è¡¨é¢ç¯€ç‚¹ï¼Œå¾ŒåŠã«ãƒ€ãƒŸãƒ¼ç¯€ç‚¹ãŒå›ºã¾ã£ã¦æ ¼ç´ã•ã‚Œã¦ã„ã‚‹ã®ã§ï¼Œå¾ŒåŠã®ãƒ€ãƒŸãƒ¼ç¯€ç‚¹ã®éƒ¨åˆ†ã®ã¿ã‚’æ¶ˆã›ã°ã‚ˆã„
-	//ãƒ€ãƒŸãƒ¼è¦ç´ ã‚’æ¶ˆã—ã¦ã‹ã‚‰è¡¨é¢ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—ã—ã¦ã„ã‚‹ã®ã§ï¼Œè¡¨é¢ã‚’æ§‹æˆã™ã‚‹ç¯€ç‚¹ç•ªå·ã®å¤‰æ›´ã¯ä¸è¦
+	//NODE‚Ì’†‚É‚Í‘O”¼‚É—¬‘Ì•\–Êß“_CŒã”¼‚Éƒ_ƒ~[ß“_‚ªŒÅ‚Ü‚Á‚ÄŠi”[‚³‚ê‚Ä‚¢‚é‚Ì‚ÅCŒã”¼‚Ìƒ_ƒ~[ß“_‚Ì•”•ª‚Ì‚İ‚ğÁ‚¹‚Î‚æ‚¢
+	//ƒ_ƒ~[—v‘f‚ğÁ‚µ‚Ä‚©‚ç•\–Êƒf[ƒ^‚ğæ“¾‚µ‚Ä‚¢‚é‚Ì‚ÅC•\–Ê‚ğ\¬‚·‚éß“_”Ô†‚Ì•ÏX‚Í•s—v
 
-	//ãƒ€ãƒŸãƒ¼å¤‰æ•°ã®æ•°ã ã‘popbackã§æœ«å°¾ã®è¦ç´ ã‹ã‚‰æ¶ˆã™
+	//ƒ_ƒ~[•Ï”‚Ì”‚¾‚¯popback‚Å––”ö‚Ì—v‘f‚©‚çÁ‚·
 	for(int i=0;i<num_dummy;i++)
 	{
 		NODE.pop_back();
@@ -1045,10 +1012,10 @@ void tetgen_function::DelDummyNode(mpsconfig &CON, vector<tetgen_node> &NODE, ve
 }
 
 
-//ç©ºæ°—å¢ƒç•Œé¢ä½œæˆ
+//‹ó‹C‹«ŠE–Êì¬
 void tetgen_function::SetAirBoundary(mpsconfig &CON, tetgen_config &TET, vector<tetgen_node> &NODEa, vector<tetgen_facet> &FACEa)
 {
-	cout<<"ç©ºæ°—å¢ƒç•Œä½œæˆ"<<endl;
+	cout<<"‹ó‹C‹«ŠEì¬"<<endl;
 
 	tetgenio in, out;
 	in.initialize();
@@ -1061,7 +1028,7 @@ void tetgen_function::SetAirBoundary(mpsconfig &CON, tetgen_config &TET, vector<
 	temp_n.attribute=AIR;
 	temp_n.boundary=0;
 
-	//åˆ†å‰²æ•°æ±ºå®š  1å‰²ã ã‘ã‚ªãƒ•ã‚»ãƒƒãƒˆã—ã¦ã„ã‚‹
+	//•ªŠ„”Œˆ’è  1Š„‚¾‚¯ƒIƒtƒZƒbƒg‚µ‚Ä‚¢‚é
 	double dL=TET.fine_air;
 	int lx = int((CON.get_XL()-0.1*dL)/dL);
 	int ux = int((CON.get_XR()+0.1*dL)/dL);
@@ -1070,8 +1037,8 @@ void tetgen_function::SetAirBoundary(mpsconfig &CON, tetgen_config &TET, vector<
 	int lz = int((CON.get_ZD()-0.1*dL)/dL);
 	int uz = int((CON.get_ZU()+0.1*dL)/dL);
 
-	//æ¥ç‚¹ãƒ‡ãƒ¼ã‚¿ä½œæˆ
-	//é™é›»ç„¡åŒ–
+	//Ú“_ƒf[ƒ^ì¬
+	//Ã“d–³‰»
 	if(CON.get_model_number()==14)
 	{
 		for(int z=lz;z<=uz;z++)
@@ -1080,7 +1047,7 @@ void tetgen_function::SetAirBoundary(mpsconfig &CON, tetgen_config &TET, vector<
 			{
 				for(int x=lx;x<=ux;x++)
 				{
-					if(x==lx || x==ux || y==ly || y==uy || z==lz || z==uz)	//è§£æé ˜åŸŸã®ç«¯ã«æ¥ãŸã¨ãç¯€ç‚¹ã‚’ç½®ã
+					if(x==lx || x==ux || y==ly || y==uy || z==lz || z==uz)	//‰ğÍ—Ìˆæ‚Ì’[‚É—ˆ‚½‚Æ‚«ß“_‚ğ’u‚­
 					{
 						temp_n.r[A_X]=x*dL;
 						temp_n.r[A_Y]=y*dL;
@@ -1093,7 +1060,7 @@ void tetgen_function::SetAirBoundary(mpsconfig &CON, tetgen_config &TET, vector<
 		}
 	}//*/
 
-	//ãƒ¬ã‚¤ãƒªãƒ¼åˆ†è£‚
+	//ƒŒƒCƒŠ[•ª—ô
 	if(CON.get_model_number()==20)
 	{
 		temp_n.boundary=ELECTRODE1;
@@ -1104,7 +1071,7 @@ void tetgen_function::SetAirBoundary(mpsconfig &CON, tetgen_config &TET, vector<
 			{
 				for(int x=lx;x<=ux;x++)
 				{
-					if(x==lx || x==ux || y==ly || y==uy || z==lz || z==uz)	//è§£æé ˜åŸŸã®ç«¯ã«æ¥ãŸã¨ãç¯€ç‚¹ã‚’ç½®ã
+					if(x==lx || x==ux || y==ly || y==uy || z==lz || z==uz)	//‰ğÍ—Ìˆæ‚Ì’[‚É—ˆ‚½‚Æ‚«ß“_‚ğ’u‚­
 					{
 						temp_n.r[A_X]=x*dL;
 						temp_n.r[A_Y]=y*dL;
@@ -1117,9 +1084,9 @@ void tetgen_function::SetAirBoundary(mpsconfig &CON, tetgen_config &TET, vector<
 		}
 	}
 
-	//ç£æ€§ã‚¨ãƒ©ã‚¹ãƒˆãƒãƒ¼
-	//è§£æé ˜åŸŸã®ç«¯ã«ããŸæ™‚ã«ç¯€ç‚¹ã‚’ç½®ã„ã¦ã„ã‚‹ãŒforãƒ«ãƒ¼ãƒ—ä½¿ã‚ãªãã¦ã‚‚è‰¯ã„ã®ã§ã¯ï¼Ÿï¼Ÿï¼Ÿ
-	//ã‚ã¨å††ç­’å½¢ã«ç½®ã„ãŸã»ã†ãŒè‰¯ã„
+	//¥«ƒGƒ‰ƒXƒgƒ}[
+	//‰ğÍ—Ìˆæ‚Ì’[‚É‚«‚½‚Éß“_‚ğ’u‚¢‚Ä‚¢‚é‚ªforƒ‹[ƒvg‚í‚È‚­‚Ä‚à—Ç‚¢‚Ì‚Å‚ÍHHH
+	//‚ ‚Æ‰~“›Œ`‚É’u‚¢‚½‚Ù‚¤‚ª—Ç‚¢
 	
 	{
 //		temp_n.boundary=ELECTRODE1;
@@ -1130,7 +1097,7 @@ void tetgen_function::SetAirBoundary(mpsconfig &CON, tetgen_config &TET, vector<
 		//	{
 		//		for(int x=lx;x<=ux;x++)
 		//		{
-		//			if(x==lx || x==ux || y==ly || y==uy || z==lz || z==uz)	//è§£æé ˜åŸŸã®ç«¯ã«æ¥ãŸã¨ãç¯€ç‚¹ã‚’ç½®ã
+		//			if(x==lx || x==ux || y==ly || y==uy || z==lz || z==uz)	//‰ğÍ—Ìˆæ‚Ì’[‚É—ˆ‚½‚Æ‚«ß“_‚ğ’u‚­
 		//			{
 		//				temp_n.r[A_X]=x*dL;
 		//				temp_n.r[A_Y]=y*dL;
@@ -1148,25 +1115,25 @@ void tetgen_function::SetAirBoundary(mpsconfig &CON, tetgen_config &TET, vector<
 		divN[A_Z]=20;
 		double regionR[2]={0.0, CON.get_RU()};
 		double regionZ[2]={CON.get_ZD(), CON.get_ZU()};
-	//divN[3];					//å„è¾ºã®åˆ†å‰²æ•°
+	//divN[3];					//Še•Ó‚Ì•ªŠ„”
 	
-	double Rmin=0;				//è§£æé ˜åŸŸ
+	double Rmin=0;				//‰ğÍ—Ìˆæ
 	double Rmax=regionR[1];
 	double Zmin=regionZ[0];
 	double Zmax=regionZ[1];
 
-	double divL[3];//åˆ†å‰²å¹…
+	double divL[3];//•ªŠ„•
 	divL[A_R]=(Rmax-Rmin)/divN[A_R];
 	divL[A_t]=(2*PI)/divN[A_t];
 	divL[A_Z]=(Zmax-Zmin)/divN[A_Z];
 
 	point3D NODE01;
 
-	/////////////////////åº•é¢
-					//ä¸­å¿ƒç‚¹
+	/////////////////////’ê–Ê
+					//’†S“_
 	temp_n.r[A_X]=0;
 	temp_n.r[A_Y]=0;
-	temp_n.r[A_Z]=Zmin;					//è§£æé ˜åŸŸã®åº•é¢
+	temp_n.r[A_Z]=Zmin;					//‰ğÍ—Ìˆæ‚Ì’ê–Ê
 	NODEa.push_back(temp_n);
 	temp_n.id+=1;
 
@@ -1178,16 +1145,16 @@ void tetgen_function::SetAirBoundary(mpsconfig &CON, tetgen_config &TET, vector<
 			double theta=divL[A_t]*m;
 			temp_n.r[A_X]=r*cos(theta);
 			temp_n.r[A_Y]=r*sin(theta);
-			temp_n.r[A_Z]=Zmin;					//è§£æé ˜åŸŸã®åº•é¢
+			temp_n.r[A_Z]=Zmin;					//‰ğÍ—Ìˆæ‚Ì’ê–Ê
 			NODEa.push_back(temp_n);
-			temp_n.id+=1;				//å¯¾å¿œã™ã‚‹ç²’å­ãŒå­˜åœ¨ã—ãªã„ã‹ã‚‰-1ã‚’æ ¼ç´
+			temp_n.id+=1;				//‘Î‰‚·‚é—±q‚ª‘¶İ‚µ‚È‚¢‚©‚ç-1‚ğŠi”[
 		}
 	}
-	//////////////////////////////////ä¸Šé¢
-					//ä¸­å¿ƒç‚¹
+	//////////////////////////////////ã–Ê
+					//’†S“_
 	temp_n.r[A_X]=0;
 	temp_n.r[A_Y]=0;
-	temp_n.r[A_Z]=Zmax;					//è§£æé ˜åŸŸã®åº•é¢
+	temp_n.r[A_Z]=Zmax;					//‰ğÍ—Ìˆæ‚Ì’ê–Ê
 	NODEa.push_back(temp_n);
 			temp_n.id+=1;	
 	for(int n=1;n<=divN[A_R];n++)
@@ -1198,13 +1165,13 @@ void tetgen_function::SetAirBoundary(mpsconfig &CON, tetgen_config &TET, vector<
 			double theta=divL[A_t]*m;
 			temp_n.r[A_X]=r*cos(theta);
 			temp_n.r[A_Y]=r*sin(theta);
-			temp_n.r[A_Z]=Zmax;					//è§£æé ˜åŸŸã®åº•é¢
+			temp_n.r[A_Z]=Zmax;					//‰ğÍ—Ìˆæ‚Ì’ê–Ê
 			NODEa.push_back(temp_n);
-			temp_n.id+=1;					//å¯¾å¿œã™ã‚‹ç²’å­ãŒå­˜åœ¨ã—ãªã„ã‹ã‚‰-1ã‚’æ ¼ç´
+			temp_n.id+=1;					//‘Î‰‚·‚é—±q‚ª‘¶İ‚µ‚È‚¢‚©‚ç-1‚ğŠi”[
 		}
 	}
 
-	//å´é¢
+	//‘¤–Ê
 	double RR=divL[A_R]*divN[A_R];
 	for(int n=1;n<divN[A_Z];n++)
 	{
@@ -1215,16 +1182,16 @@ void tetgen_function::SetAirBoundary(mpsconfig &CON, tetgen_config &TET, vector<
 			temp_n.r[A_Y]=RR*sin(theta);;
 			temp_n.r[A_Z]=Zmin+n*divL[A_Z];		
 			NODEa.push_back(temp_n);
-			temp_n.id+=1;						//å¯¾å¿œã™ã‚‹ç²’å­ãŒå­˜åœ¨ã—ãªã„ã‹ã‚‰-1ã‚’æ ¼ç´
+			temp_n.id+=1;						//‘Î‰‚·‚é—±q‚ª‘¶İ‚µ‚È‚¢‚©‚ç-1‚ğŠi”[
 		}
 	}
 
 		/////////////////////////////////////////////////////////////////////////////
 	}
 
-	//nodeãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆ
+	//nodeƒtƒ@ƒCƒ‹ì¬
 	MakeNodeFile(CON, NODEa, "NODEa1.node");
-	//.eleã®å–å¾—
+	//.ele‚Ìæ“¾
 //	GetTetrahedronList(ELEMa, in, out);
 
 	in.load_node("NODEa1");
@@ -1234,28 +1201,30 @@ void tetgen_function::SetAirBoundary(mpsconfig &CON, tetgen_config &TET, vector<
 	out.save_faces("boundary_air1");
 	//*/
 
-	//å¢ƒç•Œé¢ãƒ‡ãƒ¼ã‚¿å–å¾—
+	//‹«ŠE–Êƒf[ƒ^æ“¾
 	GetFacetList(FACEa, in, out, AIR);
-	//.faceãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆ
+	//.faceƒtƒ@ƒCƒ‹ì¬
 	//MakeFaceFile(CON, FACEa1, "FACEa1.face");
-	//é•·ã„è¦ç´ ã®é™¤å»
+	//’·‚¢—v‘f‚Ìœ‹
 //	DelThinTetrahedron(CON, TET, NODEa, ELEMa, in, out);
 
-	//ç¯€ç‚¹-è¦ç´ é–¢ä¿‚
+	//ß“_-—v‘fŠÖŒW
 //	SetRelation_NodeElem(CON, NODEa, ELEMa);
-	//è¦ç´ -è¦ç´ é–¢ä¿‚
+	//—v‘f-—v‘fŠÖŒW
 //	SetRelation_ElemElem(CON, NODEa, ELEMa);
-	//è¦ç´ -è¦ç´ é–¢ä¿‚ã‚ˆã‚Šå¼¾æ€§ä½“è¡¨é¢å–å¾—
+	//—v‘f-—v‘fŠÖŒW‚æ‚è’e«‘Ì•\–Êæ“¾
 //	GetFacetList_from_neigh(CON, ELEMa, FACEa);
+	
+
 }
 
 
-//æ°´æ»´ãƒ»ã‚¨ãƒ©ã‚¹ãƒˆãƒãƒ¼è¡¨é¢ä»˜è¿‘è¿½åŠ ç¯€ç‚¹
+//…“HEƒGƒ‰ƒXƒgƒ}[•\–Ê•t‹ß’Ç‰Áß“_
 void tetgen_function::SetAirFineBoundary(mpsconfig &CON, vector<mpselastic> &PART, tetgen_config &TET, vector<tetgen_node> &NODEa, vector<tetgen_facet> &FACEa)
 {
-	//æ°´æ»´ã®è¡¨é¢ã®æ³•ç·šæ–¹å‘ã«ä½•å±¤ã‹ã®ãƒ¡ãƒƒã‚·ãƒ¥å±¤ã‚’ä½œæˆã™ã‚‹
+	//…“H‚Ì•\–Ê‚Ì–@ü•ûŒü‚É‰½‘w‚©‚ÌƒƒbƒVƒ…‘w‚ğì¬‚·‚é
 
-	cout<<"é›»ç£çŸ³è¡¨é¢ä»˜è¿‘è¿½åŠ ç¯€ç‚¹"<<endl;
+	cout<<"“d¥Î•\–Ê•t‹ß’Ç‰Áß“_"<<endl;
 
 	tetgenio in, out;
 	in.initialize();
@@ -1266,16 +1235,16 @@ void tetgen_function::SetAirFineBoundary(mpsconfig &CON, vector<mpselastic> &PAR
 	temp.attribute=AIR;
 	temp.boundary=0;
 
-	//åˆ†å‰²æ•°æ±ºå®š
+	//•ªŠ„”Œˆ’è
 	double le=CON.get_distancebp();
-	double R=CON.get_magnet_r()+5*le;		//å††ç­’åŠå¾„
-	double uz=CON.get_magnet_Z()+CON.get_magnet_H()/2+5*le;		//å††ç­’æœ€å¤§é«˜ã•
-	double lz=CON.get_magnet_Z()-CON.get_magnet_H()/2-5*le;		//å††ç­’æœ€å°é«˜ã• -5*le
-	double dx=le;					//å††ç­’é•·ã•æ–¹å‘ãƒ¡ãƒƒã‚·ãƒ¥ç²—ã•
+	double R=CON.get_magnet_r()+5*le;		//‰~“›”¼Œa
+	double uz=CON.get_magnet_Z()+CON.get_magnet_H()/2+5*le;		//‰~“›Å‘å‚‚³
+	double lz=CON.get_magnet_Z()-CON.get_magnet_H()/2-5*le;		//‰~“›Å¬‚‚³ -5*le
+	double dx=le;					//‰~“›’·‚³•ûŒüƒƒbƒVƒ…‘e‚³
 
-		//ä¸Šä¸‹å´é¢ã§ãƒ†ãƒ¼ãƒ‘ãƒ¼ã‚’ä»˜ã‘ãŸã„æ™‚ã¯åˆ†ã‘ã‚‹ã¹ãã ãŒã¾ã¨ã‚ã¦ã‚‚ã„ã„ã‹ã‚‚ãƒ»ãƒ»ãƒ»
+		//ã‰º‘¤–Ê‚Åƒe[ƒp[‚ğ•t‚¯‚½‚¢‚Í•ª‚¯‚é‚×‚«‚¾‚ª‚Ü‚Æ‚ß‚Ä‚à‚¢‚¢‚©‚àEEE
 
-	//ä¸­å¿ƒ
+	//’†S
 	temp.r[A_X]=0;
 	temp.r[A_Y]=0;	
 	temp.r[A_Z]=uz;
@@ -1283,10 +1252,10 @@ void tetgen_function::SetAirFineBoundary(mpsconfig &CON, vector<mpselastic> &PAR
 	NODEa.push_back(temp);
 	temp.id+=1;
 
-	//ä¸Šé¢
+	//ã–Ê
 	for(double r=dx;r<R+0.1*dx;r+=dx)
 	{
-		int nr=static_cast<int>(2.0*PI*r/dx);//æ­£ä½•è§’å½¢ã§è¿‘ä¼¼ã™ã‚‹ã‹ï¼ˆè§’åº¦æ–¹å‘ã®åˆ†å‰²æ•°ï¼‰
+		int nr=static_cast<int>(2.0*PI*r/dx);//³‰½ŠpŒ`‚Å‹ß—‚·‚é‚©iŠp“x•ûŒü‚Ì•ªŠ„”j
 		double d_theta=360.0/static_cast<double>(nr);
 
 		for(double theta=0.0;theta<360-0.1*d_theta;theta+=d_theta)
@@ -1300,10 +1269,10 @@ void tetgen_function::SetAirFineBoundary(mpsconfig &CON, vector<mpselastic> &PAR
 		}
 	}
 
-	//å´é¢	//R*=1.005;	//ã‚ãšã‹ã«å¤ªãã™ã‚‹(ãƒ¡ãƒƒã‚·ãƒ¥ãŒç¹‹ãŒã‚‹ã®ã‚’é˜²ããŸã‚)ãƒ»ãƒ»ãƒ»ã“ã‚Œã¯ã„ã‚‰ã‚“
+	//‘¤–Ê	//R*=1.005;	//‚í‚¸‚©‚É‘¾‚­‚·‚é(ƒƒbƒVƒ…‚ªŒq‚ª‚é‚Ì‚ğ–h‚®‚½‚ß)EEE‚±‚ê‚Í‚¢‚ç‚ñ
 	for(double z=uz-dx;z>lz;z-=dx)
 	{
-			int nr=static_cast<int>(2.0*PI*R/dx);//r=dRã®æ™‚ã¯nr=7
+			int nr=static_cast<int>(2.0*PI*R/dx);//r=dR‚Ì‚Ínr=7
 			double d_theta=360.0/static_cast<double>(nr);
 
 			for(double theta=0.0;theta<360.0-0.1*d_theta;theta+=d_theta)
@@ -1317,7 +1286,7 @@ void tetgen_function::SetAirFineBoundary(mpsconfig &CON, vector<mpselastic> &PAR
 			}	
 	}
 
-	//ä¸‹é¢
+	//‰º–Ê
 	
 
 	for(double r=dx;r<R+0.1*dx;r+=dx)//	for(double r=R;r>le-0.1*le;r-=le)
@@ -1336,20 +1305,20 @@ void tetgen_function::SetAirFineBoundary(mpsconfig &CON, vector<mpselastic> &PAR
 		}
 	}//*/
 
-	//.stlãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿å–ã‚Š
+	//.stlƒtƒ@ƒCƒ‹“Ç‚İæ‚è
 //	in.load_stl("COIL");
-	//nodeãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆ
+	//nodeƒtƒ@ƒCƒ‹ì¬
 	MakeNodeFile(CON, NODEa, "air2.node");
-	//.nodeãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿å–ã‚Š
+	//.nodeƒtƒ@ƒCƒ‹“Ç‚İæ‚è
 	in.load_node("air2");
 
-	//ã¾ãšã¯æµä½“ç¯€ç‚¹ã®ã¿ã§åˆ†å‰²
+	//‚Ü‚¸‚Í—¬‘Ìß“_‚Ì‚İ‚Å•ªŠ„
 	tetrahedralize("", &in, &out);
-		// i è¦ç´ å†…ã¸ç¯€ç‚¹ã‚’è¿½åŠ (ä»Šã®æ‰€ç„¡ãã¦ã‚‚æ©Ÿèƒ½ã—ã¦ã„ã‚‹)
-		// f .faceãƒ•ã‚¡ã‚¤ãƒ«ã«å¢ƒç•Œã§ã¯ãªã„é¢ã‚‚å«ã‚ã‚‹
-		// e .edgeãƒ•ã‚¡ã‚¤ãƒ«ã®å‡ºåŠ›(ONã«ã™ã‚‹ã¨ãªãœã‹æ­¢ã¾ã£ã¦ã—ã¾ã†)
-		// n .neighãƒ•ã‚¡ã‚¤ãƒ«ã®å‡ºåŠ›
-	//å‡ºåŠ›
+		// i —v‘f“à‚Öß“_‚ğ’Ç‰Á(¡‚ÌŠ–³‚­‚Ä‚à‹@”\‚µ‚Ä‚¢‚é)
+		// f .faceƒtƒ@ƒCƒ‹‚É‹«ŠE‚Å‚Í‚È‚¢–Ê‚àŠÜ‚ß‚é
+		// e .edgeƒtƒ@ƒCƒ‹‚Ìo—Í(ON‚É‚·‚é‚Æ‚È‚º‚©~‚Ü‚Á‚Ä‚µ‚Ü‚¤)
+		// n .neighƒtƒ@ƒCƒ‹‚Ìo—Í
+	//o—Í
 	out.save_nodes("air2_whole");
 	out.save_elements("air2_whole");
 	out.save_faces("air2_whole");
@@ -1358,10 +1327,10 @@ void tetgen_function::SetAirFineBoundary(mpsconfig &CON, vector<mpselastic> &PAR
 }
 
 
-//å¹³æ¿é›»æ¥µå¢ƒç•Œé¢ä½œæˆ
+//•½”Â“d‹É‹«ŠE–Êì¬
 void tetgen_function::SetPlateElectrodeBoundary(mpsconfig &CON, tetgen_config &TET, vector<tetgen_node> &NODEp, vector<tetgen_facet> &FACEp)
 {
-	cout<<"å¹³æ¿é›»æ¥µå¢ƒç•Œä½œæˆ"<<endl;
+	cout<<"•½”Â“d‹É‹«ŠEì¬"<<endl;
 
 	tetgenio in, out;
 	in.initialize();
@@ -1372,21 +1341,21 @@ void tetgen_function::SetPlateElectrodeBoundary(mpsconfig &CON, tetgen_config &T
 	temp.attribute=ELECTRODE2;
 	temp.boundary=ELECTRODE2;
 
-	//åˆ†å‰²æ•°æ±ºå®š
-	double	h = TET.height_plate;						//å¹³æ¿é«˜ã•
-	double	dh = TET.fine_plate_t;						//åšã¿æ–¹å‘ãƒ¡ãƒƒã‚·ãƒ¥ç²—ã•
-	int		nh = int((TET.thickness_plate+0.1*dh)/dh);	//åšã¿æ–¹å‘åˆ†å‰²æ•°
-	double	dL = TET.fine_plate_L;						//xyæ–¹å‘ãƒ¡ãƒƒã‚·ãƒ¥ç²—ã•
-	int		nL = int((TET.length_plate/2+0.1*dL)/dL);	//xyæ–¹å‘åˆ†å‰²æ•°(ç‰‡å´)
+	//•ªŠ„”Œˆ’è
+	double	h = TET.height_plate;						//•½”Â‚‚³
+	double	dh = TET.fine_plate_t;						//Œú‚İ•ûŒüƒƒbƒVƒ…‘e‚³
+	int		nh = int((TET.thickness_plate+0.1*dh)/dh);	//Œú‚İ•ûŒü•ªŠ„”
+	double	dL = TET.fine_plate_L;						//xy•ûŒüƒƒbƒVƒ…‘e‚³
+	int		nL = int((TET.length_plate/2+0.1*dL)/dL);	//xy•ûŒü•ªŠ„”(•Ğ‘¤)
 
-	//æ¥ç‚¹ãƒ‡ãƒ¼ã‚¿ä½œæˆ
+	//Ú“_ƒf[ƒ^ì¬
 	for(int z=0;z<=nh;z++)
 	{
 		for(int y=-nL;y<=nL;y++)
 		{
 			for(int x=-nL;x<=nL;x++)
 			{
-				if(x==-nL || x==nL || y==-nL || y==nL || z==0 || z==nh)	//å¹³æ¿é›»æ¥µé ˜åŸŸã®ç«¯ã«æ¥ãŸã¨ãç¯€ç‚¹ã‚’ç½®ã
+				if(x==-nL || x==nL || y==-nL || y==nL || z==0 || z==nh)	//•½”Â“d‹É—Ìˆæ‚Ì’[‚É—ˆ‚½‚Æ‚«ß“_‚ğ’u‚­
 				{
 					temp.r[A_X]=x*dL;
 					temp.r[A_Y]=y*dL;
@@ -1400,7 +1369,7 @@ void tetgen_function::SetPlateElectrodeBoundary(mpsconfig &CON, tetgen_config &T
 		}
 	}//*/
 
-	//nodeãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆ
+	//nodeƒtƒ@ƒCƒ‹ì¬
 	MakeNodeFile(CON, NODEp, "NODEp.node");
 
 	in.load_node("NODEp");
@@ -1410,17 +1379,17 @@ void tetgen_function::SetPlateElectrodeBoundary(mpsconfig &CON, tetgen_config &T
 	out.save_faces("boundary_plate");
 	//*/
 
-	//å¢ƒç•Œé¢ãƒ‡ãƒ¼ã‚¿å–å¾—
+	//‹«ŠE–Êƒf[ƒ^æ“¾
 	GetFacetList(FACEp, in, out, ELECTRODE2);
-	//.faceãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆ
+	//.faceƒtƒ@ƒCƒ‹ì¬
 	//MakeFaceFile(CON, FACEp, "FACEp.face");
 }
 
 
-//å††æŸ±é›»æ¥µå¢ƒç•Œé¢ä½œæˆ
+//‰~’Œ“d‹É‹«ŠE–Êì¬
 void tetgen_function::SetColumnElectrodeBoundary(mpsconfig &CON, tetgen_config &TET, vector<tetgen_node> &NODEc, vector<tetgen_facet> &FACEc)
 {
-	cout<<"å††æŸ±é›»æ¥µå¢ƒç•Œä½œæˆ"<<endl;
+	cout<<"‰~’Œ“d‹É‹«ŠEì¬"<<endl;
 
 	tetgenio in, out;
 	in.initialize();
@@ -1431,16 +1400,16 @@ void tetgen_function::SetColumnElectrodeBoundary(mpsconfig &CON, tetgen_config &
 	temp.attribute=ELECTRODE1;
 	temp.boundary=ELECTRODE1;
 
-	//åˆ†å‰²æ•°æ±ºå®š
+	//•ªŠ„”Œˆ’è
 	double le=CON.get_distancebp();
-	double rc=TET.radius_column;	//å††æŸ±åŠå¾„
-	double L=TET.length_column;		//å††æŸ±é•·ã•
-	double dL=TET.fine_column_L;	//å††æŸ±é•·ã•æ–¹å‘ãƒ¡ãƒƒã‚·ãƒ¥ç²—ã•
-	//double z0=0;					//ä¸Šé¢ã®ä½ç½®
+	double rc=TET.radius_column;	//‰~’Œ”¼Œa
+	double L=TET.length_column;		//‰~’Œ’·‚³
+	double dL=TET.fine_column_L;	//‰~’Œ’·‚³•ûŒüƒƒbƒVƒ…‘e‚³
+	//double z0=0;					//ã–Ê‚ÌˆÊ’u
 
 	
-	//ä¸Šé¢
-	//ä¸­å¿ƒ
+	//ã–Ê
+	//’†S
 	temp.r[A_X]=0;
 	temp.r[A_Y]=0;	
 	temp.r[A_Z]=0;
@@ -1464,17 +1433,17 @@ void tetgen_function::SetColumnElectrodeBoundary(mpsconfig &CON, tetgen_config &
 	}
 
 
-	//å´é¢
+	//‘¤–Ê
 	int flag=0;
 	double dz=le;
 	double z=0;
-	rc*=1.005;	//ã‚ãšã‹ã«å¤ªãã™ã‚‹(ãƒ¡ãƒƒã‚·ãƒ¥ãŒç¹‹ãŒã‚‹ã®ã‚’é˜²ããŸã‚)
-	int nr=int(2.0*PI*rc/(2*le));//leãŒ2å€ã•ã‚Œã¦ã„ã‚‹ã“ã¨ã«æ³¨æ„
+	rc*=1.005;	//‚í‚¸‚©‚É‘¾‚­‚·‚é(ƒƒbƒVƒ…‚ªŒq‚ª‚é‚Ì‚ğ–h‚®‚½‚ß)
+	int nr=int(2.0*PI*rc/(2*le));//le‚ª2”{‚³‚ê‚Ä‚¢‚é‚±‚Æ‚É’ˆÓ
 	double d_theta=360.0/(double)nr;
 	
 	while(1)
 	{
-		//zæ–¹å‘ã¸ã®ç§»å‹•
+		//z•ûŒü‚Ö‚ÌˆÚ“®
 		if(flag==0)			dz*=1.05;
 		else if(flag==1)	dz=dL;
 		z-=dz;
@@ -1499,8 +1468,8 @@ void tetgen_function::SetColumnElectrodeBoundary(mpsconfig &CON, tetgen_config &
 		//if(flag==2)	break;
 	}
 
-	//ä¸‹é¢
-	//ä¸­å¿ƒ
+	//‰º–Ê
+	//’†S
 	temp.r[A_X]=0;
 	temp.r[A_Y]=0;	
 	temp.r[A_Z]=-L+le;
@@ -1508,9 +1477,9 @@ void tetgen_function::SetColumnElectrodeBoundary(mpsconfig &CON, tetgen_config &
 	temp.id+=1;
 
 	//for(double r=le;r<rc+0.1*le;r+=le)
-	for(double r=rc;r>le-0.1*le;r-=2*le)//leãŒ2å€ã•ã‚Œã¦ã„ã‚‹ã“ã¨ã«æ³¨æ„
+	for(double r=rc;r>le-0.1*le;r-=2*le)//le‚ª2”{‚³‚ê‚Ä‚¢‚é‚±‚Æ‚É’ˆÓ
 	{
-		int nr=int(2.0*PI*r/(2*le));//leãŒ2å€ã•ã‚Œã¦ã„ã‚‹ã“ã¨ã«æ³¨æ„
+		int nr=int(2.0*PI*r/(2*le));//le‚ª2”{‚³‚ê‚Ä‚¢‚é‚±‚Æ‚É’ˆÓ
 		double d_theta=360.0/(double)nr;
 
 		for(double theta=0;theta<360-0.1*d_theta;theta+=d_theta)
@@ -1524,7 +1493,7 @@ void tetgen_function::SetColumnElectrodeBoundary(mpsconfig &CON, tetgen_config &
 	}//*/
 
 
-	//nodeãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆ
+	//nodeƒtƒ@ƒCƒ‹ì¬
 	MakeNodeFile(CON, NODEc, "NODEc.node");
 
 	in.load_node("NODEc");
@@ -1534,17 +1503,17 @@ void tetgen_function::SetColumnElectrodeBoundary(mpsconfig &CON, tetgen_config &
 	out.save_faces("boundary_column");
 	//*/
 
-	//å¢ƒç•Œé¢ãƒ‡ãƒ¼ã‚¿å–å¾—
+	//‹«ŠE–Êƒf[ƒ^æ“¾
 	GetFacetList(FACEc, in, out, ELECTRODE1);
-	//.faceãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆ
+	//.faceƒtƒ@ƒCƒ‹ì¬
 	//MakeFaceFile(CON, FACEc, "FACEc.face");
 }
 
 
-//åœŸå°å¢ƒç•Œé¢ä½œæˆ
+//“y‘ä‹«ŠE–Êì¬
 void tetgen_function::SetBaseBoundary(mpsconfig &CON, tetgen_config &TET, vector<tetgen_node> &NODEb, vector<tetgen_facet> &FACEb)
 {
-	cout<<"åœŸå°å¢ƒç•Œä½œæˆ"<<endl;
+	cout<<"“y‘ä‹«ŠEì¬"<<endl;
 
 	tetgenio in, out;
 	in.initialize();
@@ -1555,27 +1524,28 @@ void tetgen_function::SetBaseBoundary(mpsconfig &CON, tetgen_config &TET, vector
 	temp.attribute=ELECTRODE1;
 	temp.boundary=ELECTRODE1;
 
-	//åˆ†å‰²æ•°æ±ºå®š
+	//•ªŠ„”Œˆ’è
 	double	le = CON.get_distancebp();
 	double	rc = TET.radius_column;
-	double	h = TET.length_column;						//å¹³æ¿é«˜ã•
-	double	dh = TET.fine_base;						//åšã¿æ–¹å‘ãƒ¡ãƒƒã‚·ãƒ¥ç²—ã•
-	int		nh = int((TET.thickness_base+0.1*dh)/dh);	//åšã¿æ–¹å‘åˆ†å‰²æ•°
+	double	h = TET.length_column;						//•½”Â‚‚³
+	double	dh = TET.fine_base;						//Œú‚İ•ûŒüƒƒbƒVƒ…‘e‚³
+	int		nh = int((TET.thickness_base+0.1*dh)/dh);	//Œú‚İ•ûŒü•ªŠ„”
 	double	L = TET.length_base;
-	double	dL = TET.fine_base;						//xyæ–¹å‘ãƒ¡ãƒƒã‚·ãƒ¥ç²—ã•
-	int		nL = int((TET.length_base/2+0.1*dL)/dL);	//xyæ–¹å‘åˆ†å‰²æ•°(ç‰‡å´)
+	double	dL = TET.fine_base;						//xy•ûŒüƒƒbƒVƒ…‘e‚³
+	int		nL = int((TET.length_base/2+0.1*dL)/dL);	//xy•ûŒü•ªŠ„”(•Ğ‘¤)
 
-	//ä¸Šé¢æ¥ç¶šéƒ¨åˆ†
+
+	//ã–ÊÚ‘±•”•ª
 	temp.r[A_X]=0;
 	temp.r[A_Y]=0;	
 	temp.r[A_Z]=-L;
 	NODEb.push_back(temp);
 	temp.id+=1;
 
-	rc*=1.005;//å††æŸ±ã«åˆã‚ã›ã¦ã‚ãšã‹ã«å¤ªãã™ã‚‹
-	for(double r=rc;r>le-0.1*le;r-=2*le)//leãŒ2å€ã•ã‚Œã¦ã„ã‚‹ã“ã¨ã«æ³¨æ„
+	rc*=1.005;//‰~’Œ‚É‡‚í‚¹‚Ä‚í‚¸‚©‚É‘¾‚­‚·‚é
+	for(double r=rc;r>le-0.1*le;r-=2*le)//le‚ª2”{‚³‚ê‚Ä‚¢‚é‚±‚Æ‚É’ˆÓ
 	{
-		int nr=int(2.0*PI*r/(2*le));//leãŒ2å€ã•ã‚Œã¦ã„ã‚‹ã“ã¨ã«æ³¨æ„
+		int nr=int(2.0*PI*r/(2*le));//le‚ª2”{‚³‚ê‚Ä‚¢‚é‚±‚Æ‚É’ˆÓ
 		double d_theta=360.0/(double)nr;
 
 		for(double theta=0;theta<360-0.1*d_theta;theta+=d_theta)
@@ -1588,7 +1558,7 @@ void tetgen_function::SetBaseBoundary(mpsconfig &CON, tetgen_config &TET, vector
 		}
 	}//*/
 
-	//ä¸Šé¢è¡¨é¢
+	//ã–Ê•\–Ê
 	double r=rc+2*le;
 	double s=2*le;
 	while(r<sqrt(2.0)*L/2+dL)
@@ -1611,14 +1581,14 @@ void tetgen_function::SetBaseBoundary(mpsconfig &CON, tetgen_config &TET, vector
 		s*=1.15;
 	}//*/
 
-	//ãã®ä»–ã®é¢
+	//‚»‚Ì‘¼‚Ì–Ê
 	for(int z=0;z<=nh;z++)
 	{
 		for(int y=-nL;y<=nL;y++)
 		{
 			for(int x=-nL;x<=nL;x++)
 			{
-				if(x==-nL || x==nL || y==-nL || y==nL || z==nh)	//å¹³æ¿é›»æ¥µé ˜åŸŸã®ç«¯ã«æ¥ãŸã¨ãç¯€ç‚¹ã‚’ç½®ã
+				if(x==-nL || x==nL || y==-nL || y==nL || z==nh)	//•½”Â“d‹É—Ìˆæ‚Ì’[‚É—ˆ‚½‚Æ‚«ß“_‚ğ’u‚­
 				{
 					//if(sqrt(temp.r[A_X]*temp.r[A_X]+temp.r[A_Y]*temp.r[A_Y])>rc+le || z>0)
 					{
@@ -1633,7 +1603,7 @@ void tetgen_function::SetBaseBoundary(mpsconfig &CON, tetgen_config &TET, vector
 		}
 	}//*/
 
-	//nodeãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆ
+	//nodeƒtƒ@ƒCƒ‹ì¬
 	MakeNodeFile(CON, NODEb, "NODEb.node");
 
 	in.load_node("NODEb");
@@ -1643,15 +1613,15 @@ void tetgen_function::SetBaseBoundary(mpsconfig &CON, tetgen_config &TET, vector
 	out.save_faces("boundary_base");
 	//*/
 
-	//å¢ƒç•Œé¢ãƒ‡ãƒ¼ã‚¿å–å¾—
+	//‹«ŠE–Êƒf[ƒ^æ“¾
 	GetFacetList(FACEb, in, out, ELECTRODE1);
-	//.faceãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆ
+	//.faceƒtƒ@ƒCƒ‹ì¬
 	//MakeFaceFile(CON, FACEp, "FACEp.face");
 }
 
 void tetgen_function::SetMagnetBoundary(mpsconfig &CON, tetgen_config &TET, vector<tetgen_node> &NODEc, vector<tetgen_facet> &FACEc)
 {
-	cout<<"ç£çŸ³å¢ƒç•Œä½œæˆ"<<endl;
+	cout<<"¥Î‹«ŠEì¬"<<endl;
 
 	tetgenio in, out;
 	in.initialize();
@@ -1662,28 +1632,28 @@ void tetgen_function::SetMagnetBoundary(mpsconfig &CON, tetgen_config &TET, vect
 	temp.attribute=MAGNET;
 	temp.boundary=MAGNET;
 
-	//åˆ†å‰²æ•°æ±ºå®š
+	//•ªŠ„”Œˆ’è
 	double le=CON.get_distancebp();
-	double R=CON.get_magnet_r();	//ç£çŸ³åŠå¾„
-	double L=CON.get_magnet_H();	//ç£çŸ³é«˜ã•
+	double R=CON.get_magnet_r();	//¥Î”¼Œa
+	double L=CON.get_magnet_H();	//¥Î‚‚³
 	double Zmin=CON.get_magnet_Z()-0.5*CON.get_magnet_H();
 	double Zmax=CON.get_magnet_Z()+0.5*CON.get_magnet_H();
-	double dL=(Zmax-Zmin)/10;	//ç£çŸ³é•·ã•æ–¹å‘ãƒ¡ãƒƒã‚·ãƒ¥ç²—ã•
-	double dR=le;//åŠå¾„æ–¹å‘ã®åˆ†å‰²å˜ä½
+	double dL=(Zmax-Zmin)/10;	//¥Î’·‚³•ûŒüƒƒbƒVƒ…‘e‚³
+	double dR=le;//”¼Œa•ûŒü‚Ì•ªŠ„’PˆÊ
 
-	//ä¸Šä¸‹å´é¢ã§ãƒ†ãƒ¼ãƒ‘ãƒ¼ã‚’ä»˜ã‘ãŸã„æ™‚ã¯åˆ†ã‘ã‚‹ã¹ãã ãŒã¾ã¨ã‚ã¦ã‚‚ã„ã„ã‹ã‚‚ãƒ»ãƒ»ãƒ»
+	//ã‰º‘¤–Ê‚Åƒe[ƒp[‚ğ•t‚¯‚½‚¢‚Í•ª‚¯‚é‚×‚«‚¾‚ª‚Ü‚Æ‚ß‚Ä‚à‚¢‚¢‚©‚àEEE
 
-	//ä¸Šé¢ä¸­å¿ƒ
+	//’†S
 	temp.r[A_X]=0;
 	temp.r[A_Y]=0;	
 	temp.r[A_Z]=Zmax;
 	NODEc.push_back(temp);
 	temp.id+=1;
 
-	//ä¸Šé¢
+	//ã–Ê
 	for(double r=dR;r<R+0.1*dR;r+=dR)
 	{
-		int nr=static_cast<int>(2.0*PI*r/dR);//æ­£ä½•è§’å½¢ã§è¿‘ä¼¼ã™ã‚‹ã‹ï¼ˆè§’åº¦æ–¹å‘ã®åˆ†å‰²æ•°ï¼‰
+		int nr=static_cast<int>(2.0*PI*r/dR);//³‰½ŠpŒ`‚Å‹ß—‚·‚é‚©iŠp“x•ûŒü‚Ì•ªŠ„”j
 		double d_theta=360.0/static_cast<double>(nr);
 
 		for(double theta=0.0;theta<360-0.1*d_theta;theta+=d_theta)
@@ -1696,10 +1666,10 @@ void tetgen_function::SetMagnetBoundary(mpsconfig &CON, tetgen_config &TET, vect
 		}
 	}
 
-	//å´é¢	//R*=1.005;	//ã‚ãšã‹ã«å¤ªãã™ã‚‹(ãƒ¡ãƒƒã‚·ãƒ¥ãŒç¹‹ãŒã‚‹ã®ã‚’é˜²ããŸã‚)ãƒ»ãƒ»ãƒ»ã“ã‚Œã¯ã„ã‚‰ã‚“
+	//‘¤–Ê	//R*=1.005;	//‚í‚¸‚©‚É‘¾‚­‚·‚é(ƒƒbƒVƒ…‚ªŒq‚ª‚é‚Ì‚ğ–h‚®‚½‚ß)EEE‚±‚ê‚Í‚¢‚ç‚ñ
 	for(double z=Zmax-dL;z>Zmin;z-=dL)
 	{
-		//ä¸­å¿ƒï¼ˆå¿˜ã‚Œãªã„ï¼‰
+		//’†Si–Y‚ê‚È‚¢j
 		temp.r[A_X]=0;
 		temp.r[A_Y]=0;	
 		temp.r[A_Z]=z;
@@ -1708,7 +1678,7 @@ void tetgen_function::SetMagnetBoundary(mpsconfig &CON, tetgen_config &TET, vect
 
 		for(double r=dR;r<R+0.1*dR;r+=dR)
 		{
-			int nr=static_cast<int>(2.0*PI*r/dR);//r=dRã®æ™‚ã¯nr=7
+			int nr=static_cast<int>(2.0*PI*r/dR);//r=dR‚Ì‚Ínr=7
 			double d_theta=360.0/static_cast<double>(nr);
 
 			for(double theta=0.0;theta<360.0-0.1*d_theta;theta+=d_theta)
@@ -1722,8 +1692,8 @@ void tetgen_function::SetMagnetBoundary(mpsconfig &CON, tetgen_config &TET, vect
 		}
 	}
 
-	//ä¸‹é¢
-	//ä¸­å¿ƒ
+	//‰º–Ê
+	//’†S
 	temp.r[A_X]=0;
 	temp.r[A_Y]=0;	
 	temp.r[A_Z]=Zmin;
@@ -1745,7 +1715,7 @@ void tetgen_function::SetMagnetBoundary(mpsconfig &CON, tetgen_config &TET, vect
 		}
 	}//*/
 
-	//nodeãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆ
+	//nodeƒtƒ@ƒCƒ‹ì¬
 	MakeNodeFile(CON, NODEc, "NODEc.node");
 
 	in.load_node("NODEc");
@@ -1755,15 +1725,15 @@ void tetgen_function::SetMagnetBoundary(mpsconfig &CON, tetgen_config &TET, vect
 	out.save_faces("boundary_column");
 	//*/
 
-	//å¢ƒç•Œé¢ãƒ‡ãƒ¼ã‚¿å–å¾—
+	//‹«ŠE–Êƒf[ƒ^æ“¾
 	GetFacetList(FACEc, in, out, MAGNET);
-	//.faceãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆ
+	//.faceƒtƒ@ƒCƒ‹ì¬
 	//MakeFaceFile(CON, FACEc, "FACEc.face");
 }
 
 void tetgen_function::SetCOILBoundary(mpsconfig &CON, tetgen_config &TET, vector<tetgen_node> &NODEc, vector<tetgen_facet> &FACEc)
 {
-	cout<<"ã‚³ã‚¤ãƒ«å¢ƒç•Œä½œæˆ"<<endl;
+	cout<<"ƒRƒCƒ‹‹«ŠEì¬"<<endl;
 
 	tetgenio in, out;
 	in.initialize();
@@ -1773,18 +1743,18 @@ void tetgen_function::SetCOILBoundary(mpsconfig &CON, tetgen_config &TET, vector
 	tetgen_node temp;
 	temp.id=0;
 
-	//åˆ†å‰²æ•°æ±ºå®š
+	//•ªŠ„”Œˆ’è
 	double le=CON.get_distancebp();
-	double R=CON.get_magnet_r();	//ç£çŸ³åŠå¾„
-	double L=CON.get_magnet_H();	//ç£çŸ³é«˜ã•
+	double R=CON.get_magnet_r();	//¥Î”¼Œa
+	double L=CON.get_magnet_H();	//¥Î‚‚³
 	double Zmin=CON.get_magnet_Z()-0.5*CON.get_magnet_H();
 	double Zmax=CON.get_magnet_Z()+0.5*CON.get_magnet_H();
-	double dL=(Zmax-Zmin)/20;	//ç£çŸ³é•·ã•æ–¹å‘ãƒ¡ãƒƒã‚·ãƒ¥ç²—ã•
-	double dR=0.001;//åŠå¾„æ–¹å‘ã®åˆ†å‰²å˜ä½
+	double dL=(Zmax-Zmin)/20;	//¥Î’·‚³•ûŒüƒƒbƒVƒ…‘e‚³
+	double dR=0.001;//”¼Œa•ûŒü‚Ì•ªŠ„’PˆÊ
 
-	//ä¸Šä¸‹å´é¢ã§ãƒ†ãƒ¼ãƒ‘ãƒ¼ã‚’ä»˜ã‘ãŸã„æ™‚ã¯åˆ†ã‘ã‚‹ã¹ãã ãŒã¾ã¨ã‚ã¦ã‚‚ã„ã„ã‹ã‚‚ãƒ»ãƒ»ãƒ»
+	//ã‰º‘¤–Ê‚Åƒe[ƒp[‚ğ•t‚¯‚½‚¢‚Í•ª‚¯‚é‚×‚«‚¾‚ª‚Ü‚Æ‚ß‚Ä‚à‚¢‚¢‚©‚àEEE
 
-	//ä¸­å¿ƒ
+	//’†S
 	temp.r[A_X]=0;
 	temp.r[A_Y]=0;	
 	temp.r[A_Z]=Zmax;
@@ -1793,10 +1763,10 @@ void tetgen_function::SetCOILBoundary(mpsconfig &CON, tetgen_config &TET, vector
 	NODEc.push_back(temp);
 	temp.id+=1;
 
-	//ä¸Šé¢
+	//ã–Ê
 	for(double r=dR;r<R+0.1*dR;r+=dR)
 	{
-		int nr=static_cast<int>(2.0*PI*r/dR);//æ­£ä½•è§’å½¢ã§è¿‘ä¼¼ã™ã‚‹ã‹ï¼ˆè§’åº¦æ–¹å‘ã®åˆ†å‰²æ•°ï¼‰
+		int nr=static_cast<int>(2.0*PI*r/dR);//³‰½ŠpŒ`‚Å‹ß—‚·‚é‚©iŠp“x•ûŒü‚Ì•ªŠ„”j
 		double d_theta=360.0/static_cast<double>(nr);
 
 		for(double theta=0.0;theta<360-0.1*d_theta;theta+=d_theta)
@@ -1815,8 +1785,8 @@ void tetgen_function::SetCOILBoundary(mpsconfig &CON, tetgen_config &TET, vector
 			temp.r[A_Y]=r*cos(theta*PI/180.0);	
 			temp.r[A_Z]=Zmax;
 			temp.attribute=COIL; //COIL
-			if(r>=R-0.1*dR){	//(r==R)ã ã¨èª¤å·®ã§é€šã‚‰ãªã„
-				int a=int((Zmax-Zmin)/dL);		//ã‚³ã‚¤ãƒ«ã®è¡¨é¢ã«ãƒ‡ã‚£ãƒ¬ã‚¯ãƒ¬å½¢å¢ƒç•Œæ¡ä»¶ã‚’æŒ¿å…¥
+			if(r>=R-0.1*dR){	//(r==R)‚¾‚ÆŒë·‚Å’Ê‚ç‚È‚¢
+				int a=int((Zmax-Zmin)/dL);		//ƒRƒCƒ‹‚Ì•\–Ê‚ÉƒfƒBƒŒƒNƒŒŒ`‹«ŠEğŒ‚ğ‘}“ü
 				if(a%3==2) temp.boundary=23;
 				else if(a%3==1) temp.boundary=22;
 				else if(a%3==0) temp.boundary=21;
@@ -1828,10 +1798,10 @@ void tetgen_function::SetCOILBoundary(mpsconfig &CON, tetgen_config &TET, vector
 		}
 	}
 
-	//å´é¢	//R*=1.005;	//ã‚ãšã‹ã«å¤ªãã™ã‚‹(ãƒ¡ãƒƒã‚·ãƒ¥ãŒç¹‹ãŒã‚‹ã®ã‚’é˜²ããŸã‚)ãƒ»ãƒ»ãƒ»ã“ã‚Œã¯ã„ã‚‰ã‚“
+	//‘¤–Ê	//R*=1.005;	//‚í‚¸‚©‚É‘¾‚­‚·‚é(ƒƒbƒVƒ…‚ªŒq‚ª‚é‚Ì‚ğ–h‚®‚½‚ß)EEE‚±‚ê‚Í‚¢‚ç‚ñ
 	for(double z=Zmax-dL;z>Zmin;z-=dL)
 	{
-		//ä¸­å¿ƒï¼ˆå¿˜ã‚Œãªã„ï¼‰
+		//’†Si–Y‚ê‚È‚¢j
 		temp.r[A_X]=0;
 		temp.r[A_Y]=0;	
 		temp.r[A_Z]=z;
@@ -1842,7 +1812,7 @@ void tetgen_function::SetCOILBoundary(mpsconfig &CON, tetgen_config &TET, vector
 
 		for(double r=dR;r<R+0.1*dR;r+=dR)
 		{
-			int nr=static_cast<int>(2.0*PI*r/dR);//r=dRã®æ™‚ã¯nr=7
+			int nr=static_cast<int>(2.0*PI*r/dR);//r=dR‚Ì‚Ínr=7
 			double d_theta=360.0/static_cast<double>(nr);
 
 			for(double theta=0.0;theta<360.0-0.1*d_theta;theta+=d_theta)
@@ -1875,8 +1845,8 @@ void tetgen_function::SetCOILBoundary(mpsconfig &CON, tetgen_config &TET, vector
 		}
 	}
 
-	//ä¸‹é¢
-	//ä¸­å¿ƒ
+	//‰º–Ê
+	//’†S
 	temp.r[A_X]=0;
 	temp.r[A_Y]=0;	
 	temp.r[A_Z]=Zmin;
@@ -1914,55 +1884,55 @@ void tetgen_function::SetCOILBoundary(mpsconfig &CON, tetgen_config &TET, vector
 		}
 	}//*/
 
-	//.stlãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿å–ã‚Š
+	//.stlƒtƒ@ƒCƒ‹“Ç‚İæ‚è
 //	in.load_stl("COIL");
-	//nodeãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆ
+	//nodeƒtƒ@ƒCƒ‹ì¬
 	MakeNodeFile(CON, NODEc, "COIL.node");
-	//.nodeãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿å–ã‚Š
+	//.nodeƒtƒ@ƒCƒ‹“Ç‚İæ‚è
 	in.load_node("COIL");
 
-	//ã¾ãšã¯æµä½“ç¯€ç‚¹ã®ã¿ã§åˆ†å‰²
+	//‚Ü‚¸‚Í—¬‘Ìß“_‚Ì‚İ‚Å•ªŠ„
 	tetrahedralize("", &in, &out);
-		// i è¦ç´ å†…ã¸ç¯€ç‚¹ã‚’è¿½åŠ (ä»Šã®æ‰€ç„¡ãã¦ã‚‚æ©Ÿèƒ½ã—ã¦ã„ã‚‹)
-		// f .faceãƒ•ã‚¡ã‚¤ãƒ«ã«å¢ƒç•Œã§ã¯ãªã„é¢ã‚‚å«ã‚ã‚‹
-		// e .edgeãƒ•ã‚¡ã‚¤ãƒ«ã®å‡ºåŠ›(ONã«ã™ã‚‹ã¨ãªãœã‹æ­¢ã¾ã£ã¦ã—ã¾ã†)
-		// n .neighãƒ•ã‚¡ã‚¤ãƒ«ã®å‡ºåŠ›
-	//å‡ºåŠ›
+		// i —v‘f“à‚Öß“_‚ğ’Ç‰Á(¡‚ÌŠ–³‚­‚Ä‚à‹@”\‚µ‚Ä‚¢‚é)
+		// f .faceƒtƒ@ƒCƒ‹‚É‹«ŠE‚Å‚Í‚È‚¢–Ê‚àŠÜ‚ß‚é
+		// e .edgeƒtƒ@ƒCƒ‹‚Ìo—Í(ON‚É‚·‚é‚Æ‚È‚º‚©~‚Ü‚Á‚Ä‚µ‚Ü‚¤)
+		// n .neighƒtƒ@ƒCƒ‹‚Ìo—Í
+	//o—Í
 	out.save_nodes("COIL_whole");
 	out.save_elements("COIL_whole");
 	out.save_faces("COIL_whole");
-	//////////////////ã“ã“ã¾ã§ã§æµä½“ç¯€ç‚¹ã®ã¿ã‚’ä½¿ã£ã¦ã€ã™ã¹ã¦ã®è¦ç´ ãŒç¹‹ãŒã£ãŸå‡¸ãªãƒ¡ãƒƒã‚·ãƒ¥ãŒã§ããŸ(fluid_wholeã§ç¢ºèªå¯èƒ½)*/
-	//è¦ç´ æè³ªã®æ±ºå®š
+	//////////////////‚±‚±‚Ü‚Å‚Å—¬‘Ìß“_‚Ì‚İ‚ğg‚Á‚ÄA‚·‚×‚Ä‚Ì—v‘f‚ªŒq‚ª‚Á‚½“Ê‚ÈƒƒbƒVƒ…‚ª‚Å‚«‚½(fluid_whole‚ÅŠm”F‰Â”\)*/
+	//—v‘fŞ¿‚ÌŒˆ’è
 //	Geteleattribute(NODEc,ELEMc, out);
-	///////////////ä¸è¦ãªè¦ç´ ã®å‰Šé™¤
+	///////////////•s—v‚È—v‘f‚Ìíœ
 
-	//.nodeã®å–å¾—
+	//.node‚Ìæ“¾
 //	GetPointList(NODEc, in, out);
-	//.eleã®å–å¾—
+	//.ele‚Ìæ“¾
 //	GetTetrahedronList(ELEMc, in, out);
-	//é•·ã„è¦ç´ ã®é™¤å»
+	//’·‚¢—v‘f‚Ìœ‹
 //	DelThinTetrahedron(CON, TET, NODEc, ELEMc, in, out);
 
-	//ç¯€ç‚¹-è¦ç´ é–¢ä¿‚
+	//ß“_-—v‘fŠÖŒW
 //	SetRelation_NodeElem(CON, NODEc, ELEMc);
-	//è¦ç´ -è¦ç´ é–¢ä¿‚
+	//—v‘f-—v‘fŠÖŒW
 //	SetRelation_ElemElem(CON, NODEc, ELEMc);
-	//å¢ƒç•Œé¢ãƒ‡ãƒ¼ã‚¿å–å¾—
+	//‹«ŠE–Êƒf[ƒ^æ“¾
 	GetFacetList(FACEc, in, out, COIL);
 
-/*	/////////////////è¦ç´ ç¢ºèªç”¨ãƒ•ã‚¡ã‚¤ãƒ«///////////////////////////////////
-	out.save_nodes("boundary_COIL");	//fluid.2.nodeã¨åŒã˜ãƒ•ã‚¡ã‚¤ãƒ«
+/*	/////////////////—v‘fŠm”F—pƒtƒ@ƒCƒ‹///////////////////////////////////
+	out.save_nodes("boundary_COIL");	//fluid.2.node‚Æ“¯‚¶ƒtƒ@ƒCƒ‹
 	MakeElemFile(CON, ELEMc, "boundary_COIL.ele");
 	MakeFaceFile(CON, FACEc, "boundary_COIL.face");
-	////////////////ã“ã“ã¾ã§ã§ã‚¨ãƒ©ã‚¹ãƒˆãƒãƒ¼ã®ãƒ¡ãƒƒã‚·ãƒ¥ãŒåˆ‡ã‚ŒãŸ//////////////////////*/
+	////////////////‚±‚±‚Ü‚Å‚ÅƒGƒ‰ƒXƒgƒ}[‚ÌƒƒbƒVƒ…‚ªØ‚ê‚½//////////////////////*/
 
-	//å¢ƒç•Œé¢ãƒ‡ãƒ¼ã‚¿å–å¾—
+	//‹«ŠE–Êƒf[ƒ^æ“¾
 //	GetFacetList(FACEc, in, out, MAGNET);
 }
 
 void tetgen_function::SetIRONBoundary(mpsconfig &CON, tetgen_config &TET, vector<tetgen_node> &NODEi, vector<tetgen_facet> &FACEi)
 {
-	cout<<"é‰„å¿ƒå¢ƒç•Œä½œæˆ"<<endl;
+	cout<<"“SS‹«ŠEì¬"<<endl;
 
 	tetgenio in, out;
 	in.initialize();
@@ -1972,11 +1942,11 @@ void tetgen_function::SetIRONBoundary(mpsconfig &CON, tetgen_config &TET, vector
 	tetgen_node temp;
 	temp.id=0;
 
-	//åˆ†å‰²æ•°æ±ºå®š
+	//•ªŠ„”Œˆ’è
 	int divN[3];
-	divN[A_R]=20;//åŠå¾„æ–¹å‘åˆ†å‰²æ•°
-	divN[A_t]=20;//è§’åº¦æ–¹å‘åˆ†å‰²æ•°ï¼ˆæ­£ä½•è§’å½¢ã§è¿‘ä¼¼ã™ã‚‹ã‹ï¼‰
-	divN[A_Z]=20;//é«˜ã•æ–¹å‘åˆ†å‰²æ•°
+	divN[A_R]=20;//”¼Œa•ûŒü•ªŠ„”
+	divN[A_t]=20;//Šp“x•ûŒü•ªŠ„”i³‰½ŠpŒ`‚Å‹ß—‚·‚é‚©j
+	divN[A_Z]=20;//‚‚³•ûŒü•ªŠ„”
 	double Rmin=0.0;
 	double Rmax=CON.get_magnet_r();
 
@@ -1986,13 +1956,13 @@ void tetgen_function::SetIRONBoundary(mpsconfig &CON, tetgen_config &TET, vector
 	divL[A_R]=(Rmax-Rmin)/divN[A_R];
 	divL[A_t]=(2*PI)/divN[A_t];
 	divL[A_Z]=(Zmax-Zmin)/divN[A_Z];
-	double theta2=CON.get_magnet_angle()*PI*2/360;//ç£çŸ³ã®å›è»¢è§’åº¦
+	double theta2=CON.get_magnet_angle()*PI*2/360;//¥Î‚Ì‰ñ“]Šp“x
 
-	//ä¸Šä¸‹å´é¢ã§ãƒ†ãƒ¼ãƒ‘ãƒ¼ã‚’ä»˜ã‘ãŸã„æ™‚ã¯åˆ†ã‘ã‚‹ã¹ãã ãŒã¾ã¨ã‚ã¦ã‚‚ã„ã„ã‹ã‚‚ãƒ»ãƒ»ãƒ»
+	//ã‰º‘¤–Ê‚Åƒe[ƒp[‚ğ•t‚¯‚½‚¢‚Í•ª‚¯‚é‚×‚«‚¾‚ª‚Ü‚Æ‚ß‚Ä‚à‚¢‚¢‚©‚àEEE
 
 	for(int n=0;n<5;n++)
 	{
-		if(n==0)//ä¸­å¿ƒ
+		if(n==0)//’†S
 		{
 			for(int k=0;k<=divN[A_Z];k++)
 			{
@@ -2000,9 +1970,9 @@ void tetgen_function::SetIRONBoundary(mpsconfig &CON, tetgen_config &TET, vector
 				temp.r[A_Y]=0;
 				temp.r[A_Z]=Zmin+divL[A_Z]*k;
 				temp.attribute=IRON;				
-				temp.boundary=0;			//å¢ƒç•Œæ¡ä»¶
+				temp.boundary=0;			//‹«ŠEğŒ
 			
-				if(fabs(theta2)>0.0175)//doubleã‚’0ã¨æ¯”è¼ƒã—ã¦ã¯ã„ã‘ãªã„ï¼ˆä¸€è‡´ã™ã‚‹ã‚ã‘ãŒãªã„ï¼‰
+				if(fabs(theta2)>0.0175)//double‚ğ0‚Æ”äŠr‚µ‚Ä‚Í‚¢‚¯‚È‚¢iˆê’v‚·‚é‚í‚¯‚ª‚È‚¢j
 				{
 					double XX=temp.r[A_X];
 					double ZZ=temp.r[A_Z]-CON.get_magnet_Z();
@@ -2028,19 +1998,19 @@ void tetgen_function::SetIRONBoundary(mpsconfig &CON, tetgen_config &TET, vector
 					temp.r[A_Z]=Zmin+divL[A_Z]*k;
 					
 					temp.attribute=IRON;	
-					temp.boundary=0;			//å¢ƒç•Œæ¡ä»¶
+					temp.boundary=0;			//‹«ŠEğŒ
 
 		//			temp.attribute=IRON;
-		//			 if((n==divN[A_R]) && (k%3==0))temp.boundary=23;//å¤–å‘¨å´é¢
+		//			 if((n==divN[A_R]) && (k%3==0))temp.boundary=23;//ŠOü‘¤–Ê
 		//			else if((n==divN[A_R]) && (k%3==1))temp.boundary=22;
 		//			else if((n==divN[A_R]) && (k%3==2))temp.boundary=21;
-		/*			else if((n==6) && (k%3==0)) NODE[num].boundary_condition=21;	//é‰„å¿ƒã¨ã®å¢ƒç•Œé¢
+		/*			else if((n==6) && (k%3==0)) NODE[num].boundary_condition=21;	//“SS‚Æ‚Ì‹«ŠE–Ê
 					else if((n==6) && (k%3==1))NODE[num].boundary_condition=22;
 					else if((n==6) && (k%3==2))NODE[num].boundary_condition=23;  */
-					/*temp.boundary=0;*/			//å¢ƒç•Œæ¡ä»¶
+					/*temp.boundary=0;*/			//‹«ŠEğŒ
 	
-					if(fabs(theta2)>0.0175)//ç£çŸ³ãŒå‚¾ã„ã¦ã„ã‚‹å ´åˆ(1degã‚ˆã‚Šå¤§ãã„å ´åˆ)ãƒ»ãƒ»ãƒ»doubleã‚’0ã¨æ¯”è¼ƒã—ã¦ã¯ã„ã‘ãªã„
-					//if(theta2!=0)ã“ã‚Œã¯ãƒ€ãƒ¡ï¼ï¼
+					if(fabs(theta2)>0.0175)//¥Î‚ªŒX‚¢‚Ä‚¢‚éê‡(1deg‚æ‚è‘å‚«‚¢ê‡)EEEdouble‚ğ0‚Æ”äŠr‚µ‚Ä‚Í‚¢‚¯‚È‚¢
+					//if(theta2!=0)‚±‚ê‚Íƒ_ƒII
 					{
 						double XX=temp.r[A_X];
 						double ZZ=temp.r[A_Z]-CON.get_magnet_Z();
@@ -2050,65 +2020,65 @@ void tetgen_function::SetIRONBoundary(mpsconfig &CON, tetgen_config &TET, vector
 						temp.r[A_Z]=newZ;
 					}
 					NODEi.push_back(temp);
-					temp.id+=1;					//IDæ ¼ç´
+					temp.id+=1;					//IDŠi”[
 				}
 			}
 		}
 	}
-	//nodeãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆ
+	//nodeƒtƒ@ƒCƒ‹ì¬
 	MakeNodeFile(CON, NODEi, "IRON.node");
 
-	//.nodeãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿å–ã‚Š
+	//.nodeƒtƒ@ƒCƒ‹“Ç‚İæ‚è
 	in.load_node("IRON");
 
-	//ã¾ãšã¯æµä½“ç¯€ç‚¹ã®ã¿ã§åˆ†å‰²
+	//‚Ü‚¸‚Í—¬‘Ìß“_‚Ì‚İ‚Å•ªŠ„
 	tetrahedralize("", &in, &out);
-		// i è¦ç´ å†…ã¸ç¯€ç‚¹ã‚’è¿½åŠ (ä»Šã®æ‰€ç„¡ãã¦ã‚‚æ©Ÿèƒ½ã—ã¦ã„ã‚‹)
-		// f .faceãƒ•ã‚¡ã‚¤ãƒ«ã«å¢ƒç•Œã§ã¯ãªã„é¢ã‚‚å«ã‚ã‚‹
-		// e .edgeãƒ•ã‚¡ã‚¤ãƒ«ã®å‡ºåŠ›(ONã«ã™ã‚‹ã¨ãªãœã‹æ­¢ã¾ã£ã¦ã—ã¾ã†)
-		// n .neighãƒ•ã‚¡ã‚¤ãƒ«ã®å‡ºåŠ›
+		// i —v‘f“à‚Öß“_‚ğ’Ç‰Á(¡‚ÌŠ–³‚­‚Ä‚à‹@”\‚µ‚Ä‚¢‚é)
+		// f .faceƒtƒ@ƒCƒ‹‚É‹«ŠE‚Å‚Í‚È‚¢–Ê‚àŠÜ‚ß‚é
+		// e .edgeƒtƒ@ƒCƒ‹‚Ìo—Í(ON‚É‚·‚é‚Æ‚È‚º‚©~‚Ü‚Á‚Ä‚µ‚Ü‚¤)
+		// n .neighƒtƒ@ƒCƒ‹‚Ìo—Í
 
-	//å‡ºåŠ›
+	//o—Í
 	out.save_nodes("IRON_whole");
 	out.save_elements("IRON_whole");
 
-	//////////////////ã“ã“ã¾ã§ã§æµä½“ç¯€ç‚¹ã®ã¿ã‚’ä½¿ã£ã¦ã€ã™ã¹ã¦ã®è¦ç´ ãŒç¹‹ãŒã£ãŸå‡¸ãªãƒ¡ãƒƒã‚·ãƒ¥ãŒã§ããŸ(fluid_wholeã§ç¢ºèªå¯èƒ½)*/
-	//è¦ç´ æè³ªã®æ±ºå®š
+	//////////////////‚±‚±‚Ü‚Å‚Å—¬‘Ìß“_‚Ì‚İ‚ğg‚Á‚ÄA‚·‚×‚Ä‚Ì—v‘f‚ªŒq‚ª‚Á‚½“Ê‚ÈƒƒbƒVƒ…‚ª‚Å‚«‚½(fluid_whole‚ÅŠm”F‰Â”\)*/
+	//—v‘fŞ¿‚ÌŒˆ’è
 //	Geteleattribute(NODEc,ELEMc, out);
-	///////////////ä¸è¦ãªè¦ç´ ã®å‰Šé™¤
+	///////////////•s—v‚È—v‘f‚Ìíœ
 
-	//.nodeã®å–å¾—
+	//.node‚Ìæ“¾
 	GetPointList(NODEi, in, out);
-	//.eleã®å–å¾—
+	//.ele‚Ìæ“¾
 	GetTetrahedronList(ELEMi, in, out);
 
-	//é•·ã„è¦ç´ ã®é™¤å»
+	//’·‚¢—v‘f‚Ìœ‹
 //	DelThinTetrahedron(CON, TET, NODEc, ELEMc, in, out);
 
-	//ç¯€ç‚¹-è¦ç´ é–¢ä¿‚
+	//ß“_-—v‘fŠÖŒW
 	SetRelation_NodeElem(CON, NODEi, ELEMi);
-	//è¦ç´ -è¦ç´ é–¢ä¿‚
+	//—v‘f-—v‘fŠÖŒW
 	SetRelation_ElemElem(CON, NODEi, ELEMi);
-	//å¢ƒç•Œé¢ãƒ‡ãƒ¼ã‚¿å–å¾—
+	//‹«ŠE–Êƒf[ƒ^æ“¾
 	GetFacetList(FACEi, in, out, IRON);
 
-	/////////////////è¦ç´ ç¢ºèªç”¨ãƒ•ã‚¡ã‚¤ãƒ«///////////////////////////////////
-	out.save_nodes("boundary_IRON");	//fluid.2.nodeã¨åŒã˜ãƒ•ã‚¡ã‚¤ãƒ«
+	/////////////////—v‘fŠm”F—pƒtƒ@ƒCƒ‹///////////////////////////////////
+	out.save_nodes("boundary_IRON");	//fluid.2.node‚Æ“¯‚¶ƒtƒ@ƒCƒ‹
 	MakeElemFile(CON, ELEMi, "boundary_IRON.ele");
 	MakeFaceFile(CON, FACEi, "boundary_IRON.face");
-	////////////////ã“ã“ã¾ã§ã§ã‚¨ãƒ©ã‚¹ãƒˆãƒãƒ¼ã®ãƒ¡ãƒƒã‚·ãƒ¥ãŒåˆ‡ã‚ŒãŸ//////////////////////*/
+	////////////////‚±‚±‚Ü‚Å‚ÅƒGƒ‰ƒXƒgƒ}[‚ÌƒƒbƒVƒ…‚ªØ‚ê‚½//////////////////////*/
 
-	//å¢ƒç•Œé¢ãƒ‡ãƒ¼ã‚¿å–å¾—
+	//‹«ŠE–Êƒf[ƒ^æ“¾
 //	GetFacetList(FACEc, in, out, MAGNET);
 }
 
-//å¢ƒç•Œç¯€ç‚¹ãƒ»å¢ƒç•Œé¢ãƒ‡ãƒ¼ã‚¿ã®çµåˆ
+//‹«ŠEß“_E‹«ŠE–Êƒf[ƒ^‚ÌŒ‹‡
 void tetgen_function::UniteBoundaryData(mpsconfig &CON, 
 					   vector<tetgen_node> &NODE, vector<tetgen_node> &NODEa1, vector<tetgen_node> &NODEa2, vector<tetgen_node> &NODEp, vector<tetgen_node> &NODEc, vector<tetgen_node> &NODEb, vector<tetgen_node> &NODEw, 
 					   vector<tetgen_facet> &FACE, vector<tetgen_facet> &FACEa1, vector<tetgen_facet> &FACEa2, vector<tetgen_facet> &FACEp, vector<tetgen_facet> &FACEc, vector<tetgen_facet> &FACEb, vector<tetgen_facet> &FACEw, 
 					   vector<int> &TRANS)
 {
-	cout<<"å¢ƒç•Œç¯€ç‚¹ãƒ»å¢ƒç•Œé¢ãƒ‡ãƒ¼ã‚¿ã®çµåˆ"<<endl;
+	cout<<"‹«ŠEß“_E‹«ŠE–Êƒf[ƒ^‚ÌŒ‹‡"<<endl;
 
 	NODE.clear();
 	FACE.clear();
@@ -2118,21 +2088,21 @@ void tetgen_function::UniteBoundaryData(mpsconfig &CON,
 	temp_n.boundary=0;
 	temp_f.boundary=0;
 
-	int offset_n=0;	//ç¯€ç‚¹ç•ªå·ã®ã‚ªãƒ•ã‚»ãƒƒãƒˆé‡
-	int offset_f=0;	//è¡¨é¢ç•ªå·ã®ã‚ªãƒ•ã‚»ãƒƒãƒˆé‡
+	int offset_n=0;	//ß“_”Ô†‚ÌƒIƒtƒZƒbƒg—Ê
+	int offset_f=0;	//•\–Ê”Ô†‚ÌƒIƒtƒZƒbƒg—Ê
 
 
-	//æ°´æ»´å¢ƒç•Œ
-	for(int i=0;i<(int)NODEw.size();i++)//ç¯€ç‚¹
+	//…“H‹«ŠE
+	for(int i=0;i<(int)NODEw.size();i++)//ß“_
 	{
-		TRANS.push_back(NODEw[i].part_no);	//TRANSã«ç²’å­ç•ªå·ã‚’æ ¼ç´(boundaryã«ç²’å­ç•ªå·ã‚’æ ¼ç´ã—ã¦ã„ã‚‹)
+		TRANS.push_back(NODEw[i].part_no);	//TRANS‚É—±q”Ô†‚ğŠi”[(boundary‚É—±q”Ô†‚ğŠi”[‚µ‚Ä‚¢‚é)
 
 		temp_n=NODEw[i];
 		temp_n.id+=offset_n;
 		//temp_n.boundary=WATER;
 		NODE.push_back(temp_n);
 	}
-	for(int i=0;i<(int)FACEw.size();i++)//è¡¨é¢
+	for(int i=0;i<(int)FACEw.size();i++)//•\–Ê
 	{
 		temp_f=FACEw[i];
 		for(int n=0;n<3;n++)	temp_f.node[n]+=offset_n;
@@ -2141,19 +2111,19 @@ void tetgen_function::UniteBoundaryData(mpsconfig &CON,
 		FACE.push_back(temp_f);
 	}
 
-	//ã‚ªãƒ•ã‚»ãƒƒãƒˆé‡æ›´æ–°
+	//ƒIƒtƒZƒbƒg—ÊXV
 	offset_n+=(int)NODEw.size();
 	offset_f+=(int)FACEw.size();
 
-	//ç©ºæ°—å¢ƒç•Œ
-	for(int i=0;i<(int)NODEa1.size();i++)//ç¯€ç‚¹
+	//‹ó‹C‹«ŠE
+	for(int i=0;i<(int)NODEa1.size();i++)//ß“_
 	{
 		temp_n=NODEa1[i];
 		temp_n.id+=offset_n;
 		//temp_n.boundary=AIR;
 		NODE.push_back(temp_n);
 	}
-	for(int i=0;i<(int)FACEa1.size();i++)//è¡¨é¢
+	for(int i=0;i<(int)FACEa1.size();i++)//•\–Ê
 	{
 		temp_f=FACEa1[i];
 		for(int n=0;n<3;n++)	temp_f.node[n]+=offset_n;
@@ -2162,19 +2132,19 @@ void tetgen_function::UniteBoundaryData(mpsconfig &CON,
 		FACE.push_back(temp_f);
 	}
 
-	//ã‚ªãƒ•ã‚»ãƒƒãƒˆé‡æ›´æ–°
+	//ƒIƒtƒZƒbƒg—ÊXV
 	offset_n+=(int)NODEa1.size();
 	offset_f+=(int)FACEa1.size();
 
-	//ç©ºæ°—å¢ƒç•Œ é«˜è§£åƒåº¦é¢
-	for(int i=0;i<(int)NODEa2.size();i++)//ç¯€ç‚¹
+	//‹ó‹C‹«ŠE ‚‰ğ‘œ“x–Ê
+	for(int i=0;i<(int)NODEa2.size();i++)//ß“_
 	{
 		temp_n=NODEa2[i];
 		temp_n.id+=offset_n;
 		//temp_n.boundary=AIR;
 		NODE.push_back(temp_n);
 	}
-	for(int i=0;i<(int)FACEa2.size();i++)//è¡¨é¢
+	for(int i=0;i<(int)FACEa2.size();i++)//•\–Ê
 	{
 		temp_f=FACEa2[i];
 		for(int n=0;n<3;n++)	temp_f.node[n]+=offset_n;
@@ -2183,19 +2153,19 @@ void tetgen_function::UniteBoundaryData(mpsconfig &CON,
 		FACE.push_back(temp_f);
 	}
 
-	//ã‚ªãƒ•ã‚»ãƒƒãƒˆé‡æ›´æ–°
+	//ƒIƒtƒZƒbƒg—ÊXV
 	offset_n+=(int)NODEa2.size();
 	offset_f+=(int)FACEa2.size();
 
-	//å¹³æ¿é›»æ¥µå¢ƒç•Œ
-	for(int i=0;i<(int)NODEp.size();i++)//ç¯€ç‚¹
+	//•½”Â“d‹É‹«ŠE
+	for(int i=0;i<(int)NODEp.size();i++)//ß“_
 	{
 		temp_n=NODEp[i];
 		temp_n.id+=offset_n;
 		//temp_n.boundary=ELECTRODE2;
 		NODE.push_back(temp_n);
 	}
-	for(int i=0;i<(int)FACEp.size();i++)//è¡¨é¢
+	for(int i=0;i<(int)FACEp.size();i++)//•\–Ê
 	{
 		temp_f=FACEp[i];
 		for(int n=0;n<3;n++)	temp_f.node[n]+=offset_n;
@@ -2204,19 +2174,19 @@ void tetgen_function::UniteBoundaryData(mpsconfig &CON,
 		FACE.push_back(temp_f);
 	}
 
-	//ã‚ªãƒ•ã‚»ãƒƒãƒˆé‡æ›´æ–°
+	//ƒIƒtƒZƒbƒg—ÊXV
 	offset_n+=(int)NODEp.size();
 	offset_f+=(int)FACEp.size();
 
-	//å††æŸ±é›»æ¥µå¢ƒç•Œ
-	for(int i=0;i<(int)NODEc.size();i++)//ç¯€ç‚¹
+	//‰~’Œ“d‹É‹«ŠE
+	for(int i=0;i<(int)NODEc.size();i++)//ß“_
 	{
 		temp_n=NODEc[i];
 		temp_n.id+=offset_n;
 		//temp_n.boundary=ELECTRODE1;
 		NODE.push_back(temp_n);
 	}
-	for(int i=0;i<(int)FACEc.size();i++)//è¡¨é¢
+	for(int i=0;i<(int)FACEc.size();i++)//•\–Ê
 	{
 		temp_f=FACEc[i];
 		for(int n=0;n<3;n++)	temp_f.node[n]+=offset_n;
@@ -2225,19 +2195,19 @@ void tetgen_function::UniteBoundaryData(mpsconfig &CON,
 		FACE.push_back(temp_f);
 	}
 
-	//ã‚ªãƒ•ã‚»ãƒƒãƒˆé‡æ›´æ–°
+	//ƒIƒtƒZƒbƒg—ÊXV
 	offset_n+=(int)NODEc.size();
 	offset_f+=(int)FACEc.size();
 
-	//åœŸå°å¢ƒç•Œ
-	for(int i=0;i<(int)NODEb.size();i++)//ç¯€ç‚¹
+	//“y‘ä‹«ŠE
+	for(int i=0;i<(int)NODEb.size();i++)//ß“_
 	{
 		temp_n=NODEb[i];
 		temp_n.id+=offset_n;
 		//temp_n.boundary=ELECTRODE1;
 		NODE.push_back(temp_n);
 	}
-	for(int i=0;i<(int)FACEb.size();i++)//è¡¨é¢
+	for(int i=0;i<(int)FACEb.size();i++)//•\–Ê
 	{
 		temp_f=FACEb[i];
 		for(int n=0;n<3;n++)	temp_f.node[n]+=offset_n;
@@ -2246,17 +2216,17 @@ void tetgen_function::UniteBoundaryData(mpsconfig &CON,
 		FACE.push_back(temp_f);
 	}
 
-	//ã‚ªãƒ•ã‚»ãƒƒãƒˆé‡æ›´æ–°
+	//ƒIƒtƒZƒbƒg—ÊXV
 	//offset_n+=(int)NODEb.size();
 	//offset_f+=(int)FACEb.size();
 
 	//cout<<"----------OK"<<endl;
 }
 
-//å¢ƒç•Œç¯€ç‚¹ãƒ»å¢ƒç•Œé¢ãƒ‡ãƒ¼ã‚¿ã®è¿½åŠ 
+//‹«ŠEß“_E‹«ŠE–Êƒf[ƒ^‚Ì’Ç‰Á
 void tetgen_function::AddBoundaryData(mpsconfig &CON, vector<tetgen_node> &NODEall, vector<tetgen_facet> &FACEall, vector<tetgen_node> &NODE, vector<tetgen_facet> &FACE, int attribute)
 {
-	//NODE,FACEã«æ ¼ç´ã•ã‚Œã¦ã„ã‚‹å„éƒ¨å“ã®ãƒ‡ãƒ¼ã‚¿ã‚’ï¼ŒNODEall,FACEallã«æ ¼ç´ã—ã¦ã„ãï¼
+	//NODE,FACE‚ÉŠi”[‚³‚ê‚Ä‚¢‚éŠe•”•i‚Ìƒf[ƒ^‚ğCNODEall,FACEall‚ÉŠi”[‚µ‚Ä‚¢‚­D
 
 	tetgen_node temp_n;
 	tetgen_facet temp_f;
@@ -2264,21 +2234,21 @@ void tetgen_function::AddBoundaryData(mpsconfig &CON, vector<tetgen_node> &NODEa
 	temp_n.boundary=0;
 	temp_f.boundary=0;
 
-	int offset_n=(int)NODEall.size();	//ç¯€ç‚¹ç•ªå·ã®ã‚ªãƒ•ã‚»ãƒƒãƒˆé‡
-	int offset_f=(int)FACEall.size();	//è¡¨é¢ç•ªå·ã®ã‚ªãƒ•ã‚»ãƒƒãƒˆé‡
+	int offset_n=(int)NODEall.size();	//ß“_”Ô†‚ÌƒIƒtƒZƒbƒg—Ê
+	int offset_f=(int)FACEall.size();	//•\–Ê”Ô†‚ÌƒIƒtƒZƒbƒg—Ê
 
 
-	//ç¯€ç‚¹ã®è¿½åŠ 
-	for(int i=0;i<(int)NODE.size();i++)//ç¯€ç‚¹
+	//ß“_‚Ì’Ç‰Á
+	for(int i=0;i<(int)NODE.size();i++)//ß“_
 	{
 		temp_n=NODE[i];
 		temp_n.id+=offset_n;
-		temp_n.boundary=NODE[i].boundary;//ãªãœã‹ã‚³ãƒ¡ãƒ³ãƒˆã‚¢ã‚¦ãƒˆã•ã‚Œã¦ã„ãŸãƒ»ãƒ»ãƒ»
+		temp_n.boundary=NODE[i].boundary;//‚È‚º‚©ƒRƒƒ“ƒgƒAƒEƒg‚³‚ê‚Ä‚¢‚½EEE
 		NODEall.push_back(temp_n);
 	}
 
-	//é¢ã®è¿½åŠ 
-	for(int i=0;i<(int)FACE.size();i++)//è¡¨é¢
+	//–Ê‚Ì’Ç‰Á
+	for(int i=0;i<(int)FACE.size();i++)//•\–Ê
 	{
 		temp_f=FACE[i];
 		for(int n=0;n<3;n++) temp_f.node[n]+=offset_n;
@@ -2288,23 +2258,23 @@ void tetgen_function::AddBoundaryData(mpsconfig &CON, vector<tetgen_node> &NODEa
 	}
 }
 
-//TRANS[]ã®æ ¼ç´
+//TRANS[]‚ÌŠi”[
 void tetgen_function::SetTRANS(vector<tetgen_node> &NODE, vector<int> &TRANS)
 {
-	//TRANS[i]ã«ã¯ã€ç¯€ç‚¹ç•ªå·iã«å¯¾å¿œã™ã‚‹ç²’å­ç•ªå·ã‚’æ ¼ç´ã™ã‚‹ã€‚
-	//FEM3D.cpp ã§ã¯ã€ç¯€ç‚¹ç•ªå·ãŒ1ã‹ã‚‰å§‹ã¾ã‚‹ã®ã§ã€TRANS[0]ã«ã¯å®£è¨€å¾Œã«-1ã‚’å…¥ã‚Œã‚‹ã€‚ï¼ˆã“ã“ã§ã¯æ—¢ã«å…¥ã£ã¦ã„ã‚‹ï¼‰
+	//TRANS[i]‚É‚ÍAß“_”Ô†i‚É‘Î‰‚·‚é—±q”Ô†‚ğŠi”[‚·‚éB
+	//FEM3D.cpp ‚Å‚ÍAß“_”Ô†‚ª1‚©‚çn‚Ü‚é‚Ì‚ÅATRANS[0]‚É‚ÍéŒ¾Œã‚É-1‚ğ“ü‚ê‚éBi‚±‚±‚Å‚ÍŠù‚É“ü‚Á‚Ä‚¢‚éj
 
 	for(int i=0;i<(int)NODE.size();i++)
 	{
-		TRANS.push_back(NODE[i].part_no);	//TRANSã«ç²’å­ç•ªå·ã‚’æ ¼ç´
+		TRANS.push_back(NODE[i].part_no);	//TRANS‚É—±q”Ô†‚ğŠi”[
 	}
 }
 
 
-//æè³ªã®æ±ºå®šï¼ˆã¾ã æœªå®Œæˆï¼‰
+//Ş¿‚ÌŒˆ’èi‚Ü‚¾–¢Š®¬j
 void tetgen_function::DecisionAttribute(vector<tetgen_node> &NODE, vector<tetgen_element> &ELEM, tetgenio &in, tetgenio &out)
 {
-	double M[4];	//ç¯€ç‚¹ã®æè³ªã‚’æ ¼ç´
+	double M[4];	//ß“_‚ÌŞ¿‚ğŠi”[
 	
 	for(int i=0;i<(int)ELEM.size();i++)
 	{	
@@ -2312,14 +2282,14 @@ void tetgen_function::DecisionAttribute(vector<tetgen_node> &NODE, vector<tetgen
 		{
 			for(int n=0;n<4;n++)	M[n]=NODE[ELEM[i].node[n]].attribute;
 
-			if(M[0]==AIR || M[1]==AIR || M[2]==AIR || M[3]==AIR)	//1ã¤ã§ã‚‚ç©ºæ°—ç¯€ç‚¹ãŒã‚ã‚Œã°ç©ºæ°—è¦ç´ 
+			if(M[0]==AIR || M[1]==AIR || M[2]==AIR || M[3]==AIR)	//1‚Â‚Å‚à‹ó‹Cß“_‚ª‚ ‚ê‚Î‹ó‹C—v‘f
 			{
 				ELEM[i].attribute=AIR;
 				out.tetrahedronattributelist[i]=AIR;
 			}
 			else
 			{
-				ELEM[i].attribute=WATER;	//æ®‹ã‚Šã¯æ°´
+				ELEM[i].attribute=WATER;	//c‚è‚Í…
 				out.tetrahedronattributelist[i]=WATER;
 			}
 		}
@@ -2327,34 +2297,34 @@ void tetgen_function::DecisionAttribute(vector<tetgen_node> &NODE, vector<tetgen
 }
 
 
-//æè³ªã®ä¿®æ­£  ã“ã®é–¢æ•°ã‚’ä½¿ã†ã¨ãã¯ç›´å‰ã«tetgenioã‹ã‚‰ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—ã—ã¦ãŠãã“ã¨
+//Ş¿‚ÌC³  ‚±‚ÌŠÖ”‚ğg‚¤‚Æ‚«‚Í’¼‘O‚Étetgenio‚©‚çƒf[ƒ^‚ğæ“¾‚µ‚Ä‚¨‚­‚±‚Æ
 void tetgen_function::ModifyAttribute(mpsconfig &CON, tetgen_config &TET, vector<tetgen_node> &NODE, vector<tetgen_element> &ELEM, tetgenio &in, tetgenio &out)
 {
-	//tetgenioã‹ã‚‰ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—æ¸ˆã¿ã¨ä»®å®šã™ã‚‹
-	//ç¯€ç‚¹-ç¯€ç‚¹é–¢ä¿‚ãŒå¾—ã‚‰ã‚Œã¦ã„ã‚‹ã¨ä»®å®šã™ã‚‹
+	//tetgenio‚©‚çƒf[ƒ^‚ğæ“¾Ï‚İ‚Æ‰¼’è‚·‚é
+	//ß“_-ß“_ŠÖŒW‚ª“¾‚ç‚ê‚Ä‚¢‚é‚Æ‰¼’è‚·‚é
 
 	/*double le=CON.get_distancebp();
 	double rc=TET.radius_column;
 	double L=TET.length_column;*/
 
-	//è¦ç´ ã®æè³ªã®ä¿®æ­£  ã“ã®æ™‚ç‚¹ã§ã¯æ°´è¦ç´ ã¨ãªã‚‹é ˜åŸŸã¯æè³ªç•ªå·ãŒ0(æœªå®šç¾©)ã¨ãªã£ã¦ã„ã‚‹
+	//—v‘f‚ÌŞ¿‚ÌC³  ‚±‚Ì“_‚Å‚Í…—v‘f‚Æ‚È‚é—Ìˆæ‚ÍŞ¿”Ô†‚ª0(–¢’è‹`)‚Æ‚È‚Á‚Ä‚¢‚é
 	for(int i=0;i<(int)ELEM.size();i++)
 	{
-		//æœªå®šç¾©(0)ã®æè³ªã‚’æ°´ã«ã™ã‚‹
+		//–¢’è‹`(0)‚ÌŞ¿‚ğ…‚É‚·‚é
 		if(ELEM[i].attribute==0)
 		{
 			ELEM[i].attribute=WATER;
 		}
 	}
 
-	//ç¯€ç‚¹ã®æè³ªã‚’è¦ç´ ã®æè³ªã¨åˆã‚ã›ã‚‹
+	//ß“_‚ÌŞ¿‚ğ—v‘f‚ÌŞ¿‚Æ‡‚í‚¹‚é
 
-	//ã¾ãšå…¨éƒ¨ç©ºæ°—ã«ã™ã‚‹
+	//‚Ü‚¸‘S•”‹ó‹C‚É‚·‚é
 	for(int i=0;i<(int)ELEM.size();i++)
 	{
 		NODE[i].attribute=AIR;
 	}
-	//æ°´ç¯€ç‚¹ã®æ±ºå®š
+	//…ß“_‚ÌŒˆ’è
 	for(int i=0;i<(int)ELEM.size();i++)
 	{
 		if(ELEM[i].attribute==WATER)
@@ -2362,7 +2332,7 @@ void tetgen_function::ModifyAttribute(mpsconfig &CON, tetgen_config &TET, vector
 			for(int n=0;n<4;n++)	NODE[ELEM[i].node[n]].attribute=ELEM[i].attribute;
 		}
 	}
-	//é›»æ¥µç¯€ç‚¹ã®æ±ºå®š
+	//“d‹Éß“_‚ÌŒˆ’è
 	for(int i=0;i<(int)ELEM.size();i++)
 	{
 		if(ELEM[i].attribute==WATER)
@@ -2371,7 +2341,7 @@ void tetgen_function::ModifyAttribute(mpsconfig &CON, tetgen_config &TET, vector
 		}
 	}
 
-	//ç¯€ç‚¹-ç¯€ç‚¹é–¢ä¿‚ã‚ˆã‚Šç¯€ç‚¹ã®ä¿®æ­£
+	//ß“_-ß“_ŠÖŒW‚æ‚èß“_‚ÌC³
 	for(int i=0;i<(int)NODE.size();i++)
 	{
 		if(NODE[i].attribute==AIR)
@@ -2383,14 +2353,14 @@ void tetgen_function::ModifyAttribute(mpsconfig &CON, tetgen_config &TET, vector
 }
 
 
-//æè³ªã®ä¿®æ­£  tetgenioã‚’ç›´æ¥ç·¨é›†
+//Ş¿‚ÌC³  tetgenio‚ğ’¼Ú•ÒW
 void tetgen_function::ModifyAttribute_tetgenio(mpsconfig &CON, tetgen_config &TET, vector<tetgen_node> &NODE, vector<tetgen_element> &ELEM, tetgenio &in, tetgenio &out)
 {
 	double le=CON.get_distancebp();
 	double rc=TET.radius_column;
 	double L=TET.length_column;
 
-	//ç¯€ç‚¹è‡ªå‹•æŒ¿å…¥ã•ã‚ŒãŸç¯€ç‚¹ã®æè³ªã‚’ã¨ã‚Šã‚ãˆãšç©ºæ°—ã¨ã™ã‚‹
+	//ß“_©“®‘}“ü‚³‚ê‚½ß“_‚ÌŞ¿‚ğ‚Æ‚è‚ ‚¦‚¸‹ó‹C‚Æ‚·‚é
 	for(int i=0;i<out.numberofpoints;i++)
 	{
 		if(out.pointattributelist[i]==0)
@@ -2399,15 +2369,15 @@ void tetgen_function::ModifyAttribute_tetgenio(mpsconfig &CON, tetgen_config &TE
 		}
 	}//*/
 
-	//è¦ç´ ã®æè³ªã®ä¿®æ­£  ã“ã®æ™‚ç‚¹ã§ã¯æ°´è¦ç´ ã¨ãªã‚‹é ˜åŸŸã¯æè³ªç•ªå·ãŒãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã§0(æœªå®šç¾©)ã¨ãªã£ã¦ã„ã‚‹
+	//—v‘f‚ÌŞ¿‚ÌC³  ‚±‚Ì“_‚Å‚Í…—v‘f‚Æ‚È‚é—Ìˆæ‚ÍŞ¿”Ô†‚ªƒfƒtƒHƒ‹ƒg‚Å0(–¢’è‹`)‚Æ‚È‚Á‚Ä‚¢‚é
 	if(CON.get_model_number()==14)
 	{
 		for(int i=0;i<out.numberoftetrahedra;i++)
 		{
-			//æœªå®šç¾©ã®æè³ªã‚’æ°´ã«ã™ã‚‹
+			//–¢’è‹`‚ÌŞ¿‚ğ…‚É‚·‚é
 			if(out.tetrahedronattributelist[i]==0)
 			{
-				out.tetrahedronattributelist[i]=WATER;//0ã ã£ãŸã‚‚ã®ãŒWATERã«ãªã‚‹
+				out.tetrahedronattributelist[i]=WATER;//0‚¾‚Á‚½‚à‚Ì‚ªWATER‚É‚È‚é
 			}
 		}
 	}
@@ -2415,20 +2385,20 @@ void tetgen_function::ModifyAttribute_tetgenio(mpsconfig &CON, tetgen_config &TE
 	if(CON.get_model_number()==2)
 	{
 			for(int i=0;i<out.numberofpoints;i++){
-	if(out.pointattributelist[i]==FACE_P) out.pointattributelist[i]=MAGELAST;//è¦ç´ ã‚’æˆ»ã™
+	if(out.pointattributelist[i]==FACE_P) out.pointattributelist[i]=MAGELAST;//—v‘f‚ğ–ß‚·
 	}
 		for(int i=0;i<out.numberoftetrahedra;i++)
 		{
-			/////////////////è¦ç´ ã‚’ä½œã‚‹ç‚¹ã®è¦ç´ /////////////////////////
+			/////////////////—v‘f‚ğì‚é“_‚Ì—v‘f/////////////////////////
 			int ai=(int)out.pointattributelist[out.tetrahedronlist[4*i]];
 			int bi=(int)out.pointattributelist[out.tetrahedronlist[4*i+1]];
 			int ci=(int)out.pointattributelist[out.tetrahedronlist[4*i+2]];
 			int di=(int)out.pointattributelist[out.tetrahedronlist[4*i+3]];
 			////////////////////////////////////////////////////////////
 			
-			if(ai==bi && bi==ci && ci==di) out.tetrahedronattributelist[i]=di;//ã™ã¹ã¦åŒã˜ç´ æãªã‚‰è¦ç´ ã‚‚ãã®ç´ æ
+			if(ai==bi && bi==ci && ci==di) out.tetrahedronattributelist[i]=di;//‚·‚×‚Ä“¯‚¶‘fŞ‚È‚ç—v‘f‚à‚»‚Ì‘fŞ
 			
-	//		if(ai==AIR || bi==AIR || ci==AIR || di==AIR) out.tetrahedronattributelist[i]=AIR;//ã²ã¨ã¤ã§ã‚‚ç©ºæ°—æ¥ç‚¹ã‚’å«ã‚“ã§ã„ã‚‹ãªã‚‰ç©ºæ°—	//ã“ã‚Œã‚’å…¥ã‚Œã‚‹ã¨MREä¸­ã«ç©ºæ°—è¦ç´ ãŒã§ãã‚‹
+	//		if(ai==AIR || bi==AIR || ci==AIR || di==AIR) out.tetrahedronattributelist[i]=AIR;//‚Ğ‚Æ‚Â‚Å‚à‹ó‹CÚ“_‚ğŠÜ‚ñ‚Å‚¢‚é‚È‚ç‹ó‹C	//‚±‚ê‚ğ“ü‚ê‚é‚ÆMRE’†‚É‹ó‹C—v‘f‚ª‚Å‚«‚é
 			
 		}
 		for(int i=0;i<out.numberoftetrahedra;i++)
@@ -2439,30 +2409,30 @@ void tetgen_function::ModifyAttribute_tetgenio(mpsconfig &CON, tetgen_config &TE
 	else
 	{
 		for(int i=0;i<out.numberofpoints;i++){
-	if(out.pointattributelist[i]==FACE_P) out.pointattributelist[i]=MAGELAST;//è¦ç´ ã‚’æˆ»ã™
+	if(out.pointattributelist[i]==FACE_P) out.pointattributelist[i]=MAGELAST;//—v‘f‚ğ–ß‚·
 	}
 		for(int i=0;i<out.numberoftetrahedra;i++)
 		{
-			/////////////////è¦ç´ ã‚’ä½œã‚‹ç‚¹ã®è¦ç´ /////////////////////////
+			/////////////////—v‘f‚ğì‚é“_‚Ì—v‘f/////////////////////////
 			int ai=(int)out.pointattributelist[out.tetrahedronlist[4*i]];
 			int bi=(int)out.pointattributelist[out.tetrahedronlist[4*i+1]];
 			int ci=(int)out.pointattributelist[out.tetrahedronlist[4*i+2]];
 			int di=(int)out.pointattributelist[out.tetrahedronlist[4*i+3]];
 			////////////////////////////////////////////////////////////
 			
-			if(ai==bi && bi==ci && ci==di) out.tetrahedronattributelist[i]=di;//ã™ã¹ã¦åŒã˜ç´ æãªã‚‰è¦ç´ ã‚‚ãã®ç´ æ
+			if(ai==bi && bi==ci && ci==di) out.tetrahedronattributelist[i]=di;//‚·‚×‚Ä“¯‚¶‘fŞ‚È‚ç—v‘f‚à‚»‚Ì‘fŞ
 			
 			else if((ai==IRON || bi==IRON || ci==IRON || di==IRON) && !(ai==AIR || bi==AIR || ci==AIR || di==AIR)) {
-				out.tetrahedronattributelist[i]=IRON;//ã²ã¨ã¤ã§ã‚‚é‰„æ¥ç‚¹ã‚’å«ã‚“ã§ã„ã‚‹ãªã‚‰,ã‹ã¤ç©ºæ°—ã‚’ã²ã¨ã¤ã‚‚å«ã‚“ã§ãªã„ãªã‚‰é‰„
+				out.tetrahedronattributelist[i]=IRON;//‚Ğ‚Æ‚Â‚Å‚à“SÚ“_‚ğŠÜ‚ñ‚Å‚¢‚é‚È‚ç,‚©‚Â‹ó‹C‚ğ‚Ğ‚Æ‚Â‚àŠÜ‚ñ‚Å‚È‚¢‚È‚ç“S
 			}
-			//if(ai==AIR || bi==AIR || ci==AIR || di==AIR) out.tetrahedronattributelist[i]=AIR;//ã²ã¨ã¤ã§ã‚‚ç©ºæ°—æ¥ç‚¹ã‚’å«ã‚“ã§ã„ã‚‹ãªã‚‰ç©ºæ°—	//ã“ã‚Œã‚’å…¥ã‚Œã‚‹ã¨MREä¸­ã«ç©ºæ°—è¦ç´ ãŒã§ãã‚‹
+			//if(ai==AIR || bi==AIR || ci==AIR || di==AIR) out.tetrahedronattributelist[i]=AIR;//‚Ğ‚Æ‚Â‚Å‚à‹ó‹CÚ“_‚ğŠÜ‚ñ‚Å‚¢‚é‚È‚ç‹ó‹C	//‚±‚ê‚ğ“ü‚ê‚é‚ÆMRE’†‚É‹ó‹C—v‘f‚ª‚Å‚«‚é
 			
 		}
 		for(int i=0;i<out.numberoftetrahedra;i++)
 		{
 			if(out.tetrahedronattributelist[i]==0) out.tetrahedronattributelist[i]=AIR;
 		}
-/*		//è‰²ã®èª¿æ•´ã€€å°ã•ã„é †ã«èµ¤ãƒ»ç·‘ãƒ»é’ãƒ»é»„è‰² ã“ã‚Œã™ã‚‹ã¨è§£æãŒå›ã‚‰ãªã„ã€€ãƒ¡ãƒƒã‚·ãƒ¥ææ–™ã«ã“ã®å€¤ãŒä½¿ç”¨ã•ã‚Œã‚‹ãŸã‚
+/*		//F‚Ì’²®@¬‚³‚¢‡‚ÉÔE—ÎEÂE‰©F ‚±‚ê‚·‚é‚Æ‰ğÍ‚ª‰ñ‚ç‚È‚¢@ƒƒbƒVƒ…Ş—¿‚É‚±‚Ì’l‚ªg—p‚³‚ê‚é‚½‚ß
 		for(int i=0;i<out.numberoftetrahedra;i++)
 		{
 			if(out.tetrahedronattributelist[i]==COIL) out.tetrahedronattributelist[i]=1;
@@ -2473,9 +2443,9 @@ void tetgen_function::ModifyAttribute_tetgenio(mpsconfig &CON, tetgen_config &TE
 		}*/
 	}
 
-	//è‡ªå‹•è¿½åŠ ã•ã‚ŒãŸç¯€ç‚¹ã®ã®attributeã¨boundary_markerã®ä¿®æ­£
-	//ã“ã®æ™‚ç‚¹ã§ã¯æµä½“å†…éƒ¨ã‚„é›»æ¥µå†…éƒ¨ã‚„é›»æ¥µå†…éƒ¨ã®ç¯€ç‚¹ã¯ç©ºæ°—ç¯€ç‚¹ã«ãªã£ã¦ã„ã‚‹ã®ã§ãã‚Œãã‚Œã®æè³ªã«ä¿®æ­£ã™ã‚‹
-	//â€»é›»æ¥µã®ä¸€ç•ªä¸Šã®ç¯€ç‚¹ã¯é›»æ¥µã®ç¯€ç‚¹ã¨ã™ã‚‹ãŸã‚ã€å…ˆã«æ°´ã®ç¯€ç‚¹æ±ºã‚ã¦ã‹ã‚‰é›»æ¥µç¯€ç‚¹ã‚’æ±ºã‚ã‚‹
+	//©“®’Ç‰Á‚³‚ê‚½ß“_‚Ì‚Ìattribute‚Æboundary_marker‚ÌC³
+	//‚±‚Ì“_‚Å‚Í—¬‘Ì“à•”‚â“d‹É“à•”‚â“d‹É“à•”‚Ìß“_‚Í‹ó‹Cß“_‚É‚È‚Á‚Ä‚¢‚é‚Ì‚Å‚»‚ê‚¼‚ê‚ÌŞ¿‚ÉC³‚·‚é
+	//¦“d‹É‚Ìˆê”Ôã‚Ìß“_‚Í“d‹É‚Ìß“_‚Æ‚·‚é‚½‚ßAæ‚É…‚Ìß“_Œˆ‚ß‚Ä‚©‚ç“d‹Éß“_‚ğŒˆ‚ß‚é
 	
 	if(CON.get_model_number()==2)
 	{
@@ -2488,7 +2458,7 @@ void tetgen_function::ModifyAttribute_tetgenio(mpsconfig &CON, tetgen_config &TE
 					out.pointattributelist[out.tetrahedronlist[i*4+n]]=MAGNET;
 					out.pointmarkerlist[out.tetrahedronlist[i*4+n]]=MAGNET;
 				}
-			//	//æè³ªã¯ELECTRODEã«æˆ»ã—ã¦ãŠã
+			//	//Ş¿‚ÍELECTRODE‚É–ß‚µ‚Ä‚¨‚­
 			//	out.tetrahedronattributelist[i]=ELECTRODE;
 			}
 		}
@@ -2497,7 +2467,7 @@ void tetgen_function::ModifyAttribute_tetgenio(mpsconfig &CON, tetgen_config &TE
 }
 
 
-//è¦ç´ ã®ç´°åˆ†åŒ–
+//—v‘f‚Ì×•ª‰»
 void tetgen_function::FineElement(mpsconfig &CON, vector<tetgen_node> &NODE, vector<tetgen_element> &ELEM, tetgenio &in, tetgenio &out)
 {
 	tetgenio add;
@@ -2535,7 +2505,7 @@ void tetgen_function::FineElement(mpsconfig &CON, vector<tetgen_node> &NODE, vec
 	MakeNodeFile(CON, NODEadd, "output-a.node");
 }//*/
 
-//ç¯€ç‚¹é–“è·é›¢è¨ˆç®—é–¢æ•°
+//ß“_ŠÔ‹——£ŒvZŠÖ”
 double tetgen_function::Distance(tetgen_node &point1, tetgen_node &point2)
 {
 	double dis=0;
@@ -2546,7 +2516,7 @@ double tetgen_function::Distance(tetgen_node &point1, tetgen_node &point2)
 }
 
 
-//è¦ç´ é‡å¿ƒåº§æ¨™è¨ˆç®—é–¢æ•°
+//—v‘fdSÀ•WŒvZŠÖ”
 void tetgen_function::CalcBarycentricElement(mpsconfig&, vector<tetgen_node> &NODE, vector<tetgen_element> &ELEM)
 {
 	double r[3]={0,0,0};

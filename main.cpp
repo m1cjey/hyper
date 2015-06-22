@@ -1,3 +1,4 @@
+
 #include "stdafx.h"		//主要なヘッダーファイルはまとめてこのなか。
 //only main function
 
