@@ -26,14 +26,14 @@ mpsconfig::mpsconfig()
 	FEMCG=2;				//FEMにおける行列解法 0:CG 1:ICCG 2:並列ICCG 3:MRTR 4:ICMRTR
 
 //	dt= (switch_FEM==OFF) ? 1.0e-5: 5.0e-6; //0.0001;不安定要因！ 0.00001:推奨(Courant数考えて) //Cf. dt_for_FEM=0.000001/2;
-	dt=1.0e-4;
-	dt_for_FEM=1.0e-4;
+	dt=1.0e-3;
+	dt_for_FEM=1.0e-3;
 	//FEMだと0.000001で止まる・・・
 	current_step=1;
 	current_time=0.0;
 	dimension=3;
 
-	interval=10; //10	//particle_movie.mgfの出力間隔。2以上の整数にすること
+	interval=1; //10	//particle_movie.mgfの出力間隔。2以上の整数にすること
 	EM_interval=2;//1	//電磁場計算を何ステップに一回行うか。通常は1に設定
 	motion_interval=1;	//運動方程式を何回に一回解くか
 	
@@ -43,7 +43,7 @@ mpsconfig::mpsconfig()
 
 //モデル
 	model_number=23;			//4:引っ張り試験片 7:MREアクチュエータ 12:剛体
-	model_set_way=0;		//modelをセットする方法　0=正方格子 1=MD
+	model_set_way=1;		//modelをセットする方法　0=正方格子 1=MD
 
 //モデル１,11専用
 /*	R1=9*0.001;
@@ -65,10 +65,10 @@ mpsconfig::mpsconfig()
 	EM_calc_type=2;			//0=デローニのみ 1=電場 2=静磁場 3=動磁場 4=磁位
 //	EM_interval=1;//1		//電磁場計算を何ステップに一回行うか。通常は1に設定
 	//解析領域
-	XR=0.1;
-	XL=-0.1;
-	YU=0.1;
-	YD=-0.1;
+	XR=1.0;
+	XL=-1.0;
+	YU=1.0;
+	YD=-1.0;
 	/*
 	XR=0.1;//0.01;		
 	XL=-0.1;//-0.01;
@@ -112,12 +112,12 @@ mpsconfig::mpsconfig()
 	height=0.0;//0.005;    
 
 //解析領域
-	maxX=1.0;//0.1;	//0.1/2;	//1
-	minX=-1.0;//-0.1;	//-0.1/2;
-	maxY=1.0;//0.1;	//0.1/2;	//0.4;
-	minY=-1.0;//-0.1;	//-0.1/2;	//-0.6; //-1.0
-	maxZ=1.0;//0.1;	//0.1/2;	//0.3;
-	minZ=-1.0;//-0.1;	//-0.1/2;	//-0.6;  //indexの関係上、Z方向には余裕をもつこと。
+	maxX=1.5;//0.1;	//0.1/2;	//1
+	minX=-1.5;//-0.1;	//-0.1/2;
+	maxY=1.5;//0.1;	//0.1/2;	//0.4;
+	minY=-1.5;//-0.1;	//-0.1/2;	//-0.6; //-1.0
+	maxZ=1.5;//0.1;	//0.1/2;	//0.3;
+	minZ=-1.5;//-0.1;	//-0.1/2;	//-0.6;  //indexの関係上、Z方向には余裕をもつこと。
 
 	//FEMcheck用15/2/10
 /*	maxX=0.2;	//0.1/2;	//
@@ -335,7 +335,7 @@ mpsconfig::mpsconfig()
 	h_vis=1.0;
 	flag_vis=OFF;
 	tension_test=OFF;	//引っ張り試験解析用15/2/8
-	nr_time=2000;	//15/2/8
+	nr_time=1000;	//15/2/8
 }
 
 

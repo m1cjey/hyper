@@ -1229,8 +1229,8 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 	 /////////////////////////////////ただの立方体////////////////////////////////////
 	 else if(model==23)
 	 {
-		int height=5;
-		int base=5;
+		int height=4;
+		int base=4;
 		vector<int>suf;
 		vector<int>num;
 		//writedata2内決め打ち有
@@ -1286,12 +1286,13 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 					}
 				}
 			}
-		 for(int i=0;i<number;i++)	writedata2(fq,i,(X[i]-2)*le,(Y[i]-2)*le,(Z[i]+2)*le,HYPERELAST,1,suf[i],0,0,0,0,0,0,0,0,0,ON);
+		 for(int i=0;i<number;i++)	writedata2(fq,i,(X[i]-1.5)*le,(Y[i]-1.5)*le,(Z[i]-1.5)*le,HYPERELAST,1,suf[i],0,0,0,0,0,0,0,0,0,ON);
 
 		 cout<<"超弾性体完成\n";
 
 		 int number2=0;
-		 int w_base=8;
+	 	int number3=0;
+		 int w_base=6;
 		 int r_z=CON->get_r_z_wall();	//15/2/8
 
 		 for(int k=0;k<3*2-1;k++)
@@ -1338,11 +1339,59 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 					}
 				}
 			}
-		}
-
-		 for(int i=0;i<number2;i++)		 writedata2(fq,i+number,(X2[i]-3.5)*le,(Y2[i]-3.5)*le,(Z2[i]-2+r_z)*le,WALL,1,0,0,0,0,0,0,0,0,0,0,0);
+		 }
+		 for(int i=0;i<number2;i++)		 writedata2(fq,i+number,(X2[i]-2.5)*le,(Y2[i]-2.5)*le,(Z2[i]-1.0-6.0)*le,WALL,1,0,0,0,0,10.0*le,0,0,0,0,0,0);
 		 cout<<"number2"<<number2<<endl;
-		 number+=number2;
+
+		for(int k=0;k<3*2-1;k++)
+		 {
+			if(k%2==0)
+			{
+				for(int i=0;i<w_base;i++)
+				{
+					for(int j=0;j<w_base;j++)
+					{
+						X3.push_back(i);
+						Y3.push_back(j);
+						Z3.push_back(k*0.5);
+						number3++;
+					}
+				}
+			}
+		else
+		{
+			for(int j=0;j<w_base*2-1;j++)
+			{
+				if(j%2==0)
+				{
+					for(int i=0;i<w_base;i++)
+					{
+						if(i+0.5<w_base-1)
+						{
+							X3.push_back(i+0.5);
+							Y3.push_back(j*0.5);
+							Z3.push_back(k*0.5);
+							number3++;
+						}
+					}
+				}
+				else
+				{
+					for(int i=0;i<w_base;i++)
+					{
+							X3.push_back(i);
+							Y3.push_back(j*0.5);
+							Z3.push_back(k*0.5);
+							number3++;
+						}
+					}
+				}
+			}
+		}
+ 		 for(int i=0;i<number3;i++)		 writedata2(fq,i+number2+number,(X3[i]-2.5)*le,(Y3[i]-2.5)*le,(Z3[i]-1.0+6.0)*le,WALL,1,0,0,0,0,-10.0*le,0,0,0,0,0,0);
+		 cout<<"number3"<<number3<<endl;
+		 		 
+		 number+=number2+number3;
 		 cout<<"壁完成\n";
 		 cout<<"model完成\n";
 	 }

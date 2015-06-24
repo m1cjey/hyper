@@ -102,7 +102,7 @@ void calc_hyper(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HY
 	calc_half_p(CON,PART,HYPER,HYPER1,N,1,t);
 	cout<<"p is calculated."<<endl;
 
-	if(t==1||t%CON.get_interval())
+	if(t==1||t%CON.get_interval()==0)
 	{
 		output_hyper_data(PART,HYPER,t);
 		momentum_movie_AVS(CON,t,PART,HYPER,N);
@@ -452,7 +452,6 @@ void newton_raphson(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> 
 		{
 			gauss(DfDx,fx,N);
 			for(int i=0;i<N;i++)	XX[i]-=fx[i];
-			for(int i=0;i<N;i++)	cout<<XX[i]<<endl;
 		}
 
 		//誤差の評価
@@ -464,18 +463,8 @@ void newton_raphson(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> 
 			E+=fabs(XX[i]-XX_old[i]);
 			sum+=fabs(XX[i]);
 		}
-		cout<<E<<endl;
-		cout<<sum<<endl;
 		E/=sum;
-		cout<<E<<endl;
 
-		if(dec_flag==ON)
-		{
-			double det_E=0;
-			if(count==1)	det_E=E;
-			else	det_E=E_old-E;
-			if(det_E>0)	break;
-		}
 
 		if(count==1 || count%200==0)
 		{
@@ -535,8 +524,8 @@ void newton_raphson(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> 
 			i_fDfDx.close();*/
 		}
 
-
-		if(count>CON.get_nr())	break;			
+		if(E<1.0e-5)	break;
+		if(count>CON.get_nr())	break;
 	}
 //	end=clock();
 //	newton_t=(end-start)/CLOCKS_PER_SEC;
@@ -553,13 +542,12 @@ void newton_raphson(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> 
 	delete[]	XX_old;
 }
 
-void calc_newton_function(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> HYPER,vector<hyperelastic2> HYPER1,double *lambda,double *fx,double *DfDx,int particle_number,int count,int t)
+void calc_newton_function(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> HYPER,vector<hyperelastic2> HYPER1,double *lambda,double *fx,double *DfDx,int num,int count,int t)
 {
 
 	double Dt=CON.get_dt();
 	double V=get_volume(&CON);
 	double mi=V*CON.get_hyper_density();
-	int num=particle_number;
 
 	//half_pの計算
 	double p_half_p[3][3];
@@ -577,6 +565,24 @@ void calc_newton_function(mpsconfig &CON,vector<mpselastic> PART,vector<hyperela
 		n_rz[i]=0;
 	}
 
+	double **n_DgDq_x=new double* [num];
+	double **n_DgDq_y=new double *[num];
+	double **n_DgDq_z=new double* [num];
+	for(int i=0;i<num;i++)
+	{
+		n_DgDq_x[i]=new double[num];
+		n_DgDq_y[i]=new double [num];
+		n_DgDq_z[i]=new double [num];
+	}
+
+	//Fの計算
+	double **p_Fi=new double *[DIMENSION];
+	double **M=new double *[DIMENSION];
+	for(int D=0;D<DIMENSION;D++)
+	{
+		p_Fi[D]=new double [DIMENSION];
+		M[D]=new double [DIMENSION];
+	}
 	
 	for(int i=0;i<num;i++)
 	{
@@ -606,51 +612,22 @@ void calc_newton_function(mpsconfig &CON,vector<mpselastic> PART,vector<hyperela
 		if(CON.get_ttest()==ON&&HYPER[i].highest==ON)	n_rz[i]=PART[i].q0[A_Z];	//引っ張り試験解析用15/2/8
 	}
 
-	//Fの計算
-	double **p_Fi=new double *[DIMENSION];
-	double **M=new double *[DIMENSION];
-	for(int D=0;D<DIMENSION;D++)
+	for(int i=0;i<num;i++)
 	{
-		p_Fi[D]=new double [DIMENSION];
-		M[D]=new double [DIMENSION];
-	}
 	////qiinとFiの更新
-	//初期化
-	double fi[3][3];
-	double fi0[3][3];
-
-	for(int D=0;D<DIMENSION;D++)
-	{
-		for(int D2=0;D2<DIMENSION;D2++)	
+		//初期化
+		double fi[3][3];
+		double fi0[3][3];
+		for(int D=0;D<DIMENSION;D++)
 		{
-			fi0[D][D2]=0;
-			p_Fi[D][D2]=0;
+			for(int D2=0;D2<DIMENSION;D2++)	
+			{
+				fi0[D][D2]=0;
+				p_Fi[D][D2]=0;
+			}
 		}
-	}
-	//DgDqの計算
-	double **n_DgDq_x=new double* [num];
-	double **n_DgDq_y=new double *[num];
-	double **n_DgDq_z=new double* [num];
-	for(int i=0;i<num;i++)
-	{
-		n_DgDq_x[i]=new double[num];
-		n_DgDq_y[i]=new double [num];
-		n_DgDq_z[i]=new double [num];
-	}
-	for(int i=0;i<num;i++)
-	{
-		for(int j=0;j<num;j++)
-		{
-			n_DgDq_x[i][j]=0;
-			n_DgDq_y[i][j]=0;
-			n_DgDq_z[i][j]=0;
-		}
-	}
+		//DgDqの計算
 
-
-	//計算
-	for(int i=0;i<num;i++)
-	{
 		for(int D=0;D<DIMENSION;D++)	for(int D2=0;D2<DIMENSION;D2++)	fi[D][D2]=0;
 		int N=HYPER[i].N;
 
@@ -683,6 +660,10 @@ void calc_newton_function(mpsconfig &CON,vector<mpselastic> PART,vector<hyperela
 		//calculation of DgDq
 		for(int j=0;j<num;j++)
 		{
+			n_DgDq_x[i][j]=0;
+			n_DgDq_y[i][j]=0;
+			n_DgDq_z[i][j]=0;
+
 			double	p_n_DgDq[3];
 			for(int D=0;D<DIMENSION;D++)
 			{
@@ -692,39 +673,23 @@ void calc_newton_function(mpsconfig &CON,vector<mpselastic> PART,vector<hyperela
 			n_DgDq_x[i][j]=J*p_n_DgDq[A_X];
 			n_DgDq_y[i][j]=J*p_n_DgDq[A_Y];
 			n_DgDq_z[i][j]=J*p_n_DgDq[A_Z];
-
-			double DFDlambda=0;
-			DfDx[i*particle_number+j]=0;
-			for(int k=0;k<particle_number;k++)
-			{		
-				DFDlambda+=n_DgDq_x[i][k]*HYPER1[j*particle_number+k].DgDq[A_X];
-				DFDlambda+=n_DgDq_y[i][k]*HYPER1[j*particle_number+k].DgDq[A_Y];
-				DFDlambda+=n_DgDq_z[i][k]*HYPER1[j*particle_number+k].DgDq[A_Z];
-			}
-			DfDx[i*particle_number+j]=-Dt*Dt/2/mi*DFDlambda;
 		}
 	}
-	for(int D=0;D<DIMENSION;D++)
-	{
-		delete[]	p_Fi[D];
-		delete[]M[D];
-	}
-	delete[]	p_Fi;
-	delete[]M;
-
 	for(int i=0;i<num;i++)
 	{
-		delete[]n_DgDq_x[i];
-		delete[]n_DgDq_y[i];
-		delete[]n_DgDq_z[i];
+		for(int j=0;j<num;j++)
+		{
+			double DFDlambda=0;
+			DfDx[i*num+j]=0;
+			for(int k=0;k<num;k++)
+			{		
+				DFDlambda+=n_DgDq_x[i][k]*HYPER1[j*num+k].DgDq[A_X];
+				DFDlambda+=n_DgDq_y[i][k]*HYPER1[j*num+k].DgDq[A_Y];
+				DFDlambda+=n_DgDq_z[i][k]*HYPER1[j*num+k].DgDq[A_Z];
+			}
+			DfDx[i*num+j]=-Dt*Dt/2/mi*DFDlambda;
+		}
 	}
-	delete[]n_DgDq_x;
-	delete[]n_DgDq_y;
-	delete[]n_DgDq_z;
-
-	delete[]n_rx;
-	delete[]n_ry;
-	delete[]n_rz;
 
 
 
@@ -776,13 +741,36 @@ void calc_newton_function(mpsconfig &CON,vector<mpselastic> PART,vector<hyperela
 		fss.close();
 		fss3.close();
 			
-		for(int i=0;i<particle_number;i++)
+		for(int i=0;i<num;i++)
 		{
-			for(int j=0;j<particle_number;j++)	fs<<HYPER1[i*particle_number+j].DFDlambda<<",";
+			for(int j=0;j<num;j++)	fs<<HYPER1[i*num+j].DFDlambda<<",";
 			fs<<endl;
 		}
 		fs.close();*/
 	}
+	for(int D=0;D<DIMENSION;D++)
+	{
+		delete[]	p_Fi[D];
+		delete[]M[D];
+	}
+	delete[]	p_Fi;
+	delete[]M;
+
+	for(int i=0;i<num;i++)
+	{
+		delete[]n_DgDq_x[i];
+		delete[]n_DgDq_y[i];
+		delete[]n_DgDq_z[i];
+	}
+	delete[]n_DgDq_x;
+	delete[]n_DgDq_y;
+	delete[]n_DgDq_z;
+
+	delete[]n_rx;
+	delete[]n_ry;
+	delete[]n_rz;
+
+
 
 }
 
@@ -887,7 +875,6 @@ void calc_F(vector<mpselastic> PART,vector<hyperelastic> &HYPER,vector<hyperelas
 	//初期化
 	int num=particle_number;
 	double fi[3][3];
-	double fi2[3][3];
 	double fi0[3][3];
 
 	double **p_Fi=new double *[DIMENSION];
@@ -899,8 +886,7 @@ void calc_F(vector<mpselastic> PART,vector<hyperelastic> &HYPER,vector<hyperelas
 		M[D]=new double[DIMENSION];
 	}
 
-	for(int D=0;D<DIMENSION;D++)	for(int D2=0;D2<DIMENSION;D2++)	fi0[D][D2]=0;
-	for(int D=0;D<DIMENSION;D++)	for(int D2=0;D2<DIMENSION;D2++)		p_Fi[D][D2]=0;
+	for(int D=0;D<DIMENSION;D++)	for(int D2=0;D2<DIMENSION;D2++)		fi0[D][D2]=0;
 
 	//計算
 	for(int i=0;i<num;i++)
@@ -909,7 +895,10 @@ void calc_F(vector<mpselastic> PART,vector<hyperelastic> &HYPER,vector<hyperelas
 		for(int in=0;in<HYPER[i].N;in++)
 		{
 			int inn=HYPER[i].NEI[in];
-			for(int D=0;D<DIMENSION;D++)	for(int D2=0;D2<DIMENSION;D2++)		fi0[D][D2]=HYPER1[i*num+inn].wiin*(PART[inn].r[D]-PART[i].r[D])*HYPER1[i*num+inn].aiin[D2];
+			double w=HYPER1[i*num+inn].wiin;
+			double a[3];
+			for(int D=0;D<DIMENSION;D++) a[D]=HYPER1[i*num+inn].aiin[D];
+			for(int D=0;D<DIMENSION;D++)	for(int D2=0;D2<DIMENSION;D2++)		fi0[D][D2]=w*(PART[inn].r[D]-PART[i].r[D])*a[D2];
 			for(int D=0;D<DIMENSION;D++)	for(int D2=0;D2<DIMENSION;D2++)		fi[D][D2]+=fi0[D][D2];
 		}
 		for(int D=0;D<DIMENSION;D++)
@@ -917,7 +906,7 @@ void calc_F(vector<mpselastic> PART,vector<hyperelastic> &HYPER,vector<hyperelas
 			for(int D2=0;D2<DIMENSION;D2++)
 			{
 				p_Fi[D][D2]=0;
-				for(int D3=0;D3<DIMENSION;D3++)		fi2[D][D2]+=fi[D][D3]*HYPER[i].inverse_Ai[D3][D2];
+				for(int D3=0;D3<DIMENSION;D3++)		p_Fi[D][D2]+=fi[D][D3]*HYPER[i].inverse_Ai[D3][D2];
 			}
 		}
 
@@ -942,33 +931,36 @@ void calc_F(vector<mpselastic> PART,vector<hyperelastic> &HYPER,vector<hyperelas
 	delete[]	p_Fi;
 	delete[]M;
 
-	stringstream s2;
-	s2<<"./Fi/differential_Fi "<<"t"<<t<<".csv";
-	string filename2=s2.str();
-	ofstream fss2(filename2);
-
-	stringstream s3;
-	s3<<"./Fi/t_inverse_Fi "<<"t"<<t<<".csv";
-	string filename3=s3.str();
-	ofstream fss3(filename3);
-
-	for(int i=0;i<num;i++)
+	if(t==1||t%200==0)
 	{
-		for(int D=0;D<DIMENSION;D++)
+		stringstream s2;
+		s2<<"./Fi/differential_Fi "<<"t"<<t<<".csv";
+		string filename2=s2.str();
+		ofstream fss2(filename2);
+
+		stringstream s3;
+		s3<<"./Fi/t_inverse_Fi "<<"t"<<t<<".csv";
+		string filename3=s3.str();
+		ofstream fss3(filename3);
+
+		for(int i=0;i<num;i++)
 		{
-			for(int D2=0;D2<DIMENSION;D2++)
+			for(int D=0;D<DIMENSION;D++)
 			{
-				fss2<<HYPER[i].differential_Fi[D][D2]<<",";
-				fss3<<HYPER[i].t_inverse_Fi[D][D2]<<",";
+				for(int D2=0;D2<DIMENSION;D2++)
+				{
+					fss2<<HYPER[i].differential_Fi[D][D2]<<",";
+					fss3<<HYPER[i].t_inverse_Fi[D][D2]<<",";
+				}
+				fss2<<endl;
+				fss3<<endl;
 			}
-			fss2<<endl;
-			fss3<<endl;
+			fss2<<endl<<endl;
+			fss3<<endl<<endl;
 		}
-		fss2<<endl<<endl;
-		fss3<<endl<<endl;
+		fss2.close();
+		fss3.close();
 	}
-	fss2.close();
-	fss3.close();
 //	for(int i=0;i<num;i++)	cout<<"J["<<i<<"]="<<HYPER[i].J<<endl;
 
 }
@@ -1427,7 +1419,7 @@ void momentum_movie_AVS(mpsconfig &CON,int t,vector<mpselastic> PART,vector<hype
 	int STEP=CON.get_step()/CON.get_interval()+1;		//出力する総ステップ数
 	int n=particle_number;
 
-		if(t==1) 
+	if(t==1) 
 	{
 		ofstream fp("momentum.inp");			
 		fp<<CON.get_step()/CON.get_interval()+1<<endl;//総ステップ数
@@ -1444,13 +1436,13 @@ void momentum_movie_AVS(mpsconfig &CON,int t,vector<mpselastic> PART,vector<hype
 	//fp<<"data_geom"<<endl;
 	//fp<<"step1"<<endl;
 	//fp<<"step"<<t/CON->get_interval()+1<<" TIME="<<TIME<<endl;
-	fp<<particle_number<<" "<<particle_number<<endl;	//節点数と要素数出力
+	fp<<n<<" "<<n<<endl;	//節点数と要素数出力
 	
 	//節点番号とその座標の出力 
-	for(int i=0;i<particle_number;i++) fp<<i<<" "<<PART[i].r[A_X]<<" "<<PART[i].r[A_Y]<<" "<<PART[i].r[A_Z]<<endl;
+	for(int i=0;i<n;i++) fp<<i<<" "<<PART[i].r[A_X]<<" "<<PART[i].r[A_Y]<<" "<<PART[i].r[A_Z]<<endl;
 	
 	//要素番号と要素形状の種類、そして要素を構成する節点番号出力
-	for(int i=0;i<particle_number;i++)
+	for(int i=0;i<n;i++)
 	{
 		fp<<i<<"  0 pt "<<i<<endl;
 	}
@@ -1472,7 +1464,7 @@ void momentum_movie_AVS(mpsconfig &CON,int t,vector<mpselastic> PART,vector<hype
 	//fp<<"value1,??"<<endl;
 
 	//各節点の情報値入力
-	for(int i=0;i<particle_number;i++)
+	for(int i=0;i<n;i++)
 	{
 		fp<<i<<" "<<HYPER[i].p[A_X]<<" "<<HYPER[i].p[A_Y]<<" "<<HYPER[i].p[A_Z]<<" "<<HYPER[i].lambda<<" "<<HYPER[i].J<<" "<<HYPER[i].ang_p[A_X]<<" "<<HYPER[i].ang_p[A_Y]<<" "<<HYPER[i].ang_p[A_Z]<<" "<<endl;
 		//fp<<i<<" "<<NODE[i].depth<<" "<<NODE[i].L/le<<" "<<NODE[i].potential<<" "<<NODE[i].Fs<<" "<<endl;
@@ -1481,10 +1473,6 @@ void momentum_movie_AVS(mpsconfig &CON,int t,vector<mpselastic> PART,vector<hype
 	cout<<"OK"<<endl;
 	fp.close();
 
-	stringstream s;
-	s<<"./P/p "<<"t"<<t<<".csv";
-	string filename=s.str();
-	ofstream fss(filename);
 }
 
 
@@ -1515,9 +1503,8 @@ void contact_judge_hyper(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperela
 		NEI_w[i]=new double[200];
 	}
 
-	if(t!=1)	for(int i=0;i<w_num;i++)	for(int D=0;D<DIMENSION;D++)	PART[i].r[D]+=PART[i].u[D]*Dt;
+	if(t!=1)	for(int i=h_num;i<w_num;i++)	for(int D=0;D<DIMENSION;D++)	PART[i].r[D]+=PART[i].u[D]*Dt;
 		
-	#pragma omp parallel for
 //		if(PART[i].type==ELASTIC || PART[i].type==MAGELAST)
 		for(int i=0;i<h_num;i++)
 		{
