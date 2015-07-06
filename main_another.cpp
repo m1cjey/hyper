@@ -2738,7 +2738,7 @@ void file_initialization()
 	system("mkdir Hy_stress");
 	system("mkdir Fi");
 	system("mkdir renew_Lambda");
-
+	system("mkdir Newton_raphson");
 
 
 	//close file

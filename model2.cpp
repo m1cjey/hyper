@@ -1154,8 +1154,8 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 	 ///////////////////////////////////////////モデル21　超弾性体///////////////////////////////////////////////////////////
 	 else if(model==21)	//越塚先生先行研究の角柱
 	 {
-		 double height=6;
-		 double base=6;
+		 double height=18;
+		 double base=3;
 
 		 for(int i=0;i<base;i++)
 		 {
@@ -1289,11 +1289,10 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 		 for(int i=0;i<number;i++)	writedata2(fq,i,(X[i]-1.5)*le,(Y[i]-1.5)*le,(Z[i]-1.5)*le,HYPERELAST,1,suf[i],0,0,0,0,0,0,0,0,0,ON);
 
 		 cout<<"超弾性体完成\n";
-
+		 
 		 int number2=0;
 	 	int number3=0;
 		 int w_base=6;
-		 int r_z=CON->get_r_z_wall();	//15/2/8
 
 		 for(int k=0;k<3*2-1;k++)
 		 {
@@ -1340,9 +1339,9 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 				}
 			}
 		 }
-		 for(int i=0;i<number2;i++)		 writedata2(fq,i+number,(X2[i]-2.5)*le,(Y2[i]-2.5)*le,(Z2[i]-1.0-6.0)*le,WALL,1,0,0,0,0,10.0*le,0,0,0,0,0,0);
+		 for(int i=0;i<number2;i++)		 writedata2(fq,i+number,(X2[i]-2.5)*le,(Y2[i]-2.5)*le,(Z2[i]-1.0-6.0)*le,WALL,1,0,0,0,0,0,0,0,0,0,0,0);
 		 cout<<"number2"<<number2<<endl;
-
+		number+=number2;/*
 		for(int k=0;k<3*2-1;k++)
 		 {
 			if(k%2==0)
@@ -1389,9 +1388,9 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 			}
 		}
  		 for(int i=0;i<number3;i++)		 writedata2(fq,i+number2+number,(X3[i]-2.5)*le,(Y3[i]-2.5)*le,(Z3[i]-1.0+6.0)*le,WALL,1,0,0,0,0,-10.0*le,0,0,0,0,0,0);
-		 cout<<"number3"<<number3<<endl;
+		 cout<<"number3"<<number3<<endl;*/
 		 		 
-		 number+=number2+number3;
+		 //number+=number2+number3;
 		 cout<<"壁完成\n";
 		 cout<<"model完成\n";
 	 }
