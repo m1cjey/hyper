@@ -22,8 +22,8 @@ public:
 	double t_inverse_Ai[DIMENSION][DIMENSION];
 	double t_inverse_Fi[DIMENSION][DIMENSION];
 	double J;
+	double pnd;
 	double differential_Fi[DIMENSION][DIMENSION];
-	double t_differential_Fi[DIMENSION][DIMENSION];
 	double vis_force[DIMENSION];
 
 	hyperelastic();

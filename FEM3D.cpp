@@ -6867,7 +6867,7 @@ void carrent_vector(mpsconfig &CON, vector<point3D> &NODE, vector<element3D> &EL
 	for(int i=1;i<=nelm;i++){				//Y-Z–Ê‚É•\Ž¦‚·‚é’f–Ê‚Ü‚Å‚Ì—v‘f”
 		if(center_of_element[i][A_X]<0.0) half_nelm++;
 	}
-//	if(t==0 || t%10==0){
+//	if(t==1 || t%10==0){
 		stringstream sscv;
 		sscv<<"./Current/Cvector"<<t<<".fld";
 		string Cvector=sscv.str();	

@@ -1229,117 +1229,140 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 	 /////////////////////////////////ただの立方体////////////////////////////////////
 	 else if(model==23)
 	 {
-		int height=4;
-		int base=4;
+		int height=5;
+		int base=5;
 		vector<int>suf;
 		vector<int>num;
 		//writedata2内決め打ち有
+
+		double le2=le*sqrt(2.0);
 
 		 for(int k=0;k<height*2-1;k++)
 		 {
 			 if(k%2==0)
 			 {
-				 for(int i=0;i<base;i++)
+				 for(int i=0;i<base*2-1;i++)
 				 {
-					 for(int j=0;j<base;j++)
+					 if(i%2==0)
 					 {
-						 X.push_back(i);
-						 Y.push_back(j);
-						 Z.push_back(k*0.5);
-						if(i==0||j==0||k==0||i==base-1||j==base-1||k==height*2-2) suf.push_back(1);
-						else suf.push_back(0);
-						number++;
+						 for(int j=0;j<base;j++)
+						 {
+							 X.push_back(i*0.5);
+							 Y.push_back(j);
+							 Z.push_back(k*0.5);
+							if(i==0||j==0||k==0||i==base-1||j==base-1||k==height*2-2) suf.push_back(1);
+							else suf.push_back(0);
+							number++;
+						 }
+					 }
+					 else 
+					 {
+						 for(int j=0;j<base-1;j++)
+						 {
+							X.push_back(i*0.5);
+							Y.push_back(j+0.5);
+							Z.push_back(k*0.5);
+							if(i==0||j==0||k==0||i==base-1||j==base-1||k==height*2-2) suf.push_back(1);
+							else suf.push_back(0);
+							number++;
+						 }
 					 }
 				 }
 			 }
 			 else
 			{
-				for(int j=0;j<base*2-1;j++)
-				{
-					if(j%2==0)
-					{
-						for(int i=0;i<base;i++)
-						{
-							if(i+0.5<base-1)
-							{
-								X.push_back(i+0.5);
-								Y.push_back(j*0.5);
-								Z.push_back(k*0.5);
-								if(i==0||j==0||k==0||i==base-1||j==base-1||k==height*2-2) suf.push_back(1);
-								else suf.push_back(0);
-								number++;
-							}
-						}
-					}
-					else
-					{
-						for(int i=0;i<base;i++)
-						{
-								X.push_back(i);
-								Y.push_back(j*0.5);
-								Z.push_back(k*0.5);
-								if(i==0||j==0||k==0||i==base-1||j==base-1||k==height*2-2) suf.push_back(1);
-								else suf.push_back(0);
-								number++;
-							}
-						}
-					}
+				 for(int i=0;i<base*2-1;i++)
+				 {
+					 if(i%2==1)
+					 {
+						 for(int j=0;j<base;j++)
+						 {
+							 X.push_back(i*0.5);
+							 Y.push_back(j);
+							 Z.push_back(k*0.5);
+							if(i==0||j==0||k==0||i==base-1||j==base-1||k==height*2-2) suf.push_back(1);
+							else suf.push_back(0);
+							number++;
+						 }
+					 }
+					 else 
+					 {
+						 for(int j=0;j<base-1;j++)
+						 {
+							X.push_back(i*0.5);
+							Y.push_back(j+0.5);
+							Z.push_back(k*0.5);
+							if(i==0||j==0||k==0||i==base-1||j==base-1||k==height*2-2) suf.push_back(1);
+							else suf.push_back(0);
+							number++;
+						 }
+					 }
 				}
-			}
-		 for(int i=0;i<number;i++)	writedata2(fq,i,(X[i]-1.5)*le,(Y[i]-1.5)*le,(Z[i]-1.5)*le,HYPERELAST,1,suf[i],0,0,0,0,0,0,0,0,0,ON);
+			 }
+		 }
+		 for(int i=0;i<number;i++)	writedata2(fq,i,(X[i]-2.0)*le2,(Y[i]-2.0)*le2,(Z[i]-2.0)*le2,HYPERELAST,1,suf[i],0,0,0,0,0,0,0,0,0,ON);
 
 		 cout<<"超弾性体完成\n";
 		 
 		 int number2=0;
 	 	int number3=0;
-		 int w_base=6;
-
+		 int w_base=9;
 		 for(int k=0;k<3*2-1;k++)
 		 {
-			if(k%2==0)
-			{
-				for(int i=0;i<w_base;i++)
-				{
-					for(int j=0;j<w_base;j++)
-					{
-						X2.push_back(i);
-						Y2.push_back(j);
-						Z2.push_back(k*0.5);
-						number2++;
-					}
-				}
-			}
-		else
-		{
-			for(int j=0;j<w_base*2-1;j++)
-			{
-				if(j%2==0)
-				{
-					for(int i=0;i<w_base;i++)
-					{
-						if(i+0.5<w_base-1)
-						{
-							X2.push_back(i+0.5);
-							Y2.push_back(j*0.5);
+			 if(k%2==0)
+			 {
+				 for(int i=0;i<w_base*2-1;i++)
+				 {
+					 if(i%2==0)
+					 {
+						 for(int j=0;j<w_base;j++)
+						 {
+							 X2.push_back(i*0.5);
+							 Y2.push_back(j);
+							 Z2.push_back(k*0.5);
+							number2++;
+						 }
+					 }
+					 else 
+					 {
+						 for(int j=0;j<w_base-1;j++)
+						 {
+							X2.push_back(i*0.5);
+							Y2.push_back(j+0.5);
 							Z2.push_back(k*0.5);
 							number2++;
-						}
-					}
-				}
-				else
-				{
-					for(int i=0;i<w_base;i++)
-					{
-							X2.push_back(i);
-							Y2.push_back(j*0.5);
+						 }
+					 }
+				 }
+			 }
+			 else
+			{
+				 for(int i=0;i<w_base*2-1;i++)
+				 {
+					 if(i%2==1)
+					 {
+						 for(int j=0;j<w_base;j++)
+						 {
+							 X2.push_back(i*0.5);
+							 Y2.push_back(j);
+							 Z2.push_back(k*0.5);
+							number2++;
+						 }
+					 }
+					 else 
+					 {
+						 for(int j=0;j<w_base-1;j++)
+						 {
+							X2.push_back(i*0.5);
+							Y2.push_back(j+0.5);
 							Z2.push_back(k*0.5);
 							number2++;
-						}
-					}
-				}
-			}
+						 }
+					 }
+				 }
+			 }
 		 }
-		 for(int i=0;i<number2;i++)		 writedata2(fq,i+number,(X2[i]-2.5)*le,(Y2[i]-2.5)*le,(Z2[i]-1.0-6.0)*le,WALL,1,0,0,0,0,0,0,0,0,0,0,0);
+		 for(int i=0;i<number2;i++)		 writedata2(fq,i+number,(X2[i]-4.0)*le2,(Y2[i]-4.0)*le2,(Z2[i]-1.0-6.0)*le2,WALL,1,0,0,0,0,0,0,0,0,0,0,0);
 		 cout<<"number2"<<number2<<endl;
 		number+=number2;/*
 		for(int k=0;k<3*2-1;k++)

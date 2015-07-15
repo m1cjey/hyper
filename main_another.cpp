@@ -2733,14 +2733,24 @@ void file_initialization()
 	system("mkdir Current");
 
 	//í¥íeê´
-	system("mkdir d_Momentum");
+	ofstream init10("sum_P.csv", ios::trunc);
+	ofstream init11("P_X.csv", ios::trunc);
+	ofstream init12("P_Y.csv", ios::trunc);
+	ofstream init13("P_Z.csv", ios::trunc);
+	ofstream init14("P_corner.csv", ios::trunc);
+	ofstream init15("d_P_X.csv", ios::trunc);
+	ofstream init16("d_P_Y.csv", ios::trunc);
+	ofstream init17("d_P_Z.csv", ios::trunc);
+	ofstream init18("h_P_X.csv", ios::trunc);
+	ofstream init19("h_P_Y.csv", ios::trunc);
+	ofstream init20("h_P_Z.csv", ios::trunc);
+	ofstream init21("lambda.csv", ios::trunc);
+
 	system("mkdir Position");
 	system("mkdir Hy_stress");
 	system("mkdir Fi");
-	system("mkdir renew_Lambda");
 	system("mkdir Newton_raphson");
-
-
+	
 	//close file
 	init1.close();
 	init2.close();
@@ -2751,6 +2761,18 @@ void file_initialization()
 	init7.close();
 	init8.close();
 	init9.close();
+	init10.close();
+	init11.close();
+	init12.close();
+	init13.close();
+	init14.close();
+	init15.close();
+	init16.close();
+	init17.close();
+	init18.close();
+	init19.close();
+	init20.close();
+	init21.close();
 }
 
 void Make_STL(){
