@@ -2667,13 +2667,14 @@ void TetGenInterface(mpsconfig &CON, vector<mpselastic> &PART, double **F, int f
 			////電磁力読み取り
 			for(int i=0;i<PART.size();i++)
 			{
-				if(PART[i].type==MAGELAST){//MAGELAST
-				for(int D=0;D<3;D++)
-				{
-					fin5>>F_val;
-					F[D][i]+=F_val;//F[D][i]は宣言した直後にゼロセットしてある
+				if(PART[i].type==MAGELAST)
+				{//MAGELAST
+					for(int D=0;D<3;D++)
+					{
+						fin5>>F_val;
+						F[D][i]+=F_val;//F[D][i]は宣言した直後にゼロセットしてある
+					}
 				}
-			}
 			}
 			fin5.close();
 		}
@@ -2745,7 +2746,7 @@ void file_initialization()
 	ofstream init19("h_P_Y.csv", ios::trunc);
 	ofstream init20("h_P_Z.csv", ios::trunc);
 	ofstream init21("lambda.csv", ios::trunc);
-
+	ofstream init22("pnd.csv", ios::trunc);
 	system("mkdir Position");
 	system("mkdir Hy_stress");
 	system("mkdir Fi");
@@ -2773,6 +2774,7 @@ void file_initialization()
 	init19.close();
 	init20.close();
 	init21.close();
+	init22.close();
 }
 
 void Make_STL(){

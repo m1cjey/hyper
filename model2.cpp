@@ -1362,7 +1362,7 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 				 }
 			 }
 		 }
-		 for(int i=0;i<number2;i++)		 writedata2(fq,i+number,(X2[i]-4.0)*le2,(Y2[i]-4.0)*le2,(Z2[i]-1.0-6.0)*le2,WALL,1,0,0,0,0,0,0,0,0,0,0,0);
+		 for(int i=0;i<number2;i++)		 writedata2(fq,i+number,(X2[i]-4.0)*le2,(Y2[i]-4.0)*le2,(Z2[i]-1.0-5.0)*le2,WALL,1,0,0,0,0,0,0,0,0,0,0,0);
 		 cout<<"number2"<<number2<<endl;
 		number+=number2;/*
 		for(int k=0;k<3*2-1;k++)

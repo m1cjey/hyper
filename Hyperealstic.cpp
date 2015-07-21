@@ -1242,8 +1242,8 @@ void contact_judge_hyper(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperela
 					{					
 						double qiin[DIMENSION];
 						for(int D=0;D<DIMENSION;D++)	qiin[D]=PART[j].r[D]-PART[i].r[D];
-						double dis=sqrt(qiin[A_X]*qiin[A_X]+qiin[A_Y]*qiin[A_Y]+qiin[A_Z]*qiin[A_Z]);
-						double wiin=kernel(r,dis);
+						double dis0=sqrt(qiin[A_X]*qiin[A_X]+qiin[A_Y]*qiin[A_Y]+qiin[A_Z]*qiin[A_Z]);
+						double wiin=kernel(r,dis0);
 						pnd+=wiin;
 					}
 				}
@@ -1293,7 +1293,6 @@ void output_hyper_data(vector<mpselastic> PART,vector<hyperelastic> HYPER,vector
 		////åvéZÇµÇΩäeíËêîÇÃèoóÕ
 		ofstream ai("Ai.csv");
 		ofstream inai("inverse_Ai.csv");
-		ofstream pnd("pnd.csv");
 		ofstream aiin("aiin.csv");
 		ofstream n0("noij.csv");
 		ofstream dg("initial_DgDq.csv");
@@ -1310,7 +1309,6 @@ void output_hyper_data(vector<mpselastic> PART,vector<hyperelastic> HYPER,vector
 		{
 			inai<<i<<",";
 			ai<<i<<",";
-			pnd<<i<<","<<HYPER[i].pnd<<endl;
 			for(int D=0;D<DIMENSION;D++)
 			{
 				if(D==0)
@@ -1359,7 +1357,6 @@ void output_hyper_data(vector<mpselastic> PART,vector<hyperelastic> HYPER,vector
 		}
 		ai.close();
 		inai.close();
-		pnd.close();
 		n0.close();
 		dg.close();
 		wiin.close();
@@ -1397,6 +1394,7 @@ void output_hyper_data(vector<mpselastic> PART,vector<hyperelastic> HYPER,vector
 	ofstream p_Y("P_Y.csv", ios::app);
 	ofstream p_Z("P_Z.csv", ios::app);
 	ofstream p_c("P_corner.csv", ios::app);
+	ofstream pnd("pnd.csv", ios::app);
 
 	po<<"Position"<<t<<endl;		
 	stress<<"Stress"<<t<<endl;
@@ -1416,25 +1414,14 @@ void output_hyper_data(vector<mpselastic> PART,vector<hyperelastic> HYPER,vector
 		h_p_Y<<"t"<<",";
 		h_p_Z<<"t"<<",";
 		lam<<"t"<<",";
+		pnd<<"t"<<",";
 
-		if(t==1)
-		{
-			p_c<<0<<","<<","<<","<<4<<","<<","<<","<<36<<","<<","<<","<<40<<endl;
-			p_c<<","<<HYPER[0].p[A_X]<<","<<HYPER[0].p[A_Y]<<","<<HYPER[0].p[A_Z]<<",";
-			p_c<<HYPER[4].p[A_X]<<","<<HYPER[4].p[A_Y]<<","<<HYPER[4].p[A_Z]<<",";
-			p_c<<HYPER[36].p[A_X]<<","<<HYPER[36].p[A_Y]<<","<<HYPER[36].p[A_Z]<<",";
-			p_c<<HYPER[40].p[A_X]<<","<<HYPER[40].p[A_Y]<<","<<HYPER[40].p[A_Z]<<",";
-		}
-		else
-		{
-			p_c<<","<<HYPER[0].p[A_X]<<","<<HYPER[0].p[A_Y]<<","<<HYPER[0].p[A_Z]<<",";
-			p_c<<HYPER[4].p[A_X]<<","<<HYPER[4].p[A_Y]<<","<<HYPER[4].p[A_Z]<<",";
-			p_c<<HYPER[36].p[A_X]<<","<<HYPER[36].p[A_Y]<<","<<HYPER[36].p[A_Z]<<",";
-			p_c<<HYPER[40].p[A_X]<<","<<HYPER[40].p[A_Y]<<","<<HYPER[40].p[A_Z]<<",";
-		}
-
-
-
+		p_c<<0<<","<<","<<","<<4<<","<<","<<","<<36<<","<<","<<","<<40<<endl;
+		p_c<<","<<HYPER[0].p[A_X]<<","<<HYPER[0].p[A_Y]<<","<<HYPER[0].p[A_Z]<<",";
+		p_c<<HYPER[4].p[A_X]<<","<<HYPER[4].p[A_Y]<<","<<HYPER[4].p[A_Z]<<",";
+		p_c<<HYPER[36].p[A_X]<<","<<HYPER[36].p[A_Y]<<","<<HYPER[36].p[A_Z]<<",";
+		p_c<<HYPER[40].p[A_X]<<","<<HYPER[40].p[A_Y]<<","<<HYPER[40].p[A_Z]<<",";
+		
 		for(int i=0;i<h_num;i++)
 		{
 			p_X<<i<<",";
@@ -1447,6 +1434,7 @@ void output_hyper_data(vector<mpselastic> PART,vector<hyperelastic> HYPER,vector
 			h_p_Y<<i<<",";
 			h_p_Z<<i<<",";
 			lam<<i<<",";
+			pnd<<i<<",";
 		}
 		p_X<<endl;
 		p_Y<<endl;
@@ -1458,6 +1446,14 @@ void output_hyper_data(vector<mpselastic> PART,vector<hyperelastic> HYPER,vector
 		h_p_Y<<endl;
 		h_p_Z<<endl;
 		lam<<endl;
+		pnd<<endl;
+	}
+	else
+	{
+		p_c<<t<<","<<HYPER[0].p[A_X]<<","<<HYPER[0].p[A_Y]<<","<<HYPER[0].p[A_Z]<<",";
+		p_c<<HYPER[4].p[A_X]<<","<<HYPER[4].p[A_Y]<<","<<HYPER[4].p[A_Z]<<",";
+		p_c<<HYPER[36].p[A_X]<<","<<HYPER[36].p[A_Y]<<","<<HYPER[36].p[A_Z]<<",";
+		p_c<<HYPER[40].p[A_X]<<","<<HYPER[40].p[A_Y]<<","<<HYPER[40].p[A_Z]<<","<<endl;
 	}
 
 	p_X<<t<<",";
@@ -1470,10 +1466,11 @@ void output_hyper_data(vector<mpselastic> PART,vector<hyperelastic> HYPER,vector
 	h_p_Y<<t<<",";
 	h_p_Z<<t<<",";
 	lam<<t<<",";
+	pnd<<t<<",";
 
 	for(int i=0;i<h_num;i++)
 	{
-
+		
 		px+=HYPER[i].p[A_X];
 		py+=HYPER[i].p[A_Y];
 		pz+=HYPER[i].p[A_Z];
@@ -1490,6 +1487,7 @@ void output_hyper_data(vector<mpselastic> PART,vector<hyperelastic> HYPER,vector
 
 		po<<i<<"	";
 		lam<<i<<","<<HYPER[i].lambda<<endl;
+		pnd<<HYPER[i].pnd<<",";
 		for(int D=0;D<DIMENSION;D++)
 		{
 				po<<PART[i].r[D]<<"	";
@@ -1521,6 +1519,7 @@ void output_hyper_data(vector<mpselastic> PART,vector<hyperelastic> HYPER,vector
 	h_p_Y<<endl;
 	h_p_Z<<endl;
 	lam<<endl;
+	pnd<<endl;
 
 	stress.close();
 	po.close();
@@ -1539,6 +1538,7 @@ void output_hyper_data(vector<mpselastic> PART,vector<hyperelastic> HYPER,vector
 	h_p_X.close();
 	h_p_Y.close();
 	h_p_Z.close();
+	pnd.close();
 
 	ofstream sum_p("sum_P.csv", ios::app);
 	if(t==1)	sum_p<<"step"<<","<<"X"<<","<<"Y"<<","<<"Z"<<endl;
@@ -1736,4 +1736,12 @@ hyperelastic2::hyperelastic2()
 	}
 }
 
+
+double calculation_wall_effect(double p, double dp, double h);
+{
+
+
+	dp=p*atan(h);
+	return dp;
+}
 
