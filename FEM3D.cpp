@@ -2115,11 +2115,7 @@ void calc_variable_magnetic_field(mpsconfig &CON,int node,int nelm,vector<point3
 	delete [] SIDE;
 }
 
-void calc_normal_vector(mpsconfig &CON, vector<mpselastic> &PART, int particle_number, int hyper_number)
-{
 
-
-}
 //電磁力スムージング関数・・・影響半径内にある周辺粒子の電磁力の平均値を与えている
 void smoothingF3D(mpsconfig &CON, vector<mpselastic> &PART,int fluid_number,double *F[3],int t)
 {
@@ -5611,6 +5607,8 @@ void usingTetGen(mpsconfig &CON,vector<mpselastic> &PART, double **F, int fluid_
 			}
 		}
 	}
+
+
 	//メッシュ生成のポスト処理
 		double *val=new double[KTJ+1];
 		for(int i=1;i<=node;i++) val[i]=NODE[i].material;
@@ -5665,7 +5663,6 @@ void usingTetGen(mpsconfig &CON,vector<mpselastic> &PART, double **F, int fluid_
 	if(CON.get_EM_calc_type()==2) calc_static_magnetic_field(CON, node, nelm,NODE,ELEM,jnb, dt,TIME, t,nei, KTE,PART,fluid_number,F,KTJ);
 	if(CON.get_EM_calc_type()==3) calc_transitional_EM_field(CON, node, nelm,NODE,ELEM,jnb, dt, TIME,t,nei, KTE,PART,fluid_number,F,KTJ);
 	if(CON.get_EM_calc_type()==5) calc_variable_magnetic_field(CON, node, nelm,NODE,ELEM,jnb, dt,TIME, t,nei, KTE,PART,fluid_number,F);
-	if(CON.get_EM_calc_type()==6) calc_normal_vector(CON, node, nelm, NODE, ELEM, fluid_number, particle_number,F);
 	//FEM_intervalによる計算時間短縮の場合
     if(CON.get_EM_interval()>1 && CON.get_Ferror()==OFF) //えらーがないなら電磁力をファイルに書き込み
     {

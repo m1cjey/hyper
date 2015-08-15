@@ -2747,11 +2747,13 @@ void file_initialization()
 	ofstream init20("h_P_Z.csv", ios::trunc);
 	ofstream init21("lambda.csv", ios::trunc);
 	ofstream init22("pnd.csv", ios::trunc);
+	ofstream init23("E.csv", ios::trunc);
 	system("mkdir Position");
 	system("mkdir Hy_stress");
 	system("mkdir Fi");
 	system("mkdir Newton_raphson");
-	
+	system("mkdir Wall");
+
 	//close file
 	init1.close();
 	init2.close();
@@ -2775,6 +2777,7 @@ void file_initialization()
 	init20.close();
 	init21.close();
 	init22.close();
+	init23.close();
 }
 
 void Make_STL(){

@@ -68,13 +68,6 @@ public:
 	//PND=particle_number_density
 	void set_PND(const double pnd){PND=pnd;}
 	double get_PND() const{return PND;}
-
-	//超弾性
-	int N0;
-	int NEI0[300];
-
-
-
 };
 
 //弾性体計算用派生クラス
@@ -82,6 +75,7 @@ class mpselastic: public mpsparticle
 {
 	double youngs_modulus;	//ヤング率
 	double poisson_ratio;	//ポアソン比
+	
 
 	//要は周辺にある粒子のIDだけ持っておけば良いのだが、その都度位置関係を計算していたら面倒
 	vector<int> initial_neighboursID;	//初期の周辺粒子ID
@@ -199,6 +193,7 @@ public:
 	//freeonでneighbour_distanceを求めてinitialize_particlesでmapにコピーする
 	map<int, double> distance0;		//初期の周辺粒子との距離(sizeはneighbours0), IDをキーにして粒子間距離を参照する //NEIの置き換えを図る
 	map<int, double> distance;		//現在の周辺粒子との距離(sizeはneighbours), IDをキーにして粒子間距離を参照する
+	
 };
 
 #endif

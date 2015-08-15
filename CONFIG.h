@@ -595,6 +595,7 @@ public:
 	double get_hyper_density(){return hyper_density;}
 	double get_c10(){return c10;}
 	double get_c01(){return c01;}
+	int get_flag_wall(){return flag_wall;}
 	double get_h_dis(){return h_dis;}
 	double get_h_viscousity(){return h_vis;}
 	int get_flag_vis(){return flag_vis;}

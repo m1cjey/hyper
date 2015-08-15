@@ -25,15 +25,15 @@ void post_processing(mpsconfig &CON, vector<mpselastic> &PART, elastic &ELAST, i
 		cout<<"加速度プロット完了"<<endl;
 
 	//応力分布をプロット
-	if(CON.get_current_step()==1 || CON.get_current_step()%CON.get_interval()==0) plot_stress_distribution(CON, PART);
+	if(CON.get_flag_ELAST()==ON)	if(CON.get_current_step()==1 || CON.get_current_step()%CON.get_interval()==0) plot_stress_distribution(CON, PART);
 		cout<<"応力分布プロット完了"<<endl;
 
 	//せん断力をプロット
-	if(CON.get_current_step()==1 || CON.get_current_step()%CON.get_interval()==0) plot_shear_force(CON, PART);
+	if(CON.get_flag_ELAST()==ON)	if(CON.get_current_step()==1 || CON.get_current_step()%CON.get_interval()==0) plot_shear_force(CON, PART);
 		cout<<"せん断加速度プロット完了"<<endl;
 
 	//ひずみ速度による加速度をプロット
-	if(CON.get_current_step()==1 || CON.get_current_step()%CON.get_interval()==0) plot_strainrate_acceleration(CON, PART);
+	if(CON.get_flag_ELAST()==ON)	if(CON.get_current_step()==1 || CON.get_current_step()%CON.get_interval()==0) plot_strainrate_acceleration(CON, PART);
 		cout<<"ひずみ加速度プロット完了"<<endl;
 
 	//ひずみ率をプロット
@@ -41,7 +41,7 @@ void post_processing(mpsconfig &CON, vector<mpselastic> &PART, elastic &ELAST, i
 		cout<<"ひずみ率プロット完了"<<endl;
 
 	//残差加速度をプロット
-	if(CON.get_current_step()==1 || CON.get_current_step()%CON.get_interval()==0) plot_residual_acceleration(CON, PART, F);
+	if(CON.get_flag_ELAST()==ON)	if(CON.get_current_step()==1 || CON.get_current_step()%CON.get_interval()==0) plot_residual_acceleration(CON, PART, F);
 		cout<<"残差加速度プロット完了"<<endl;
 
 	//座標プロット
@@ -73,28 +73,30 @@ void post_processing(mpsconfig &CON, vector<mpselastic> &PART, elastic &ELAST, i
 	gnu2.close();
 	//*/
 		
-	//平均粒子密度&圧力を表示
-	double ave_n0=0;
-	double ave_P=0;
-	int count=0;
-	for(int i=0;i<fluid_number;i++) 
+	if(CON.get_flag_ELAST()==ON)
 	{
-	    if(PART[i].surface==OFF)
-	    {
-	        ave_n0+=PART[i].PND; //平均粒子数密度
-			ave_P+=fabs(PART[i].P); //平均圧力
-			count++;
-	    }
-	}
-	if(count!=0){ 
-		ave_n0/=count;
-		ave_P/=count;
-	}
+		//平均粒子密度&圧力を表示
+		double ave_n0=0;
+		double ave_P=0;
+		int count=0;
+		for(int i=0;i<fluid_number;i++) 
+		{
+			if(PART[i].surface==OFF)
+			{
+				ave_n0+=PART[i].PND; //平均粒子数密度
+				ave_P+=fabs(PART[i].P); //平均圧力
+				count++;
+			}
+		}
+		if(count!=0){ 
+			ave_n0/=count;
+			ave_P/=count;
+		}
 
-	cout<<"average n0="<<ave_n0<<" average P="<<ave_P<<"/"<<CON.get_ave_P_for_FEM_flag()<<" time="<<(GetTickCount()-timeA)*0.001<<"[sec]"<<endl;
-
-	check_FEM_flag(CON, ELAST, ave_P);
+		cout<<"average n0="<<ave_n0<<" average P="<<ave_P<<"/"<<CON.get_ave_P_for_FEM_flag()<<" time="<<(GetTickCount()-timeA)*0.001<<"[sec]"<<endl;
 	
+		check_FEM_flag(CON, ELAST, ave_P);
+	}
 	CON.set_current_step(t);
 }
 

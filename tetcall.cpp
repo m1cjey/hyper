@@ -60,17 +60,18 @@ void tetgen_function::TetGen_elastic(mpsconfig &CON, vector<mpselastic> &PART, i
 	FACE.clear();
 	SetMagnetBoundary(CON, TET, NODE, FACE);
 	AddBoundaryData(CON, NODEall, FACEall, NODE, FACE, MAGNET);//*/
-	/*/////////////コイル領域//////////////
-	NODE.clear();
+	/////////////コイル領域//////////////
+	/*NODE.clear();
 	FACE.clear();
 	SetCOILBoundary(CON, TET, NODE, FACE);
-	AddBoundaryData(CON, NODEall, FACEall, NODE, FACE, COIL);
-	////////////鉄心領域////////////////*/
-/*	NODE.clear();
+	AddBoundaryData(CON, NODEall, FACEall, NODE, FACE, COIL);*/
+	////////////鉄心領域///////////////////*
+/*NODE.clear();
 	FACE.clear();
 	SetIRONBoundary(CON, TET, NODE, FACE);
-	AddBoundaryData(CON, NODEall, FACEall, NODE, FACE, IRON);
-	////////////空気領域////////////*/
+	AddBoundaryData(CON, NODEall, FACEall, NODE, FACE, IRON);*/
+
+	////////////空気領域////////////
 	NODE.clear();
 	FACE.clear();
 	SetAirBoundary(CON, TET, NODE, FACE);
@@ -83,6 +84,7 @@ void tetgen_function::TetGen_elastic(mpsconfig &CON, vector<mpselastic> &PART, i
 	AddBoundaryData(CON, NODEall, FACEall, NODE, FACE, AIR);
 	//*/
 	
+
 	//.nodeファイル作成
 	MakeNodeFile(CON, NODEall, "all_boundary.node");
 	//.polyファイルの出力

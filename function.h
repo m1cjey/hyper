@@ -222,11 +222,14 @@ void ludcmp(double **a,int N,int *index,double *d);
 void lubksb(double **a,int N,int *index,double b[]);
 void momentum_movie_AVS(mpsconfig &CON,int t,vector<mpselastic> PART,vector<hyperelastic> HYPER,int hyper_number);
 void contact_judge_hyper(mpsconfig &CON,vector<mpselastic> &PART, vector<hyperelastic> &HYPER,int t);
+void contact_judge_hyper2(mpsconfig CON, vector<mpselastic> &PART, vector<hyperelastic> &HYPER, int hyper_number, int t);
 void output_hyper_data(vector<mpselastic> PART,vector<hyperelastic> HYPER,vector<hyperelastic2> HYPER1, int t);
 void transpose(double **M,double **N);
 void output_newton_data1(double *fx, double *DfDx, double *n_rx, double *n_ry, double *n_rz, int hyper_number, int count, int t);
 void output_newton_data2(double E, double *XX, int hyper_number, int count, int t);
-void calc_gravity(mpsconfig &CON,vector<hyperelastic> &HYPER,int hyper_number);
+void calc_gravity(mpsconfig CON,vector<hyperelastic> &HYPER,int hyper_number);
+void calculation_vec_norm(vector<mpselastic> PART, vector<hyperelastic> &HYPER, int hyper_number,int particle_number,int t);
+void output_energy(mpsconfig CON, vector<mpselastic> PART, vector<hyperelastic> HYPER, int hyper_number, int t);
 
 //îSê´çÄåvéZ
 void calc_vis_f(mpsconfig &CON,vector<mpselastic>PART,vector<hyperelastic>&HYPER,vector<hyperelastic2>&HYPER1,int hyper_number,int t);

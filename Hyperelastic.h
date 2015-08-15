@@ -10,6 +10,7 @@ public:
 	int NEI_w[200];
 	int N;
 	int N_w;
+	
 	double lambda;
 	double half_p[DIMENSION];
 	double stress[DIMENSION][DIMENSION];
@@ -25,7 +26,7 @@ public:
 	double pnd;
 	double differential_Fi[DIMENSION][DIMENSION];
 	double vis_force[DIMENSION];
-
+	double vec_norm[DIMENSION];
 	hyperelastic();
 };
 

@@ -1307,6 +1307,7 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 		 int number2=0;
 	 	int number3=0;
 		 int w_base=9;
+		 vector<int> w_suf;
 		 for(int k=0;k<3*2-1;k++)
 		 {
 			 if(k%2==0)
@@ -1321,6 +1322,8 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 							 Y2.push_back(j);
 							 Z2.push_back(k*0.5);
 							number2++;
+							if(i==0||j==0||k==0||i==w_base*2-2||j==w_base||k==3*2-2) w_suf.push_back(1);
+							else w_suf.push_back(0);
 						 }
 					 }
 					 else 
@@ -1331,6 +1334,8 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 							Y2.push_back(j+0.5);
 							Z2.push_back(k*0.5);
 							number2++;
+							if(i==0||j==0||k==0||i==w_base*2-2||j==w_base-2||k==3*2-2) w_suf.push_back(1);
+							else w_suf.push_back(0);
 						 }
 					 }
 				 }
@@ -1347,6 +1352,8 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 							 Y2.push_back(j);
 							 Z2.push_back(k*0.5);
 							number2++;
+							if(i==0||j==0||k==0||i==w_base*2-2||j==w_base-1||k==3*2-2) w_suf.push_back(1);
+							else w_suf.push_back(0);
 						 }
 					 }
 					 else 
@@ -1357,12 +1364,14 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 							Y2.push_back(j+0.5);
 							Z2.push_back(k*0.5);
 							number2++;
+							if(i==0||j==0||k==0||i==w_base*2-2||j==w_base-2||k==3*2-2) w_suf.push_back(1);
+							else w_suf.push_back(0);
 						 }
 					 }
 				 }
 			 }
 		 }
-		 for(int i=0;i<number2;i++)		 writedata2(fq,i+number,(X2[i]-4.0)*le2,(Y2[i]-4.0)*le2,(Z2[i]-1.0-5.0)*le2,WALL,1,0,0,0,0,0,0,0,0,0,0,0);
+		 for(int i=0;i<number2;i++)		 writedata2(fq,i+number,(X2[i]-4.0)*le2,(Y2[i]-4.0)*le2,(Z2[i]-2.0-5.0)*le2,WALL,1,w_suf[i],0,0,0,0,0,0,0,0,0,0);
 		 cout<<"number2"<<number2<<endl;
 		number+=number2;/*
 		for(int k=0;k<3*2-1;k++)

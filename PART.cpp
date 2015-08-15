@@ -121,6 +121,4 @@ void mpselastic::check_elastic_constant()
 }
 
 
-
-
 //#endif

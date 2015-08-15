@@ -26,7 +26,7 @@ mpsconfig::mpsconfig()
 	FEMCG=2;				//FEMにおける行列解法 0:CG 1:ICCG 2:並列ICCG 3:MRTR 4:ICMRTR
 
 //	dt= (switch_FEM==OFF) ? 1.0e-5: 5.0e-6; //0.0001;不安定要因！ 0.00001:推奨(Courant数考えて) //Cf. dt_for_FEM=0.000001/2;
-	dt=1.0e-4;
+	dt=1.0e-3;
 	dt_for_FEM=1.0e-3;
 	//FEMだと0.000001で止まる・・・
 	current_step=1;
@@ -34,7 +34,7 @@ mpsconfig::mpsconfig()
 	dimension=3;
 
 	interval=1; //10	//particle_movie.mgfの出力間隔。2以上の整数にすること
-	EM_interval=2;//1	//電磁場計算を何ステップに一回行うか。通常は1に設定
+	EM_interval=1;//1	//電磁場計算を何ステップに一回行うか。通常は1に設定
 	motion_interval=1;	//運動方程式を何回に一回解くか
 	
 	//この圧力以上になったらFEMスタート cf. PostProcessing.cpp
@@ -62,13 +62,13 @@ mpsconfig::mpsconfig()
 //電磁力計算
 	region_shape=1;//1;		//解析領域形状　0=立方体 1=円筒
 	EM_method=1;			//電磁場の解法 0=OFF 1=FEM 2=BEM 3=磁気ﾓｰﾒﾝﾄ法 4=FEM2
-	EM_calc_type=0;			//0=デローニのみ 1=電場 2=静磁場 3=動磁場 4=磁位
+	EM_calc_type=2;			//0=デローニのみ 1=電場 2=静磁場 3=動磁場 4=磁位
 //	EM_interval=1;//1		//電磁場計算を何ステップに一回行うか。通常は1に設定
 	//解析領域
-	XR=10.0;
-	XL=-10.0;
-	YU=10.0;
-	YD=-10.0;
+	XR=2.0;
+	XL=-2.0;
+	YU=2.0;
+	YD=-2.0;
 	/*
 	XR=0.1;//0.01;		
 	XL=-0.1;//-0.01;
@@ -80,9 +80,9 @@ mpsconfig::mpsconfig()
 	RU=distancebp*10;*/
 	
 	//FRMcheck用	15/2/10
-	ZU=0.1;//0.10; //0.2
-	ZD=-0.1;//0.10; //0.2 				//液滴 -0.01 コイル:-0.15 るつぼ:-0.0002
-	RU=0.1;//0.10;//0.1;				//解析領域が円筒形となるときのその半径
+	ZU=2.0;//0.10; //0.2
+	ZD=-2.0;//0.10; //0.2 				//液滴 -0.01 コイル:-0.15 るつぼ:-0.0002
+	RU=2.0;//0.10;//0.1;				//解析領域が円筒形となるときのその半径
 
 //流体の物性値
 	MRE_density=1826;          //water:997.04  エタノール:798[kg/m3]
@@ -212,9 +212,9 @@ mpsconfig::mpsconfig()
 	m_force=1;//1			//電磁力計算方式 1=節点力法 2=kelvin 3=積分面 4=divT(マクスウェルの応力テンソル) 5=VAG 6=積分つき節点力法 7=MC
 	NLBHI=0;				//体積力において、要素Ｂから要素Ｈを求める際に非線形性を考慮するか、しないか(non linier B H inverter)
 	NLMH=OFF;				//Ｍの算出に非線形性を考慮するか、しないか
-	magnet_H=3.0*distancebp;			//永久磁石の高さ0.005
+	magnet_H=5.0*distancebp;			//永久磁石の高さ0.005
 	magnet_r=3.0*distancebp;//0.01	//永久磁石の半径0.005 　　　　　　　　　　　//J_input_way=2:半径ではなく直径、J_put_way=0:半径　と思われる。
-	magnet_Z=-4*distancebp; //-45*0.0005-0.005; //-(fluidwidth)*distancebp-0.01; //-0.0125*0.8		//永久磁石の中心のZ座標 42*0.0005 //-magnet_H/2-(15*distancebp+0.002) モデル5:-0.035
+	magnet_Z=-(6*sqrt(2.0)+3.0)*distancebp;//-8*distancebp; //-45*0.0005-0.005; //-(fluidwidth)*distancebp-0.01; //-0.0125*0.8		//永久磁石の中心のZ座標 42*0.0005 //-magnet_H/2-(15*distancebp+0.002) モデル5:-0.035
 	magnet_angle=0.0;			//永久磁石の着磁方向 0なら+Z方向となる。そこから角度をつけたいなら、その角度[deg]を入力する
 	magnet_B=1.25;//0.145;//1.20;			//永久磁石の強さ[T] Avector3D()で指定
 	magnetic_layers=1;	//永久磁石周辺の空気層の数1層はすでにある 1+
@@ -329,7 +329,7 @@ mpsconfig::mpsconfig()
 	hyper_density=1000;          //water:997.04  エタノール:798[kg/m3]
 	c10=30000;
 	c01=20000;
-	flag_wall=OFF;
+	flag_wall=ON;
 	h_dis=1.9*distancebp;
 	h_vis=1.0;
 	flag_vis=OFF;

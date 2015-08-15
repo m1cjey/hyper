@@ -2072,6 +2072,8 @@ void tetgen_function::SetIRONBoundary(mpsconfig &CON, tetgen_config &TET, vector
 //	GetFacetList(FACEc, in, out, MAGNET);
 }
 
+
+
 //境界節点・境界面データの結合
 void tetgen_function::UniteBoundaryData(mpsconfig &CON, 
 					   vector<tetgen_node> &NODE, vector<tetgen_node> &NODEa1, vector<tetgen_node> &NODEa2, vector<tetgen_node> &NODEp, vector<tetgen_node> &NODEc, vector<tetgen_node> &NODEb, vector<tetgen_node> &NODEw, 
@@ -2438,8 +2440,7 @@ void tetgen_function::ModifyAttribute_tetgenio(mpsconfig &CON, tetgen_config &TE
 			if(out.tetrahedronattributelist[i]==COIL) out.tetrahedronattributelist[i]=1;
 			else if(out.tetrahedronattributelist[i]==MAGELAST) out.tetrahedronattributelist[i]=2;
 			else if(out.tetrahedronattributelist[i]==AIR) out.tetrahedronattributelist[i]=3;
-			else if(out.tetrahedronattributelist[i]==IRON) out.tetrahedronattributelist[i]=4;
-			
+			else if(out.tetrahedronattributelist[i]==IRON) out.tetrahedronattributelist[i]=4;	
 		}*/
 	}
 
