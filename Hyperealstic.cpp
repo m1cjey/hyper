@@ -5,7 +5,7 @@ void calc_hyper(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HY
 	int h_num=hyper_number;
 	cout<<"Hypercalculation starts."<<endl;
 
-	calc_gravity(CON,HYPER,h_num);
+	//calc_gravity(CON,HYPER,h_num);
 	
 	if(t==1)
 	{
@@ -413,7 +413,7 @@ void calc_newton_function(mpsconfig &CON,vector<mpselastic> PART,vector<hyperela
 			for(int D=0;D<DIMENSION;D++)	p_half_p3[D]+=p_half_p2[D];
 		}//jに関するfor文の終わり
 //		cout<<"partial_half["<<i<<"]="<<Dt/2*p_half_p3[A_X]<<" "<<Dt/2*p_half_p3[A_Y]<<" "<<Dt/2*p_half_p3[A_Z]<<endl;
-		for(int D=0;D<DIMENSION;D++)	n_half_p[D]=HYPER[i].p[D]+Dt/2*p_half_p3[D];
+		for(int D=0;D<DIMENSION;D++)	n_half_p[D]=HYPER[i].p[D]+Dt/2*(p_half_p3[D]-9.8*V);
 		
 		//位置座標の計算
 		n_rx[i]=PART[i].r[A_X]+Dt*n_half_p[A_X]/mi;
@@ -589,7 +589,7 @@ void calc_half_p(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &H
 		if(repetation==0)
 		{
 			//half_pの更新
-			for(int D=0;D<DIMENSION;D++)	HYPER[i].half_p[D]=HYPER[i].p[D]+Dt/2*p_half_p3[D];
+			for(int D=0;D<DIMENSION;D++)	HYPER[i].half_p[D]=HYPER[i].p[D]+Dt/2*(p_half_p3[D]-V*9.8);
 			//位置座標の更新
 			for(int D=0;D<DIMENSION;D++)	PART[i].r[D]+=Dt*HYPER[i].half_p[D]/mi;
 		}
@@ -600,7 +600,7 @@ void calc_half_p(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &H
 			//運動量の更新
 			for(int D=0;D<DIMENSION;D++)
 			{
-				HYPER[i].p[D]=HYPER[i].half_p[D]+Dt/2*p_half_p3[D];
+				HYPER[i].p[D]=HYPER[i].half_p[D]+Dt/2*(p_half_p3[D]-9.8*V);
 				PART[i].u[D]=HYPER[i].half_p[D]/mi;
 			}
 
@@ -786,7 +786,7 @@ void calc_differential_p(mpsconfig &CON,vector<hyperelastic> &HYPER,vector<hyper
 
 	int h_num=hyper_number;
 	double Dt=CON.get_dt();
-
+	double V=get_volume(&CON);
 	double p_differential_p[3];
 	double p_differential_p2[3];
 
@@ -802,7 +802,7 @@ void calc_differential_p(mpsconfig &CON,vector<hyperelastic> &HYPER,vector<hyper
 			}
 			for(int D=0;D<DIMENSION;D++)	p_differential_p2[D]+=p_differential_p[D];				
 		}		
-		for(int D=0;D<DIMENSION;D++)	HYPER[i].differential_p[D]=HYPER[i].half_p[D]+Dt/2*p_differential_p2[D];
+		for(int D=0;D<DIMENSION;D++)	HYPER[i].differential_p[D]=HYPER[i].half_p[D]+Dt/2*(p_differential_p2[D]-9.8*V);
 	}
 	cout<<"----------OK"<<endl;
 }
