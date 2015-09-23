@@ -414,7 +414,7 @@ void calc_newton_function(mpsconfig &CON,vector<mpselastic> PART,vector<hyperela
 			for(int D=0;D<DIMENSION;D++)	p_half_p3[D]+=p_half_p2[D];
 		}//jに関するfor文の終わり
 //		cout<<"partial_half["<<i<<"]="<<Dt/2*p_half_p3[A_X]<<" "<<Dt/2*p_half_p3[A_Y]<<" "<<Dt/2*p_half_p3[A_Z]<<endl;
-		for(int D=0;D<DIMENSION;D++)	n_half_p[D]=HYPER[i].p[D]+Dt/2*(p_half_p3[D]-9.8*V*vec_g[D]);
+		for(int D=0;D<DIMENSION;D++)	n_half_p[D]=HYPER[i].p[D]+Dt/2*(p_half_p3[D]-9.8*mi*vec_g[D]);
 		
 		//位置座標の計算
 		n_rx[i]=PART[i].r[A_X]+Dt*n_half_p[A_X]/mi;
@@ -592,7 +592,7 @@ void calc_half_p(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &H
 		if(repetation==0)
 		{
 			//half_pの更新
-			for(int D=0;D<DIMENSION;D++)	HYPER[i].half_p[D]=HYPER[i].p[D]+Dt/2*(p_half_p3[D]-V*9.8*vec_g[D]);
+			for(int D=0;D<DIMENSION;D++)	HYPER[i].half_p[D]=HYPER[i].p[D]+Dt/2*(p_half_p3[D]-mi*9.8*vec_g[D]);
 			//位置座標の更新
 			for(int D=0;D<DIMENSION;D++)	PART[i].r[D]+=Dt*HYPER[i].half_p[D]/mi;
 		}
@@ -603,7 +603,7 @@ void calc_half_p(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &H
 			//運動量の更新
 			for(int D=0;D<DIMENSION;D++)
 			{
-				HYPER[i].p[D]=HYPER[i].half_p[D]+Dt/2*(p_half_p3[D]-9.8*V*vec_g[D]);
+				HYPER[i].p[D]=HYPER[i].half_p[D]+Dt/2*(p_half_p3[D]-9.8*mi*vec_g[D]);
 				PART[i].u[D]=HYPER[i].half_p[D]/mi;
 			}
 
@@ -792,6 +792,7 @@ void calc_differential_p(mpsconfig &CON,vector<hyperelastic> &HYPER,vector<hyper
 	vec_g[A_X]=0,vec_g[A_Y]=0,vec_g[A_Z]=1;
 	double Dt=CON.get_dt();
 	double V=get_volume(&CON);
+	double mi=V*CON.get_hyper_density();
 	double p_differential_p[3];
 	double p_differential_p2[3];
 
@@ -807,7 +808,7 @@ void calc_differential_p(mpsconfig &CON,vector<hyperelastic> &HYPER,vector<hyper
 			}
 			for(int D=0;D<DIMENSION;D++)	p_differential_p2[D]+=p_differential_p[D];				
 		}		
-		for(int D=0;D<DIMENSION;D++)	HYPER[i].differential_p[D]=HYPER[i].half_p[D]+Dt/2*(p_differential_p2[D]-9.8*V*vec_g[D]);
+		for(int D=0;D<DIMENSION;D++)	HYPER[i].differential_p[D]=HYPER[i].half_p[D]+Dt/2*(p_differential_p2[D]-9.8*mi*vec_g[D]);
 	}
 	cout<<"----------OK"<<endl;
 }
@@ -1910,6 +1911,9 @@ void output_energy(mpsconfig CON, vector<mpselastic> PART, vector<hyperelastic> 
 	cout<<"----------OK"<<endl;
 
 	ofstream e("E.csv", ios::app);
+	ofstream e_T("E_T.csv", ios::app);
+	ofstream e_g("E_g.csv", ios::app);
+	ofstream e_W("E_W.csv", ios::app);
 
 	double V=get_volume(&CON);
 	double mi=V*CON.get_hyper_density();
@@ -1917,20 +1921,45 @@ void output_energy(mpsconfig CON, vector<mpselastic> PART, vector<hyperelastic> 
 	if(t==1)
 	{
 		e<<"t"<<",";
-		for(int i=0;i<h_num;i++)	e<<i<<",";
+		e_T<<"t"<<",";
+		e_g<<"t"<<",";
+		e_W<<"t"<<",";
+		for(int i=0;i<h_num;i++)
+		{
+			e<<i<<",";
+			e_T<<i<<",";
+			e_g<<i<<",";
+			e_W<<i<<",";
+		}
 		e<<endl;
+		e_T<<endl;
+		e_g<<endl;
+		e_W<<endl;
 	}
 
 	e<<t<<",";
+	e_T<<t<<",";
+	e_g<<t<<",";
+	e_W<<t<<",";
 	for(int i=0;i<h_num;i++)
 	{
 		double v=HYPER[i].p[A_Z]/mi;
 		double energy=0;
-		energy=0.5*mi*v*v+mi*9.8*PART[i].r[A_Z]+W[i];
+		energy=0.5*mi*v*v+mi*9.8*PART[i].r[A_Z]+W[i]*V;
 		e<<energy<<",";
+		e_T<<0.5*mi*v*v<<",";
+		e_g<<mi*9.8*PART[i].r[A_Z]<<",";
+		e_W<<W[i]*V<<",";
 	}
 	e<<endl;
+	e_T<<endl;
+	e_g<<endl;
+	e_W<<endl;
+
 	e.close();
+	e_T.close();
+	e_g.close();
+	e_W.close();
 }
 
 void calc_gravity(mpsconfig CON,vector<hyperelastic> &HYPER,int hyper_number)

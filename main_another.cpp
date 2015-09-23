@@ -2748,6 +2748,9 @@ void file_initialization()
 	ofstream init21("lambda.csv", ios::trunc);
 	ofstream init22("pnd.csv", ios::trunc);
 	ofstream init23("E.csv", ios::trunc);
+	ofstream init24("E_T.csv", ios::trunc);
+	ofstream init25("E_g.csv", ios ::trunc);
+	ofstream init26("E_W.csv", ios::trunc);
 	system("mkdir Position");
 	system("mkdir Hy_stress");
 	system("mkdir Fi");
