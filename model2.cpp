@@ -1300,7 +1300,7 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 				}
 			 }
 		 }
-		 for(int i=0;i<number;i++)	writedata2(fq,i,(X[i]-2.0)*le2,(Y[i]-2.0)*le2,(Z[i]-2.0)*le2,HYPERELAST,1,suf[i],0,0,0,0,0,0,0,0,0,ON);
+		 for(int i=0;i<number;i++)	writedata2(fq,i,(X[i]-2.0)*le2,(Y[i]-2.0)*le2,(Z[i]+2.0)*le2,HYPERELAST,1,suf[i],0,0,0,0,0,0,0,0,0,ON);
 
 		 cout<<"超弾性体完成\n";
 		 
@@ -1371,7 +1371,7 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 				 }
 			 }
 		 }
-		 for(int i=0;i<number2;i++)		 writedata2(fq,i+number,(X2[i]-4.0)*le2,(Y2[i]-4.0)*le2,(Z2[i]-2.0-5.0)*le2,WALL,1,w_suf[i],0,0,0,0,0,0,0,0,0,0);
+		 for(int i=0;i<number2;i++)		 writedata2(fq,i+number,(X2[i]-4.0)*le2,(Y2[i]-4.0)*le2,(Z2[i]-3.0)*le2,WALL,1,w_suf[i],0,0,0,0,0,0,0,0,0,0);
 		 cout<<"number2"<<number2<<endl;
 		number+=number2;/*
 		for(int k=0;k<3*2-1;k++)
