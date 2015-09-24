@@ -33,7 +33,7 @@ mpsconfig::mpsconfig()
 	current_time=0.0;
 	dimension=3;
 
-	interval=10; //10	//particle_movie.mgfの出力間隔。2以上の整数にすること
+	interval=1; //10	//particle_movie.mgfの出力間隔。2以上の整数にすること
 	EM_interval=1;//1	//電磁場計算を何ステップに一回行うか。通常は1に設定
 	motion_interval=1;	//運動方程式を何回に一回解くか
 	

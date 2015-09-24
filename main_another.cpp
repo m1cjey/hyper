@@ -2751,6 +2751,7 @@ void file_initialization()
 	ofstream init24("E_T.csv", ios::trunc);
 	ofstream init25("E_g.csv", ios ::trunc);
 	ofstream init26("E_W.csv", ios::trunc);
+	ofstream init27("E_lam.csv", ios::trunc);
 	system("mkdir Position");
 	system("mkdir Hy_stress");
 	system("mkdir Fi");
@@ -2781,6 +2782,10 @@ void file_initialization()
 	init21.close();
 	init22.close();
 	init23.close();
+	init24.close();
+	init25.close();
+	init26.close();
+	init27.close();
 }
 
 void Make_STL(){

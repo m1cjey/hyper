@@ -1914,6 +1914,7 @@ void output_energy(mpsconfig CON, vector<mpselastic> PART, vector<hyperelastic> 
 	ofstream e_T("E_T.csv", ios::app);
 	ofstream e_g("E_g.csv", ios::app);
 	ofstream e_W("E_W.csv", ios::app);
+	ofstream e_lam("E_lam.csv", ios::app);
 
 	double V=get_volume(&CON);
 	double mi=V*CON.get_hyper_density();
@@ -1924,42 +1925,50 @@ void output_energy(mpsconfig CON, vector<mpselastic> PART, vector<hyperelastic> 
 		e_T<<"t"<<",";
 		e_g<<"t"<<",";
 		e_W<<"t"<<",";
+		e_lam<<"t"<<",";
 		for(int i=0;i<h_num;i++)
 		{
 			e<<i<<",";
 			e_T<<i<<",";
 			e_g<<i<<",";
 			e_W<<i<<",";
+			e_lam<<i<<",";
 		}
 		e<<endl;
 		e_T<<endl;
 		e_g<<endl;
 		e_W<<endl;
+		e_lam<<endl;
 	}
 
 	e<<t<<",";
 	e_T<<t<<",";
 	e_g<<t<<",";
 	e_W<<t<<",";
+	e_lam<<t<<",";
 	for(int i=0;i<h_num;i++)
 	{
-		double v=HYPER[i].p[A_Z]/mi;
+		double vv=0;
+		for(int D=0;D<DIMENSION;D++)	vv+=HYPER[i].p[D]*HYPER[i].p[D];
 		double energy=0;
-		energy=0.5*mi*v*v+mi*9.8*PART[i].r[A_Z]+W[i]*V;
+		energy=0.5/mi*vv+mi*9.8*PART[i].r[A_Z]+W[i]*V+HYPER[i].lambda*(1-HYPER[i].J)*V;
 		e<<energy<<",";
-		e_T<<0.5*mi*v*v<<",";
+		e_T<<0.5*mi*vv<<",";
 		e_g<<mi*9.8*PART[i].r[A_Z]<<",";
 		e_W<<W[i]*V<<",";
+		e_lam<<HYPER[i].lambda*(1-HYPER[i].J)*V<<",";
 	}
 	e<<endl;
 	e_T<<endl;
 	e_g<<endl;
 	e_W<<endl;
+	e_lam<<endl;
 
 	e.close();
 	e_T.close();
 	e_g.close();
 	e_W.close();
+	e_lam.close();
 }
 
 void calc_gravity(mpsconfig CON,vector<hyperelastic> &HYPER,int hyper_number)
