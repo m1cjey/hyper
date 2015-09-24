@@ -1381,7 +1381,7 @@ void contact_judge_hyper2(mpsconfig CON, vector<mpselastic> &PART, vector<hypere
 				}
 			}			
 		}
-		if(pnd!=0)	for(int D=0;D<DIMENSION;D++)	HYPER[i].p[D]+=dp_i[D]/pnd;
+		if(pnd!=0 && HYPER[i].p[A_Z]<0)	for(int D=0;D<DIMENSION;D++)	HYPER[i].p[D]+=dp_i[D]/pnd;
 		s_pnd<<pnd<<",";
 		dp<<i<<",";
 		for(int D=0;D<DIMENSION;D++)	dp<<dp_i[D]<<",";
