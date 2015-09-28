@@ -2734,24 +2734,17 @@ void file_initialization()
 	system("mkdir Current");
 
 	//í¥íeê´
-	ofstream init10("sum_P.csv", ios::trunc);
-	ofstream init11("P_X.csv", ios::trunc);
-	ofstream init12("P_Y.csv", ios::trunc);
-	ofstream init13("P_Z.csv", ios::trunc);
-	ofstream init14("P_corner.csv", ios::trunc);
-	ofstream init15("d_P_X.csv", ios::trunc);
-	ofstream init16("d_P_Y.csv", ios::trunc);
-	ofstream init17("d_P_Z.csv", ios::trunc);
-	ofstream init18("h_P_X.csv", ios::trunc);
-	ofstream init19("h_P_Y.csv", ios::trunc);
-	ofstream init20("h_P_Z.csv", ios::trunc);
-	ofstream init21("lambda.csv", ios::trunc);
-	ofstream init22("pnd.csv", ios::trunc);
-	ofstream init23("E.csv", ios::trunc);
-	ofstream init24("E_T.csv", ios::trunc);
-	ofstream init25("E_g.csv", ios ::trunc);
-	ofstream init26("E_W.csv", ios::trunc);
-	ofstream init27("E_lam.csv", ios::trunc);
+	ofstream init10("P.csv", ios::trunc);
+	ofstream init11("d_P.csv", ios::trunc);
+	ofstream init12("h_P.csv", ios::trunc);
+	ofstream init13("lambda.csv", ios::trunc);
+	ofstream init14("pnd.csv", ios::trunc);
+	ofstream init15("E.csv", ios::trunc);
+	ofstream init16("E_T.csv", ios::trunc);
+	ofstream init17("E_g.csv", ios ::trunc);
+	ofstream init18("E_W.csv", ios::trunc);
+	ofstream init19("E_lam.csv", ios::trunc);
+	ofstream init20("J.csv", ios::trunc);
 	system("mkdir Position");
 	system("mkdir Hy_stress");
 	system("mkdir Fi");
@@ -2779,13 +2772,6 @@ void file_initialization()
 	init18.close();
 	init19.close();
 	init20.close();
-	init21.close();
-	init22.close();
-	init23.close();
-	init24.close();
-	init25.close();
-	init26.close();
-	init27.close();
 }
 
 void Make_STL(){
