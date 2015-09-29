@@ -26,7 +26,7 @@ mpsconfig::mpsconfig()
 	FEMCG=2;				//FEMにおける行列解法 0:CG 1:ICCG 2:並列ICCG 3:MRTR 4:ICMRTR
 
 //	dt= (switch_FEM==OFF) ? 1.0e-5: 5.0e-6; //0.0001;不安定要因！ 0.00001:推奨(Courant数考えて) //Cf. dt_for_FEM=0.000001/2;
-	dt=1.0e-4;
+	dt=1.0e-3;
 	dt_for_FEM=1.0e-3;
 	//FEMだと0.000001で止まる・・・
 	current_step=1;
