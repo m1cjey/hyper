@@ -42,7 +42,7 @@ mpsconfig::mpsconfig()
 	ave_P_for_FEM_flag=8000000000;//80.0;//75.0;//70.0;
 
 //モデル
-	model_number=21;			//4:引っ張り試験片 7:MREアクチュエータ 12:剛体
+	model_number=23;			//4:引っ張り試験片 7:MREアクチュエータ 12:剛体
 	model_set_way=1;		//modelをセットする方法　0=正方格子 1=MD
 
 //モデル１,11専用

@@ -2499,7 +2499,12 @@ double get_volume(mpsconfig *CON)
 {
 	double V=0;//‘ÌÏ
 	double le=CON->get_distancebp();
-	if(CON->get_model_set_way()==0)	//³•ûŠiŽq‚Ì‚Æ‚«
+	if(CON->get_model_number()==21)
+	{
+		V=le*le*le;
+	}
+
+	else if(CON->get_model_set_way()==0)	//³•ûŠiŽq‚Ì‚Æ‚«
 	{
 		if(CON->get_dimension()==2){V=le*le;}
 		else	{V=le*le*le;}
@@ -2508,7 +2513,7 @@ double get_volume(mpsconfig *CON)
 	{
 		if(CON->get_dimension()==2){V=sqrt(3.0)/2*le*le;}
 		else V=le*le*le/sqrt(2.0);
-	}	
+	}
 	else cout<<"ƒ‚ƒfƒ‹‚ÌÏ‚Ý•û‚ª•s’è‚Å‚· ‘ÌÏ‚ðŒvŽZ‚Å‚«‚Ü‚¹‚ñ"<<endl;
 	return V;
 }
@@ -2745,6 +2750,10 @@ void file_initialization()
 	ofstream init18("E_W.csv", ios::trunc);
 	ofstream init19("E_lam.csv", ios::trunc);
 	ofstream init20("J.csv", ios::trunc);
+	ofstream init21("position.csv", ios::trunc);
+	ofstream init22("d_Fi.csv", ios::trunc);
+	ofstream init23("i_t_Fi.csv", ios::trunc);
+	ofstream init24("stress.csv",ios::trunc);
 	system("mkdir Position");
 	system("mkdir Hy_stress");
 	system("mkdir Fi");
@@ -2772,6 +2781,10 @@ void file_initialization()
 	init18.close();
 	init19.close();
 	init20.close();
+	init21.close();
+	init22.close();
+	init23.close();
+	init24.close();
 }
 
 void Make_STL(){
