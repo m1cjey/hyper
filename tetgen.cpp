@@ -30,7 +30,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "tetgen.h"
-#include <iostream>
 
 //// io_cxx ///////////////////////////////////////////////////////////////////
 ////                                                                       ////
@@ -2183,19 +2182,13 @@ bool tetgenio::load_tetmesh(char* filebasename)
 void tetgenio::save_nodes(char* filebasename)
 {
   FILE *fout;
-  errno_t error;
   char outnodefilename[FILENAMESIZE];
   char outmtrfilename[FILENAMESIZE];
   int i, j;
 
   sprintf_s(outnodefilename, "%s.node", filebasename);
   if(PRINTF_SW==1) printf("Saving nodes to %s\n", outnodefilename);
-  //fopen_s(&fout,outnodefilename, "w");
-  if((error = fopen_s(&fout,outnodefilename, "w")) != 0){
-	  std::cout << outnodefilename << std::endl;
-	  std::cout << error << std::endl;
-	  getchar();
-  }
+  fopen_s(&fout,outnodefilename, "w");
   fprintf(fout, "%d  %d  %d  %d\n", numberofpoints, mesh_dim,
           numberofpointattributes, pointmarkerlist != NULL ? 1 : 0);
   for (i = 0; i < numberofpoints; i++) {

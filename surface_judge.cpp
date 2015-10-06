@@ -27,6 +27,7 @@ void freeon(elastic &ELAST, vector<mpselastic> &PART, double n0_4,int *INDEX,int
 		PART[i].reset_current_neighboursID();
 		PART[i].reset_current_neighbours_position();
 		PART[i].distance.clear();
+		PART[i].N0=0;
 
 		////粒子数密度測定
 		double pnd=0.0;	//全粒子を考慮にいれた粒子数密度
@@ -65,6 +66,11 @@ void freeon(elastic &ELAST, vector<mpselastic> &PART, double n0_4,int *INDEX,int
 									PART[i].set_current_distancebps(dis);	//これいらない・・・
 									N++;
 									
+									if(t=1)
+									{
+										PART[i].NEI0[N0]=j;
+										N0++;
+									}
 								}
 							}
 						}
@@ -74,6 +80,7 @@ void freeon(elastic &ELAST, vector<mpselastic> &PART, double n0_4,int *INDEX,int
 		}
 		PART[i].PND=pnd;	//iの影響半径内に含まれる粒子数密度を取得
 		PART[i].N=N;		//iの影響半径内に含まれる周辺粒子数を取得
+		PART[i].N0=N0;
 
 //			PART[i].set_density(N*mass/volume);
 
@@ -142,6 +149,7 @@ void freeon(mpsconfig &CON, vector<mpselastic> &PART, double n0_4,int *INDEX,int
 		PART[i].reset_current_neighboursID();
 		PART[i].reset_current_neighbours_position();
 		PART[i].distance.clear();
+		PART[i].N0=0;
 
 		////粒子数密度測定
 		double pnd=0;	//全粒子を考慮にいれた粒子数密度
@@ -149,6 +157,7 @@ void freeon(mpsconfig &CON, vector<mpselastic> &PART, double n0_4,int *INDEX,int
 		double pnd4=0;	//表面判定用
 		double sum=0;
 		int N=0;		//周辺粒子数
+		int N0=0;
 			
 		//空間に固有のID(INDEX, MESH)と粒子に固有のID(PART[i].index, PART[i].NEI[N])を照合して探索する
 		for(int I=PART[i].index-1;I<=PART[i].index+1;I++)
@@ -189,6 +198,13 @@ void freeon(mpsconfig &CON, vector<mpselastic> &PART, double n0_4,int *INDEX,int
 									PART[i].set_current_distancebps(dis);	//これいらない・・・
 									N++;		//壁粒子は初期周辺粒子に加えない
 									}//*/
+
+									if(t=1)
+									{
+										PART[i].NEI0[N0]=j;
+										N0++;
+									}
+
 								}
 							}
 						}
@@ -198,6 +214,7 @@ void freeon(mpsconfig &CON, vector<mpselastic> &PART, double n0_4,int *INDEX,int
 		}
 		PART[i].PND=pnd;	//iの影響半径内に含まれる粒子数密度を取得
 		PART[i].N=N;		//iの影響半径内に含まれる周辺粒子数を取得
+		PART[i].N0=N0;
 
 
 	}//全粒子の表面判定が終了

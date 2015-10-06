@@ -30,7 +30,7 @@ void Check::Out_put_config()
 	stringstream day;
 	double Mh=CON.get_magnet_H();//¥Î‚Ì‚‚³
 	double Mc=CON.get_magnet_Z();//©ì’†SÀ•W
-	double MMd=(abs((Mh/2)+Mc)+0.006)*1000;	//0.006?‚È‚ºŒˆ‚ß‘Å‚¿‚È‚Ì‚©15/5/24
+	double MMd=(abs((Mh/2)+Mc)+0.006)*1000;
 	day<<checkf<<Set_y_m_d()<<".dat";
 	system("mkdir Check");
 	ofstream checkconfig(day.str());

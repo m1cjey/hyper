@@ -55,23 +55,22 @@ void tetgen_function::TetGen_elastic(mpsconfig &CON, vector<mpselastic> &PART, i
 	AddBoundaryData(CON, NODEall, FACEall, NODE, FACE, MAGELAST);//*
 
 
-	//////////////電磁石領域/////////////
+/*	//////////////電磁石領域/////////////
 	NODE.clear();
 	FACE.clear();
 	SetMagnetBoundary(CON, TET, NODE, FACE);
 	AddBoundaryData(CON, NODEall, FACEall, NODE, FACE, MAGNET);//*/
 	/////////////コイル領域//////////////
-	/*NODE.clear();
+	NODE.clear();
 	FACE.clear();
 	SetCOILBoundary(CON, TET, NODE, FACE);
-	AddBoundaryData(CON, NODEall, FACEall, NODE, FACE, COIL);*/
-	////////////鉄心領域///////////////////*
-/*NODE.clear();
+	AddBoundaryData(CON, NODEall, FACEall, NODE, FACE, COIL);
+	////////////鉄心領域////////////////*/
+/*	NODE.clear();
 	FACE.clear();
 	SetIRONBoundary(CON, TET, NODE, FACE);
-	AddBoundaryData(CON, NODEall, FACEall, NODE, FACE, IRON);*/
-
-	////////////空気領域////////////
+	AddBoundaryData(CON, NODEall, FACEall, NODE, FACE, IRON);
+	////////////空気領域////////////*/
 	NODE.clear();
 	FACE.clear();
 	SetAirBoundary(CON, TET, NODE, FACE);
@@ -84,7 +83,6 @@ void tetgen_function::TetGen_elastic(mpsconfig &CON, vector<mpselastic> &PART, i
 	AddBoundaryData(CON, NODEall, FACEall, NODE, FACE, AIR);
 	//*/
 	
-
 	//.nodeファイル作成
 	MakeNodeFile(CON, NODEall, "all_boundary.node");
 	//.polyファイルの出力
@@ -93,7 +91,7 @@ void tetgen_function::TetGen_elastic(mpsconfig &CON, vector<mpselastic> &PART, i
 	cout<<"polyファイル読み込み"<<endl;
 	in.load_poly("all_boundary");	//.polyを読み込んだら自動的に.nodeも読み込むらしい
 	cout<<"自動分割開始"<<endl;
-	tetrahedralize("pq1.1a1.0e-4AYYn", &in, &out);	//1.1未満では切れない デフォルトはrqa1.1AYYn  pq1.3a1.67e-7AYYn
+	tetrahedralize("pq1.1a2.0e-7AYYn", &in, &out);	//1.1未満では切れない デフォルトはrqa1.1AYYn  pq1.3a1.67e-7AYYn
 	out.save_nodes("output");
 	out.save_elements("output");
 	//out.save_faces("output");

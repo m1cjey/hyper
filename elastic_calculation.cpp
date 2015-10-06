@@ -282,14 +282,13 @@ void calc_accel_for_3D(vector<mpselastic> &PART, elastic &ELAST)
 		//粒子数密度が増加した場合はPを置き換える
 		if(PART[i].PND>PART[i].PND0)
 		{
-			if(PART[i].type==MAGELAST || PART[i].type==TERMINAL1 || PART[i].type==TERMINAL2)
+			if(PART[i].type==MAGELAST || PART[i].type==TERMINAL1 || PART[i].type==TERMINAL2){
+			double contact_pressure=mag_lambda*(PART[i].PND-PART[i].PND0)/PART[i].PND0;
+			if(contact_pressure>PART[i].P)
 			{
-				double contact_pressure=mag_lambda*(PART[i].PND-PART[i].PND0)/PART[i].PND0;
-				if(contact_pressure>PART[i].P)
-				{
-					PART[i].P=contact_pressure;//密度が非線形なのにここで粒子数密度が線形として良い？→OK（n0とρは比例）
-				}
-				PART[i].contact=true; //フラグを立てておく
+				PART[i].P=contact_pressure;//密度が非線形なのにここで粒子数密度が線形として良い？→OK（n0とρは比例）
+			}
+			PART[i].contact=true; //フラグを立てておく
 			}
 			else if(PART[i].type==ELASTIC){
 			double contact_pressure=elas_lambda*(PART[i].PND-PART[i].PND0)/PART[i].PND0;

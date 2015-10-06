@@ -1,4 +1,3 @@
-
 #include "stdafx.h"		//主要なヘッダーファイルはまとめてこのなか。
 //only main function
 
@@ -450,11 +449,13 @@ int _tmain(int argc, _TCHAR* argv[])
 				cout<<de<<","<<e<<endl;
 				cout<<limP<<","<<P<<endl;
 				cout<<floor(limP*1000000)<<","<<floor(P*1000000)<<endl;
+
 				if(floor(limP*1000000)==floor(P*1000000) && floor(P*1000000)>100000){
 					if(ff==1){
 				ofstream hiz("hizumi-poa.dat", ios::app);
 				hiz<<P<<" "<<e*100<<endl;
 				hiz.close();
+
 				ofstream yiz("hizumi-yang_stress.dat", ios::app);
 				double stress=0;
 				double pressure=0;
@@ -465,12 +466,14 @@ int _tmain(int argc, _TCHAR* argv[])
 					partnum++;
 				}
 			//	stress+=fabs(PART[1512].get_stress_accel(A_Z))*ELAST.get_density();
+
 				stress/=partnum;
 				yiz<<stress/(e*100)<<" "<<e*100<<endl;
 				yiz.close();
 				ELAST.set_poise_flag(ON);
 					}
 					ff=1;
+
 			}
 				else {
 					limP=P;
@@ -1022,6 +1025,7 @@ void courant_elastic(vector<mpselastic> &PART, int fluid_number, int t, double *
 	{      
 		double newdt=*dt;	//新しいdt
 		CFL=sqrt((lambda+2.0*mu)/density);
+
 	//	if(Umax!=0) newdt=CFL*le/Umax;
 		if(Umax!=0) newdt=(le/CFL)/factor;
 		if(newdt>CON->get_dt()) *dt=CON->get_dt();
@@ -1029,6 +1033,7 @@ void courant_elastic(vector<mpselastic> &PART, int fluid_number, int t, double *
 		
 		if(*dt!=CON->get_dt()) cout<<"CFL条件によるdt更新 dt="<<*dt<<endl;
 	}
+
 	///拡散数の正確な定義を調べて書きなおせ
 	if(CON->get_vis()!=0 && CON->get_vis_calc_type()==POSITIVE)
 	{
@@ -2695,6 +2700,7 @@ void calc_electro_magnetic_force(mpsconfig &CON,vector<mpselastic> &PART,int flu
 				{
 					//電磁力初期化
 					for(int i=0;i<particle_number;i++)	for(int D=0;D<CON.get_dimention();D++)	PART[i].eforce[D]=0;
+
 					////まずoutput_node_data関数で流体情報をFEM用に出力する。このときMPSから抽出される最大粒子数は300までと定義。
 					int N=0;///FEMに転送する粒子数(線で結ばれる粒子数)
 					int NUM[1000];///表面粒子ID格納
@@ -2717,6 +2723,7 @@ void calc_electro_magnetic_force(mpsconfig &CON,vector<mpselastic> &PART,int flu
 				{
 					//電磁力初期化
 					for(int i=0;i<particle_number;i++)	for(int D=0;D<CON.get_dimention();D++)	PART[i].eforce[D]=0;
+
 					int N=0;							//FEMに転送する流体粒子数
 					//int *TRANS=new int[fluid_number+1]; //節点iはTRANS[i]番目の粒子に相当
 					vector<int> TRANS(fluid_number+1);	//TetGenの導入によりvectorに対応
@@ -2724,6 +2731,7 @@ void calc_electro_magnetic_force(mpsconfig &CON,vector<mpselastic> &PART,int flu
 					cout<<"FEM用メッシュ作成開始----";
 					unsigned int timeF=GetTickCount();	//計算開始時刻
 					int node_number=0;					//こちらが指定する節点数
+
 					//静電霧化についてはMPSTOFEM3D_nanoe2を試している(2011.5.2作成)
 					//if(CON.get_model_number()==14) MPSTOFEM3D_nanoe(CON,PART,particle_number,INDEX,MESH,&node_number,TRANS,&N,fluid_number,n0);
 					if(CON.get_model_number()==14) MPSTOFEM3D_nanoe2(CON,PART,particle_number,INDEX,MESH,&node_number,TRANS,&N,fluid_number,n0);
@@ -2732,7 +2740,9 @@ void calc_electro_magnetic_force(mpsconfig &CON,vector<mpselastic> &PART,int flu
 //void MPSTOFEM3D_levitation(mpsconfig &CON,vector<mpselastic> &PART,int particle_number,int *INDEX,int **MESH,int *node_number,vector<int> &TRANS,int *N,int fluid_number,double n0)
 					
 					cout<<"ok  time="<<(GetTickCount()-timeF)*0.001<<"[sec]"<<endl;
+
 					FEM3D(CON,PART,node_number,N,TRANS,fluid_number,particle_number,dt,TIME,t);
+
 					//delete [] TRANS;
 				}
 			}
@@ -2752,17 +2762,21 @@ void calc_electro_magnetic_force(mpsconfig &CON,vector<mpselastic> &PART,int flu
 			}
 		}
 	}
+
+
 	//静電霧化の場合
 	//粒子の移動により、内部に静電力が現れたり、表面の静電力が0だったりするのを防ぐ処理
 	if(CON.get_FEM_calc_type()==1 && CON.get_model_number()==14)
 	{
 		double le=CON.get_distancebp();
 		double R=CON.get_re()*le;
+
 		for(int i=0;i<fluid_number;i++)
 		{
 			if(PART[i].type==BOFLUID)//表面の場合
 			{
 				double F=sqrt(PART[i].eforce[A_X]*PART[i].eforce[A_X]+PART[i].eforce[A_Y]*PART[i].eforce[A_Y]+PART[i].eforce[A_Z]*PART[i].eforce[A_Z]);		
+
 				if(fabs(F)<1.0E-16)
 				{
 					double newF[DIMENTION];
@@ -2790,18 +2804,22 @@ void calc_electro_magnetic_force(mpsconfig &CON,vector<mpselastic> &PART,int flu
 					//if(W>0)	for(int D=0;D<DIMENTION;D++)	newF[D]/=W;
 					for(int D=0;D<DIMENTION;D++)	PART[i].eforce[D]=newF[D];//適用
 				}
+
 			}
 			if(PART[i].type==FRFLUID)//内部の場合
 			{
 				double F=sqrt(PART[i].eforce[A_X]*PART[i].eforce[A_X]+PART[i].eforce[A_Y]*PART[i].eforce[A_Y]+PART[i].eforce[A_Z]*PART[i].eforce[A_Z]);		
+
 				if(fabs(F)>1.0E-16)//静電力を持っている場合は周りの表面粒子に分配して、自分は0にする。
 				{
 					int num=0;//周辺粒子数
+
 					for(int k=0;k<PART[i].N;k++)
 					{
 						int j=PART[i].NEI[k];
 						if(PART[j].type==BOFLUID)	num++;
 					}//表面の粒子数が求まった
+
 					for(int k=0;k<PART[i].N;k++)
 					{
 						int j=PART[i].NEI[k];
@@ -2812,14 +2830,17 @@ void calc_electro_magnetic_force(mpsconfig &CON,vector<mpselastic> &PART,int flu
 					}
 					
 				}
+
 				for(int D=0;D<DIMENTION;D++)	PART[i].eforce[D]=0;
 			}
 		}
 	}//
+
 	//粒子の電磁力[N]を圧力のディリクレ値にする
 	if(CON.get_FEM_calc_type()==1)
     {
 		double le=CON.get_distancebp();
+
 		//静電力をMPSの圧力ディリクレ値とする場合
 		if(CON.get_dir_for_P()==2 || CON.get_dir_for_P()==3)
 		{
@@ -2830,6 +2851,7 @@ void calc_electro_magnetic_force(mpsconfig &CON,vector<mpselastic> &PART,int flu
 				double S;	//粒子1つが担当する表面積
 				if(CON.get_model_set_way()==0)	S=le*le;
 				if(CON.get_model_set_way()==1)	S=sqrt(3.0)/2*le*le;
+
 				double *direct[DIMENTION];	//これ使ってないよね？
 				for(int D=0;D<DIMENTION;D++) direct[D]=new double [fluid_number];
 				for(int i=0;i<fluid_number;i++)
@@ -2837,6 +2859,7 @@ void calc_electro_magnetic_force(mpsconfig &CON,vector<mpselastic> &PART,int flu
 					if(PART[i].type==BOFLUID)  direct_f(CON,PART,i,direct);
 					else  for(int D=0;D<DIMENTION;D++) direct[D][i]=0;
 				}
+
 				for(int i=0;i<fluid_number;i++)
 				{
 					double fs=0;//表面力
@@ -2852,6 +2875,7 @@ void calc_electro_magnetic_force(mpsconfig &CON,vector<mpselastic> &PART,int flu
 			}
 		}
     }//////////
+
 	
 	//電磁力プロット
 	plot_F(CON, PART, fluid_number);
@@ -2859,12 +2883,14 @@ void calc_electro_magnetic_force(mpsconfig &CON,vector<mpselastic> &PART,int flu
 	{
 		if(CON.get_current_step()==1 || CON.get_current_step()%CON.get_F_interval()==0) plot_F_log(CON,PART,fluid_number);
 	}
+
 	//電磁力AVSファイル出力
 	if(CON.get_avs_eforce_interval()>0)
 	{
 		if(CON.get_current_step()==1 || CON.get_current_step()%CON.get_avs_eforce_interval()==0) plot_avs_eforce(CON,PART,fluid_number);
 	}
 }
+
 */
 
 void initial_model_input(mpsconfig *CON, int *particle_number, double *TIME)
@@ -2947,6 +2973,7 @@ void TetGenInterface(mpsconfig &CON, vector<mpselastic> &PART, double **F, int f
 	{
 		if(t==1 || t%CON.get_F_interval()==0) plot_F_log(CON,PART,fluid_number,t);
 	}
+
 	//電磁力AVSファイル出力
 	if(CON.get_avs_eforce_interval()>0)
 	{
