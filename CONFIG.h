@@ -596,11 +596,9 @@ public:
 	double get_c10(){return c10;}
 	double get_c01(){return c01;}
 	int get_flag_wall(){return flag_wall;}
-	double get_r_z_wall(){return r_z_wall;}
 	double get_h_dis(){return h_dis;}
 	double get_h_viscousity(){return h_vis;}
 	int get_flag_vis(){return flag_vis;}
-	int get_ttest(){return tension_test;}	//ˆø‚Á’£‚èŒ±‰ğÍ—p15/2/8
 	int get_nr(){return nr_time;}
 };
 

@@ -379,6 +379,40 @@ void tetgen_function::MakePolyFile(mpsconfig &CON, tetgen_config &TET, vector<te
 		temp.region_attribute=MAGELAST;
 		REGION.push_back(temp);//*/
 	}
+
+	if(CON.get_model_number()==23 || CON.get_model_number()==24)
+	{
+		double le=CON.get_distancebp();
+		//空気
+		temp.id+=1;
+		temp.r[A_X]=0;
+		temp.r[A_Y]=0;
+		temp.r[A_Z]=CON.get_ZU()*0.9;	//解析領域上限の9割のところ
+		temp.region_number=AIR;
+		temp.region_attribute=AIR;
+		REGION.push_back(temp);
+
+		//MAGNET
+		temp.id+=1;
+		temp.r[A_X]=0;
+		temp.r[A_Y]=0;
+		temp.r[A_Z]=CON.get_magnet_Z();	//磁石の中心点
+		temp.region_number=MAGNET;
+		temp.region_attribute=MAGNET;
+		REGION.push_back(temp);
+
+		int i_no;
+		for(int i=0;i<NODE.size();i++)	if(NODE[i].part_no==0)  i_no=i;
+
+		//MAGELAST
+		temp.id+=1;
+		temp.r[A_X]=NODE[i_no].r[A_X]+le; //MAGELASTのノードが最初に追加される
+		temp.r[A_Y]=NODE[i_no].r[A_Y]+le;
+		temp.r[A_Z]=NODE[i_no].r[A_Z]+le;
+		temp.region_number=MAGELAST;
+		temp.region_attribute=MAGELAST;
+		REGION.push_back(temp);//
+	}
 	////////////////////////////////////////////////////////////////////*/
 
 	//region attribute list
@@ -473,8 +507,7 @@ void tetgen_function::SetElastBoundary(mpsconfig &CON, vector<mpselastic> &PART,
 		for(int i=0;i<(int)PART.size();i++)
 		{
 			if(PART[i].type==MAGELAST)
-			{
-				
+			{			
 				part_no=i;
 				for(int d=0;d<3;d++) temp.r[d]=PART[i].r[d];
 				type=PART[i].type;
@@ -483,7 +516,6 @@ void tetgen_function::SetElastBoundary(mpsconfig &CON, vector<mpselastic> &PART,
 				{
 					temp.attribute=MAGELAST;
 					count++;
-					
 				}
 				else if(PART[i].surface==1) 
 				{
@@ -494,7 +526,6 @@ void tetgen_function::SetElastBoundary(mpsconfig &CON, vector<mpselastic> &PART,
 				NODEe.push_back(temp);
 				temp.id+=1;
 			}
-			
 		}
 		cout<<"count"<<count<<endl;
 	//nodeファイル作成
@@ -602,7 +633,7 @@ void tetgen_function::DelThinTetrahedron(mpsconfig &CON, tetgen_config &TET, vec
 		int del=OFF;
 		int count=0;
 
-		//4点が表面節点で構成されていればフラグ1ON
+		/*//4点が表面節点で構成されていればフラグ1ON
 		count=0;
 		for(int n=0;n<4;n++)
 		{
@@ -887,7 +918,7 @@ void tetgen_function::GetFacetList_from_neigh(mpsconfig &CON, vector<tetgen_elem
 
 				for(int f=0;f<4;f++)
 				{
-					if(n!=f)
+					if(f!=n)
 					{
 						temp.node[c]=ELEM[i].node[f];
 						c++;
@@ -2041,6 +2072,8 @@ void tetgen_function::SetIRONBoundary(mpsconfig &CON, tetgen_config &TET, vector
 //	GetFacetList(FACEc, in, out, MAGNET);
 }
 
+
+
 //境界節点・境界面データの結合
 void tetgen_function::UniteBoundaryData(mpsconfig &CON, 
 					   vector<tetgen_node> &NODE, vector<tetgen_node> &NODEa1, vector<tetgen_node> &NODEa2, vector<tetgen_node> &NODEp, vector<tetgen_node> &NODEc, vector<tetgen_node> &NODEb, vector<tetgen_node> &NODEw, 
@@ -2407,8 +2440,7 @@ void tetgen_function::ModifyAttribute_tetgenio(mpsconfig &CON, tetgen_config &TE
 			if(out.tetrahedronattributelist[i]==COIL) out.tetrahedronattributelist[i]=1;
 			else if(out.tetrahedronattributelist[i]==MAGELAST) out.tetrahedronattributelist[i]=2;
 			else if(out.tetrahedronattributelist[i]==AIR) out.tetrahedronattributelist[i]=3;
-			else if(out.tetrahedronattributelist[i]==IRON) out.tetrahedronattributelist[i]=4;
-			
+			else if(out.tetrahedronattributelist[i]==IRON) out.tetrahedronattributelist[i]=4;	
 		}*/
 	}
 

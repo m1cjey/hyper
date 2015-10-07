@@ -15,7 +15,7 @@ _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
 _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDOUT);
 /*_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
 _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_DELAY_FREE_MEM_DF | _CRTDBG_CHECK_CRT_DF);
+_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_DELAY_FREE_MEM_DF | _CRTDBG_CHECK_CRT_DF);
 
 
 
@@ -66,6 +66,8 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 //	Model model;
 //	particle_number=model.Model_set();
 
+	
+
 	//INDEX関係
     int *INDEX=new int[CON.get_number_of_mesh()];	//各格子に含まれる粒子数を格納(格子の数だけ配列が必要)
     cout<<"X_mesh="<<CON.get_X_mesh()<<" Y_mesh="<<CON.get_Y_mesh()<<" Z_mesh="<<CON.get_Z_mesh()<<endl;
@@ -76,18 +78,11 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 	//初期化・・・push_back()ではコンストラクタは動かない！！（コピーコンストラクタが動く！！）angは不定！！
 	//これ以降はparticle_number=PART.size()でよい
 	mpselastic PART0;
-	vector<mpselastic> PART3;
-	vector<mpselastic> PART2;
 	vector<mpselastic> PART1;	//粒子配列をtyoe毎に並べ替える。一時保管
 	vector<mpselastic> PART;
-//	Rigidbody rigids0;
-//	vector<Rigidbody> rigids;//剛体
 
 	cout<<"ベクトル作成完了"<<endl;
 
-/*	for(int i=0;i<2;i++){
-		rigids.push_back(rigids0);
-	}*/
 	cout<<"1"<<endl;
 //	PART.reserve(20000);
 	for(int i=0;i<particle_number;i++){
@@ -116,47 +111,26 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 	//各粒子数をカウント or 並び替え．※ほとんど意味がない．実行しなくてもOK(2012/02/21)
 	calc_numbers_of_particles_and_change_the_order(&CON, PART, &fluid_number,&hyper_number,&magnetic_number, &out, &order_sw);
 
-	
-	//HYPERクラスに粒子情報格納
-	hyperelastic HYPER0;
-	hyperelastic2 HYPER10;
-	vector<hyperelastic> HYPER;
-	vector<hyperelastic2> HYPER1;
-
-	for(int i=0;i<hyper_number*hyper_number;i++)	HYPER1.push_back(HYPER10);
-	for(int i=0;i<hyper_number;i++)	HYPER.push_back(HYPER0);
-
-
-/*	//剛体クラスに粒子情報格納
-	for(int i=0;i<particle_number;i++){
-		if(PART[i].type==TERMINAL1){
-			PART2.push_back(PART[i]);
-			}		
-		if(PART[i].type==TERMINAL2){
-			PART3.push_back(PART[i]);
-			}
-	}
-	rigids[0].Get_initial_particle(PART2);
-	rigids[1].Get_initial_particle(PART3);//
-
-	PART2.clear();
-	PART3.clear();//*/
-	//初期粒子配置で解析領域外に粒子がないかチェック
 
 	check_initial_position(&CON, PART);
 
 
 	//FEM3D
 	double **F=new double*[DIMENSION];//F[D][i]となっているがこれでOK??
+	double **old_F=new double*[DIMENSION];//F[D][i]となっているがこれでOK??
+
 	for(int D=0;D<DIMENSION;D++)
 	{
 		F[D]=new double [(unsigned)PART.size()]; //各粒子に働く電磁力//particle_numberはinitial_model_input()で求まる．
 		for(int i=0;i<PART.size();i++)	F[D][i]=0.0; //初期化
+		old_F[D]=new double [(unsigned)PART.size()]; 
+		for(int i=0;i<PART.size();i++)	old_F[D][i]=0.0; //初期化
 	}
 
 	//陽解析の前にreloadINDEX	
 	//粒子ID更新・粒子数密度更新
 	reload_INDEX(CON,PART, INDEX);//格子内の粒子数更新
+	
 	count=0;
 	int **MESH0=new int *[CON.get_number_of_mesh()];
 	for(int i=0;i<CON.get_number_of_mesh();i++)
@@ -165,7 +139,6 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 		MESH0[i]=new int [INDEX[i]];
 	}
 	reload_INDEX2(&CON, PART, MESH0);
-
 
 	//表面判定（弾性計算の場合最初だけやればOK！）
 
@@ -176,29 +149,31 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 	delete [] MESH0;
 
 	//初期化も同時に行うのでこの位置(ePND[i]=PART[i].PNDなのでこの位置でなければ)
+	elastic ELAST(PART);
+	for(int i=0;i<PART.size();i++) PART[i].initialize_particles(ELAST, t);
+	//ELAST.set_ground_position(CON.get_ground_position());
 
-		elastic ELAST(PART);
-		for(int i=0;i<PART.size();i++) PART[i].initialize_particles(ELAST, t);
-		ELAST.set_ground_position(CON.get_ground_position());
+	//HYPERクラスに粒子情報格納
+	hyperelastic HYPER0;
+	hyperelastic2 HYPER10;
+	vector<hyperelastic> HYPER;
+	vector<hyperelastic2> HYPER1;
+
+		for(int i=0;i<hyper_number*hyper_number;i++)	HYPER1.push_back(HYPER10);
+		for(int i=0;i<hyper_number;i++)	HYPER.push_back(HYPER0);
+	//初期粒子配置で解析領域外に粒子がないかチェック
+
+
 	//プリプロセス終了
-
-
-
 
 
 	//file initialization
 	file_initialization();
 	/////////////////////
 	ofstream pt("PART_model.dat");
-	for(int i=0;i<PART.size();i++)
-	{
-		if(PART[i].r[A_X]>(0-CON.get_distancebp()/2) && PART[i].r[A_X]>(0+CON.get_distancebp()/2))
-		{
-			pt<<PART[i].r[A_Y]<<PART[i].r[A_Z]<<endl;
-		}
-	}
-
+	for(int i=0;i<PART.size();i++)	pt<<PART[i].r[A_Y]<<PART[i].r[A_Z]<<endl;
 	pt.close();
+
 	double L=0;
 	double W=100;
 	double P=0;
@@ -208,22 +183,19 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 	bool ff=0;
 
 	
-	int count_suf=0;
-	for(int i=0 ;i<PART.size();i++)
-	{
-		if(PART[i].surface==ON) count_suf++;
-	}
-	cout<<count_suf<<endl;
 	//表面だけ表示//表面初期化
+	/*
 	if(bool cat=ON)
 	{
-		for(int i=0 ;i<PART.size();i++){
+		for(int i=0 ;i<PART.size();i++)
+		{
 			PART[i].surface=OFF;	
-			if(PART[i].PND<=18){
+			if(PART[i].PND<=18)
+			{
 				PART[i].surface=ON;
 			}
 		}
-	}
+	}*/
 
 	//表面粒子の存在確認
 /*	count_suf=0;
@@ -242,6 +214,7 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 		//陽解析の前にreloadINDEX（粒子は移動するので毎ステップ実行する必要がある）
 		reload_INDEX(CON, PART, INDEX);	//格子内の粒子数更新
 		cout<<"reload_INDEX_OK"<<endl;
+
 		//MESHはmpsconfigのメンバ関数にするのが良い。new/delete危険なのでshared_ptrかvectorを使うべき
 		int **MESH = new int *[CON.get_number_of_mesh()];	//get_number_of_mesh() {return (int)((maxX-minX)/(distancebp*dx)*(maxY-minY)/(distancebp*dx)*(maxZ-minZ)/(distancebp*dx)+0.001);}//格子数：X_mesh*Y_mesh*Z_mesh
 		count=0;
@@ -252,7 +225,7 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 		}
 		if(count>PART.size()) cout<<"INDEX error 粒子数増加?"<<endl;
 		if(count<PART.size()) cout<<"INDEX error 粒子数減少?"<<endl;
-		reload_INDEX2(&CON, PART, MESH);
+		//reload_INDEX2(&CON, PART, MESH);
 
 		//陽解析
 		unsigned timeA=GetTickCount();
@@ -267,8 +240,8 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 
 		//CFL条件・拡散数条件によるdtの決定
 		//シンプレティックスキームを使う場合は時間解像度可変は適用してはならない
-//		if(OFF==ELAST.get_symp_flag()) courant_elastic(&CON, PART, fluid_number, t, &dt, mindis, Umax, g);
-//		courant_elastic(&CON, PART, fluid_number, t, &dt, mindis, Umax, g);
+		//if(OFF==ELAST.get_symp_flag()) courant_elastic(&CON, PART, fluid_number, t, &dt, mindis, Umax, g);
+		//courant_elastic(&CON, PART, fluid_number, t, &dt, mindis, Umax, g);
 		//弾性体計算が落ち着いてからdtを変更する
 
 		//model1だと1311、model7だと731、model11だと1781でICCG法で誤差の計算値が発散し、解析が破綻する
@@ -277,6 +250,22 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 
 		if(CON.get_FEM_flag()==true && t>wait)
 		{
+			///////HYPERの場合差分をFは足す & 初期化
+			if(CON.get_flag_HYPER()==ON)
+			{
+				if(t==1)
+				{
+					for(int i=0;i<hyper_number;i++)
+					{
+						for(int D=0;D<DIMENSION;D++)
+						{
+							HYPER[i].p[D]=0;
+							old_F[D][i]=0;
+						}
+					}
+				}
+				else{for(int i=0;i<hyper_number;i++)for(int D=0;D<DIMENSION;D++)old_F[D][i]=F[D][i];}
+			}
 
 			//ELASTからCONの関数呼び出せるので二系統要らない・・・
 			if(ELAST.get_FEM_switch()==true && CON.get_mesh_input()!=2)
@@ -286,7 +275,7 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 				if(t==1 || (t-1)%CON.get_EM_interval()==0)
 				{
 					//自作デローニ分割
-					FEM3D(CON, PART, F, &node_FEM3D, &nelm_FEM3D, NODE_FEM3D, ELEM_FEM3D, t, TIME, fluid_number);
+					FEM3D(CON, PART, F, &node_FEM3D, &nelm_FEM3D, NODE_FEM3D, ELEM_FEM3D, t, TIME, fluid_number);	//HYPERELASTに対応できていない
 				}
 			}
 			else if(CON.get_mesh_input()==2)
@@ -297,8 +286,21 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 					TetGenInterface(CON, PART, F, fluid_number, dt, t, particle_number, n0, TIME);
 				}	
 			}
-			if(t==1)	for(int i=0;i<hyper_number;i++)	for(int D=0;D<DIMENSION;D++)	HYPER[i].p[D]=0;
-			for(int i=0;i<hyper_number;i++)	for(int D=0;D<DIMENSION;D++)	HYPER[i].p[D]+=Dt*F[D][i];
+
+			////////超弾性体計算の場合は、ローレンツ力の変化分を運動量に追加する15/05/23
+			if(CON.get_flag_HYPER()==ON)
+			{
+				double det_F[DIMENSION];
+				for(int i=0;i<hyper_number;i++)
+				{
+					for(int D=0;D<DIMENSION;D++)
+					{
+						det_F[D]=0;
+						det_F[D]=F[D][i]-old_F[D][i];
+						HYPER[i].p[D]+=Dt*det_F[D];
+					}
+				}
+			}
 		}
 		
 
@@ -307,9 +309,11 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 
 		cout<<"hyper_number="<<hyper_number<<endl;
 
-
 		//超弾性計算
-		if(CON.get_flag_ELAST()==ON)	calc_hyper(CON,PART,HYPER,HYPER1,hyper_number,t);//if分の追加15/2/10
+		if(CON.get_flag_HYPER()==ON)	calc_hyper(CON,PART,HYPER,HYPER1,hyper_number,t);//if分の追加15/2/10
+
+		cout<<"hyper_calculation is ended."<<endl;
+
 
 		cout<<"陽解析終了"<<endl;
 //		cout<<"陽解析終了 umax="<<sqrt(Umax)<<"  limit U="<<0.2*mindis/dt<<endl;
@@ -356,11 +360,13 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
 
 	for(int D=0;D<DIMENSION;D++){
 		delete[] F[D];
+		delete[]old_F[D];
 //		delete [] laplacian[D];
 	}
 
 	delete [] INDEX;
 	delete [] F;
+	delete[]old_F;
 	clock_t t2=clock();
 	cout<<"CPU last time="<<(t2-t1)/CLOCKS_PER_SEC<<"[sec]"<<endl;
 //	MessageBeep(MB_ICONEXCLAMATION);//作業の終了を知らせるBEEP音 マングリングエラーが起こるのでコメントアウト
@@ -2493,7 +2499,12 @@ double get_volume(mpsconfig *CON)
 {
 	double V=0;//体積
 	double le=CON->get_distancebp();
-	if(CON->get_model_set_way()==0)	//正方格子のとき
+	if(CON->get_model_number()==21)
+	{
+		V=le*le*le;
+	}
+
+	else if(CON->get_model_set_way()==0)	//正方格子のとき
 	{
 		if(CON->get_dimension()==2){V=le*le;}
 		else	{V=le*le*le;}
@@ -2502,7 +2513,7 @@ double get_volume(mpsconfig *CON)
 	{
 		if(CON->get_dimension()==2){V=sqrt(3.0)/2*le*le;}
 		else V=le*le*le/sqrt(2.0);
-	}	
+	}
 	else cout<<"モデルの積み方が不定です 体積を計算できません"<<endl;
 	return V;
 }
@@ -2564,13 +2575,14 @@ void FEM3D(mpsconfig &CON, vector<mpselastic> &PART, double **F, int *static_nod
 			////電磁力読み取り
 			for(int i=0;i<PART.size();i++)
 			{
-				if(PART[i].type!=WALL){
-				for(int D=0;D<3;D++)
+				if(PART[i].type!=WALL)
 				{
-					fin5>>F_val;
-					F[D][i]+=F_val;//F[D][i]は宣言した直後にゼロセットしてある
+					for(int D=0;D<3;D++)
+					{
+						fin5>>F_val;
+						F[D][i]+=F_val;//F[D][i]は宣言した直後にゼロセットしてある
+					}
 				}
-			}
 			}
 			fin5.close();
 		}
@@ -2621,7 +2633,6 @@ void TetGenInterface(mpsconfig &CON, vector<mpselastic> &PART, double **F, int f
 		}
 	}
 
-
 	/////////////////////////////////////////////////
 	if(CON.get_EM_interval()==1 || t==1 || (t-1)%CON.get_EM_interval()==0){
 
@@ -2636,17 +2647,20 @@ void TetGenInterface(mpsconfig &CON, vector<mpselastic> &PART, double **F, int f
 			////電磁力読み取り
 			for(int i=0;i<PART.size();i++)
 			{
-				if(PART[i].type==MAGELAST){//MAGELAST
-				for(int D=0;D<3;D++)
-				{
-					fin5>>F_val;
-					F[D][i]+=F_val;//F[D][i]は宣言した直後にゼロセットしてある
+				if(PART[i].type==MAGELAST)
+				{//MAGELAST
+						for(int D=0;D<3;D++)
+						{
+							fin5>>F_val;
+							F[D][i]+=F_val;//F[D][i]は宣言した直後にゼロセットしてある
+						}
+					}
 				}
-			}
-			}
 			fin5.close();			
 			}
-	}else{ //何ステップかに一度だけ電磁場計算を行う場合
+	}
+	else
+	{ //何ステップかに一度だけ電磁場計算を行う場合
 	
 		if(CON.get_dir_for_P()!=2 && CON.get_dir_for_P()!=3)//電磁力が圧力ディリクレ値のときはここでは計算しない
 		{
@@ -2658,13 +2672,14 @@ void TetGenInterface(mpsconfig &CON, vector<mpselastic> &PART, double **F, int f
 			////電磁力読み取り
 			for(int i=0;i<PART.size();i++)
 			{
-				if(PART[i].type==MAGELAST){//MAGELAST
-				for(int D=0;D<3;D++)
-				{
-					fin5>>F_val;
-					F[D][i]+=F_val;//F[D][i]は宣言した直後にゼロセットしてある
+				if(PART[i].type==MAGELAST)
+				{//MAGELAST
+					for(int D=0;D<3;D++)
+					{
+						fin5>>F_val;
+						F[D][i]+=F_val;//F[D][i]は宣言した直後にゼロセットしてある
+					}
 				}
-			}
 			}
 			fin5.close();
 		}
@@ -2683,8 +2698,9 @@ void TetGenInterface(mpsconfig &CON, vector<mpselastic> &PART, double **F, int f
 		if(t==1 || t%CON.get_avs_eforce_interval()==0) plot_avs_eforce(CON,PART,fluid_number,t);
 	}//*/
 
+
 	//HYPERELAST適用のための工夫
-	for(int i=0;i<particle_number;i++)	if(flag_hyper[i]==ON)	PART[i].type==HYPERELAST;
+	for(int i=0;i<particle_number;i++)		if(flag_hyper[i]==ON) 	PART[i].type=HYPERELAST;
 
 }
 
@@ -2722,8 +2738,22 @@ void file_initialization()
 	system("mkdir Pressure");
 	system("mkdir Current");
 
-
-
+	//超弾性
+	ofstream init10("P.csv", ios::trunc);
+	ofstream init11("d_P.csv", ios::trunc);
+	ofstream init12("h_P.csv", ios::trunc);
+	ofstream init13("lambda.csv", ios::trunc);
+	ofstream init14("pnd.csv", ios::trunc);
+	ofstream init15("E.csv", ios::trunc);
+	ofstream init16("E_T.csv", ios::trunc);
+	ofstream init17("E_g.csv", ios ::trunc);
+	ofstream init18("E_W.csv", ios::trunc);
+	ofstream init19("E_lam.csv", ios::trunc);
+	ofstream init20("J.csv", ios::trunc);
+	ofstream init21("position.csv", ios::trunc);
+	ofstream init22("d_Fi.csv", ios::trunc);
+	ofstream init24("stress.csv",ios::trunc);
+	system("mkdir Newton_raphson");
 
 	//close file
 	init1.close();
@@ -2735,6 +2765,20 @@ void file_initialization()
 	init7.close();
 	init8.close();
 	init9.close();
+	init10.close();
+	init11.close();
+	init12.close();
+	init13.close();
+	init14.close();
+	init15.close();
+	init16.close();
+	init17.close();
+	init18.close();
+	init19.close();
+	init20.close();
+	init21.close();
+	init22.close();
+	init24.close();
 }
 
 void Make_STL(){

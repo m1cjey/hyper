@@ -8,37 +8,33 @@ mpsconfig::mpsconfig()
 /*	ifstream fin("config.txt");
 	string buffer;
 	stringstream ss;
-
 	if(fin.fail()){
 		cout<<"コンフィグファイルを開けませんでした";
 		exit(1);
 	}
-
 	//boost::formatで実装するのがラクでスマート・・・
 	//get_char()で実装して#(コメント文)を読み飛ばしても良い
 	getline(fin, buffer);
 	ss<<buffer;
 	ss>>step;
-
 	fin.close();*/
 	
-	step=500;				//全step数
-	switch_FEM=true;		//FEMを実行するかしないか false
+	step=100000;				//全step数	step=20000;//40000;	//30000;//10000;;	//79*20+1;
+	switch_FEM=false;		//FEMを実行するかしないか false
 	nonlinear_elastic=false;	//弾性体非線形計算するかtrue
 	switch_vis=OFF;			//粘性項計算するかしないか・・・これはあとで消す
 	FEMCG=2;				//FEMにおける行列解法 0:CG 1:ICCG 2:並列ICCG 3:MRTR 4:ICMRTR
 
 //	dt= (switch_FEM==OFF) ? 1.0e-5: 5.0e-6; //0.0001;不安定要因！ 0.00001:推奨(Courant数考えて) //Cf. dt_for_FEM=0.000001/2;
-	dt=1.0e-6;
-	dt_for_FEM=1.0e-4;
+	dt=1.0e-3;
+	dt_for_FEM=1.0e-3;
 	//FEMだと0.000001で止まる・・・
-//	step=20000;//40000;	//30000;//10000;;	//79*20+1;
 	current_step=1;
 	current_time=0.0;
 	dimension=3;
 
-	interval=2; //10	//particle_movie.mgfの出力間隔。2以上の整数にすること
-	EM_interval=2;//1	//電磁場計算を何ステップに一回行うか。通常は1に設定
+	interval=1; //10	//particle_movie.mgfの出力間隔。2以上の整数にすること
+	EM_interval=1;//1	//電磁場計算を何ステップに一回行うか。通常は1に設定
 	motion_interval=1;	//運動方程式を何回に一回解くか
 	
 	//この圧力以上になったらFEMスタート cf. PostProcessing.cpp
@@ -46,8 +42,8 @@ mpsconfig::mpsconfig()
 	ave_P_for_FEM_flag=8000000000;//80.0;//75.0;//70.0;
 
 //モデル
-	model_number=6;			//4:引っ張り試験片 7:MREアクチュエータ 12:剛体
-	model_set_way=0;		//modelをセットする方法　0=正方格子 1=MD
+	model_number=21;			//4:引っ張り試験片 7:MREアクチュエータ 12:剛体
+	model_set_way=1;		//modelをセットする方法　0=正方格子 1=MD
 
 //モデル１,11専用
 /*	R1=9*0.001;
@@ -69,10 +65,10 @@ mpsconfig::mpsconfig()
 	EM_calc_type=2;			//0=デローニのみ 1=電場 2=静磁場 3=動磁場 4=磁位
 //	EM_interval=1;//1		//電磁場計算を何ステップに一回行うか。通常は1に設定
 	//解析領域
-	XR=0.1;
-	XL=-0.1;
-	YU=0.1;
-	YD=-0.1;
+	XR=2.0;
+	XL=-2.0;
+	YU=2.0;
+	YD=-2.0;
 	/*
 	XR=0.1;//0.01;		
 	XL=-0.1;//-0.01;
@@ -84,9 +80,9 @@ mpsconfig::mpsconfig()
 	RU=distancebp*10;*/
 	
 	//FRMcheck用	15/2/10
-	ZU=0.1; //0.2
-	ZD=-0.1; //0.2 				//液滴 -0.01 コイル:-0.15 るつぼ:-0.0002
-	RU=0.1;//0.1;				//解析領域が円筒形となるときのその半径
+	ZU=2.0;//0.10; //0.2
+	ZD=-2.0;//0.10; //0.2 				//液滴 -0.01 コイル:-0.15 るつぼ:-0.0002
+	RU=2.0;//0.10;//0.1;				//解析領域が円筒形となるときのその半径
 
 //流体の物性値
 	MRE_density=1826;          //water:997.04  エタノール:798[kg/m3]
@@ -111,25 +107,25 @@ mpsconfig::mpsconfig()
 	///////////////////
 //粒子配置用
 	fluidwidth=20; //30;//40//15[個]	//fluidwidth=20*2;
-	distancebp=0.001;///0.001/2;//0.005; //distancebp=0.0125;[mm]
+	distancebp=0.1;///0.001/2;//0.005; //distancebp=0.0125;[mm]
 	wlength=2;
 	height=0.0;//0.005;    
 
 //解析領域
-/*	maxX=distancebp*20;	//0.1/2;	//1
-	minX=-distancebp*20;	//-0.1/2;
-	maxY=distancebp*20;	//0.1/2;	//0.4;
-	minY=-distancebp*20;	//-0.1/2;	//-0.6; //-1.0
-	maxZ=distancebp*20;	//0.1/2;	//0.3;
-	minZ=-distancebp*20;	//-0.1/2;	//-0.6;  //indexの関係上、Z方向には余裕をもつこと。*/
+	maxX=2.0;//0.1;	//0.1/2;	//1
+	minX=-2.0;//-0.1;	//-0.1/2;
+	maxY=2.0;//0.1;	//0.1/2;	//0.4;
+	minY=-2.0;//-0.1;	//-0.1/2;	//-0.6; //-1.0
+	maxZ=2.0;//0.1;	//0.1/2;	//0.3;
+	minZ=-2.0;//-0.1;	//-0.1/2;	//-0.6;  //indexの関係上、Z方向には余裕をもつこと。
 
 	//FEMcheck用15/2/10
-	maxX=0.2;	//0.1/2;	//
+/*	maxX=0.2;	//0.1/2;	//
 	minX=-0.2;	//-0.1/2;
 	maxY=0.2;	//0.1/2;	//0.4;
 	minY=-0.2;	//-0.1/2;	//-0.6; //-1.0
 	maxZ=0.2;	//0.1/2;	//0.3;
-	minZ=-0.2;	//-0.1/2;	//-0.6;  //indexの関係上、Z方向には余裕をもつこと。
+	minZ=-0.2;	//-0.1/2;	//-0.6;  //indexの関係上、Z方向には余裕をもつこと。*/
 
 
 //粒子法用パラメータ
@@ -199,9 +195,9 @@ mpsconfig::mpsconfig()
 	air_layer=2;				//物体の周囲に空気層を生成する層数(0なら生成しない)
 	layer_depth=0.5;//0.5(2012/03/03);		//空気層の幅。初期粒子間距離の何倍か
 	mesh_output_interval=1;//1;	//メッシュ情報を、有限要素法のステップに対して、何ステップに一度出力するか。
-	FEMCGep=5.0e-5;			//1.3e-4PICCG 元々5.0e-6
-	MRTRep=6.8e-4;		//MRTR(&ICMRTR)法の収束判定
-	FEM_calc_type=3;		//0=OFF 1=電場 2=磁場 3=磁場(渦電流) 4=磁位 5=非線形静磁場
+	FEMCGep=5.0e-5;			//1.3e-4PICCG 元々5.0e-6	//本プログラムでは現在不使用15/5/24
+	MRTRep=6.8e-4;		//MRTR(&ICMRTR)法の収束判定	//本プログラムでは現在不使用15/5/24
+	FEM_calc_type=2;	//15/5/24	//3;		//0=OFF 1=電場 2=磁場 3=磁場(渦電流) 4=磁位 5=非線形静磁場
 	ele_type=1;				//(mesher=0の場合) 要素ﾀｲﾌﾟ 0:節点要素 1:辺要素
 
 //磁場計算
@@ -217,10 +213,10 @@ mpsconfig::mpsconfig()
 	NLBHI=0;				//体積力において、要素Ｂから要素Ｈを求める際に非線形性を考慮するか、しないか(non linier B H inverter)
 	NLMH=OFF;				//Ｍの算出に非線形性を考慮するか、しないか
 	magnet_H=5.0*distancebp;			//永久磁石の高さ0.005
-	magnet_r=2.5*distancebp;//0.01	//永久磁石の半径0.005 　　　　　　　　　　　//J_input_way=2:半径ではなく直径、J_put_way=0:半径　と思われる。
-	magnet_Z=-11.5*distancebp; //-45*0.0005-0.005; //-(fluidwidth)*distancebp-0.01; //-0.0125*0.8		//永久磁石の中心のZ座標 42*0.0005 //-magnet_H/2-(15*distancebp+0.002) モデル5:-0.035
+	magnet_r=3.0*distancebp;//0.01	//永久磁石の半径0.005 　　　　　　　　　　　//J_input_way=2:半径ではなく直径、J_put_way=0:半径　と思われる。
+	magnet_Z=-(6*sqrt(2.0)+3.0)*distancebp;//-8*distancebp; //-45*0.0005-0.005; //-(fluidwidth)*distancebp-0.01; //-0.0125*0.8		//永久磁石の中心のZ座標 42*0.0005 //-magnet_H/2-(15*distancebp+0.002) モデル5:-0.035
 	magnet_angle=0.0;			//永久磁石の着磁方向 0なら+Z方向となる。そこから角度をつけたいなら、その角度[deg]を入力する
-	magnet_B=2.0;//0.145;//1.20;			//永久磁石の強さ[T] Avector3D()で指定
+	magnet_B=1.25;//0.145;//1.20;			//永久磁石の強さ[T] Avector3D()で指定
 	magnetic_layers=1;	//永久磁石周辺の空気層の数1層はすでにある 1+
 	uniform_B=0.00; //0.01;	//一様磁場の大きさ[T]?
 	B_times=1;//0.1			//ファイル出力する際の、磁束密度の倍率
@@ -237,7 +233,7 @@ mpsconfig::mpsconfig()
 	FEM_elm_type=1;			//要素タイプ 0:節点要素 1:辺要素
 	FEM_smn=1;				//電磁力スムージング回数　0ならOFF マイナスなら表面のみ プラスなら内部も。
 	max_DN=25000;           //Dirichlet型境界条件をとる最大節点(辺)数
-//	FEMCG=1;				//FEMにおける行列解法 0:CG 1:ICCG 2:並列ICCG
+//	FEMCG=1;				//FEMにおける行列解法 0:CG 1:ICCG 2:並列ICCG	//なぜコメントアウトされているのか15/5/24
 	CGaccl=1.3;				//ICCG法における加速ファクタ　1のときファクタOFF
 	EMCGep=1.0e-12;			//電磁場のICCGの収束判定1e-5  アクチュエータ2.5e-5　ICCG
 	FEMtimes=5;				//電磁力をプロットする際の、表面張力に対する倍率 通常は1に設定
@@ -315,7 +311,7 @@ mpsconfig::mpsconfig()
 	minT=293;
 
 //AVS関連出力ファイル
-	F_interval=100;			//F.datのログを何ステップ毎に出力するか
+	F_interval=2;			//F.datのログを何ステップ毎に出力するか
 	avs_eforce_interval=0;			//AVS電磁力ファイルを何ステップ毎に出力するか
 	avs_mesh1_interval=200;			//AVS電位ファイル(断面)を何ステップ毎に出力するか
 	avs_mesh2_interval=200;			//AVSメッシュファイ有ル(断面)を何ステップ毎に出力するか
@@ -328,18 +324,16 @@ mpsconfig::mpsconfig()
 
 
 //超弾性計算 
-	flag_ELAST=ON;
-	flag_HYPER=OFF;
+	flag_ELAST=OFF;
+	flag_HYPER=ON;
 	hyper_density=1000;          //water:997.04  エタノール:798[kg/m3]
-	c10=30000;
-	c01=20000;
-	flag_wall=OFF;
-	r_z_wall=-6.5;	//distancebpがダブっていたことが判明15/2/8
+	c10=30000;//30000;
+	c01=20000;//20000;
+	flag_wall=ON;
 	h_dis=1.9*distancebp;
 	h_vis=1.0;
 	flag_vis=OFF;
-	tension_test=OFF;	//引っ張り試験解析用15/2/8
-	nr_time=2000;	//15/2/8
+	nr_time=1000;	//15/2/8
 }
 
 
@@ -373,5 +367,6 @@ double mpsconfig::get_particle_mass()
 		cout<<"モデルの積み方が不定です 質量を計算できません"<<endl;
 		exit(1);
 	}
+
 	return mass;
 }
