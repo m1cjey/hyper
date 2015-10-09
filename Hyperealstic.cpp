@@ -62,7 +62,7 @@ void calc_constant(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> &
 
 	////初期運動量
 	//曲げねじり
-	if(model==21)
+	/*if(model==21)
 	{
 		
 		int t=30,b=2;
@@ -86,8 +86,56 @@ void calc_constant(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> &
 			HYPER[i].p[A_Y]=mi*t*part_p*part_p*part_p*X;
 			HYPER[i].p[A_Z]=0;
 		}
+	}*/
 
+	//曲げ
+	/*if(model==21)
+	{
+		int b=2;
+		double max=0,min=0;
+
+		for(int i=0;i<h_num;i++)
+		{
+			if(max<PART[i].q0[A_Z])	max=PART[i].q0[A_Z];
+			if(min>PART[i].q0[A_Z])	min=PART[i].q0[A_Z];
+		}
+		double H=max-min+le;
+		cout<<H;
+		//double H=1.8;
+		for(int i=0;i<h_num;i++)	
+		{
+			double Z=PART[i].q0[A_Z];
+			double part_p=(Z/H)*2;
+			HYPER[i].p[A_X]=mi*b*(3*part_p*part_p-1);
+		}
+	}*/
+
+	//ねじり
+	if(model==21)
+	{
+		int t=30;
+		double max=0,min=0;
+
+		for(int i=0;i<h_num;i++)
+		{
+			if(max<PART[i].q0[A_Z])	max=PART[i].q0[A_Z];
+			if(min>PART[i].q0[A_Z])	min=PART[i].q0[A_Z];
+		}
+		double H=max-min+le;
+		cout<<H;
+		//double H=1.8;
+		for(int i=0;i<h_num;i++)	
+		{
+			double Z=PART[i].q0[A_Z];
+			double Y=PART[i].q0[A_Y];
+			double X=PART[i].q0[A_X];
+			double part_p=(Z/H)*2;
+			HYPER[i].p[A_X]=-mi*t*part_p*part_p*part_p*Y;
+			HYPER[i].p[A_Y]=mi*t*part_p*part_p*part_p*X;
+			HYPER[i].p[A_Z]=0;
+		}
 	}
+
 
 	//回転
 	if(model==22)
@@ -675,15 +723,13 @@ void calc_F(vector<mpselastic> PART,vector<hyperelastic> &HYPER,vector<hyperelas
 
 		Ni=HYPER[i].N;
 
-		int inn;
-		double w;
 		double a[DIMENSION];
 		double fi0[DIMENSION][DIMENSION];
 
 		for(int in=0;in<Ni;in++)
 		{
-			inn=HYPER[i].NEI[in];
-			w=HYPER1[i*h_num+inn].wiin;
+			int inn=HYPER[i].NEI[in];
+			double w=HYPER1[i*h_num+inn].wiin;
 			a[A_X]=HYPER1[i*h_num+inn].aiin[A_X];	a[A_Y]=HYPER1[i*h_num+inn].aiin[A_Y];	a[A_Z]=HYPER1[i*h_num+inn].aiin[A_Z];
 			fi0[A_X][A_X]=w*(PART[inn].r[A_X]-PART[i].r[A_X])*a[A_X];	fi0[A_X][A_Y]=w*(PART[inn].r[A_X]-PART[i].r[A_X])*a[A_Y];	fi0[A_X][A_Z]=w*(PART[inn].r[A_X]-PART[i].r[A_X])*a[A_Z];
 			fi0[A_Y][A_X]=w*(PART[inn].r[A_Y]-PART[i].r[A_Y])*a[A_X];	fi0[A_Y][A_Y]=w*(PART[inn].r[A_Y]-PART[i].r[A_Y])*a[A_Y];	fi0[A_Y][A_Z]=w*(PART[inn].r[A_Y]-PART[i].r[A_Y])*a[A_Z];
@@ -885,7 +931,7 @@ void renew_lambda(mpsconfig &CON,vector<hyperelastic> &HYPER,vector<hyperelastic
 	for(int i=0;i<h_num;i++)
 	{
 		N_right=0;
-		for(int j=0;j<h_num;j++)N_right+=HYPER[j].differential_p[0]*HYPER1[i*h_num+j].DgDq[0]+HYPER[j].differential_p[1]*HYPER1[i*h_num+j].DgDq[1]+HYPER[j].differential_p[2]*HYPER1[i*h_num+j].DgDq[2];
+		for(int j=0;j<h_num;j++)	N_right+=HYPER[j].differential_p[0]*HYPER1[i*h_num+j].DgDq[0]+HYPER[j].differential_p[1]*HYPER1[i*h_num+j].DgDq[1]+HYPER[j].differential_p[2]*HYPER1[i*h_num+j].DgDq[2];
 		N_Right[i]=N_right;//1/mk*N_right;	
 //		cout<<"N_Right["<<i<<"]= "<<"1/"<<mk<<"*"<<N_right2<<" = "<<N_Right[i]<<endl;
 	}
@@ -942,6 +988,7 @@ double calc_det(double **M,int N)
 	}
 	return det;
 }
+
 double calc_det3(double **M)
 {
 	double det=0;
@@ -1195,10 +1242,7 @@ void momentum_movie_AVS(mpsconfig &CON,int t,vector<mpselastic> PART,vector<hype
 	for(int i=0;i<h_num;i++) fp<<i<<" "<<PART[i].r[A_X]<<" "<<PART[i].r[A_Y]<<" "<<PART[i].r[A_Z]<<endl;
 	
 	//要素番号と要素形状の種類、そして要素を構成する節点番号出力
-	for(int i=0;i<h_num;i++)
-	{
-		fp<<i<<"  0 pt "<<i<<endl;
-	}
+	for(int i=0;i<h_num;i++)	fp<<i<<"  0 pt "<<i<<endl;
 
 	//fp<<"2 3"<<endl;//節点の情報量が2で、要素の情報量が3ということ。
 	fp<<"7 0"<<endl;//節点の情報量が8で、要素の情報量が0ということ。
@@ -1343,7 +1387,6 @@ void contact_judge_hyper(mpsconfig CON,vector<mpselastic> &PART,vector<hyperelas
 
 void contact_judge_hyper2(mpsconfig CON, vector<mpselastic> &PART, vector<hyperelastic> &HYPER, int hyper_number, int t)
 {
-
 	//アルゴリズム
 	// 0. i周辺の粒子数密度が増加した場合，影響半径内にある粒子を探索し，以下を行う
 	// 1. 「接触の可能性がある粒子」（(PART[j].PND>PART[j].PND0)が真？）を調べる
@@ -1382,10 +1425,8 @@ void contact_judge_hyper2(mpsconfig CON, vector<mpselastic> &PART, vector<hypere
 		for(int i=0;i<h_num;i++)	s_pnd<<i<<",";
 	}
 	s_pnd<<t<<",";
-	double vec_norm[DIMENSION];
-	vec_norm[A_X]=0;
-	vec_norm[A_Y]=0;
-	vec_norm[A_Z]=1;
+
+	double vec_norm[DIMENSION]={0,0,1};
 	//for(int i=0;i<h_num;i++)	for(int D=0;D<DIMENSION;D++)	HYPER[h_num].vec_norm[D]=vec_norm[D];
 
 	for(int i=0;i<h_num;i++)
