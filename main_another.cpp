@@ -2753,7 +2753,9 @@ void file_initialization()
 	ofstream init21("position.csv", ios::trunc);
 	ofstream init22("d_Fi.csv", ios::trunc);
 	ofstream init24("stress.csv",ios::trunc);
+	ofstream init25("ti_Fi.csv", ios::trunc);
 	system("mkdir Newton_raphson");
+
 
 	//close file
 	init1.close();
@@ -2779,6 +2781,7 @@ void file_initialization()
 	init21.close();
 	init22.close();
 	init24.close();
+	init25.close();
 }
 
 void Make_STL(){
