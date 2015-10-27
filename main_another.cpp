@@ -2754,6 +2754,7 @@ void file_initialization()
 	ofstream init22("d_Fi.csv", ios::trunc);
 	ofstream init24("stress.csv",ios::trunc);
 	ofstream init25("ti_Fi.csv", ios::trunc);
+	ofstream init26("Fi.csv", ios::trunc);
 	system("mkdir Newton_raphson");
 
 

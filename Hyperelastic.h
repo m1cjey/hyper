@@ -15,7 +15,6 @@ public:
 	double half_p[DIMENSION];
 	double stress[DIMENSION][DIMENSION];
 	double differential_p[DIMENSION];
-	double old_p[DIMENSION];
 	double p[DIMENSION];
 	double ang_p[DIMENSION];
 	double Ai[DIMENSION][DIMENSION];
@@ -25,6 +24,7 @@ public:
 	double J;
 	double pnd;
 	double differential_Fi[DIMENSION][DIMENSION];
+	double Fi[DIMENSION][DIMENSION];
 	double vis_force[DIMENSION];
 	double vec_norm[DIMENSION];
 	hyperelastic();
