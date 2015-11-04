@@ -2739,6 +2739,7 @@ void file_initialization()
 	system("mkdir Current");
 
 	//í¥íeê´
+	system("mkdir DgDq");
 	ofstream init10("P.csv", ios::trunc);
 	ofstream init11("d_P.csv", ios::trunc);
 	ofstream init12("h_P.csv", ios::trunc);
@@ -2750,11 +2751,9 @@ void file_initialization()
 	ofstream init18("E_W.csv", ios::trunc);
 	ofstream init19("E_lam.csv", ios::trunc);
 	ofstream init20("J.csv", ios::trunc);
-	ofstream init21("position.csv", ios::trunc);
-	ofstream init22("d_Fi.csv", ios::trunc);
-	ofstream init24("stress.csv",ios::trunc);
-	ofstream init25("ti_Fi.csv", ios::trunc);
-	ofstream init26("Fi.csv", ios::trunc);
+	ofstream init22("stress.csv",ios::trunc);
+	ofstream init23("ti_Fi.csv", ios::trunc);
+	ofstream init24("Fi.csv", ios::trunc);
 	system("mkdir Newton_raphson");
 
 
@@ -2779,10 +2778,10 @@ void file_initialization()
 	init18.close();
 	init19.close();
 	init20.close();
-	init21.close();
 	init22.close();
+	init23.close();
 	init24.close();
-	init25.close();
+
 }
 
 void Make_STL(){
