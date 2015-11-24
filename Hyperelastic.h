@@ -7,10 +7,12 @@ public:
 
 	unsigned ID;
 	int NEI[200];
-	int NEI_w[200];
+	int NEIw[200];
+	int tw[2000];
 	int N;
-	int N_w;
-	
+	int Nw;
+	double bw_pz;
+
 	double lambda;
 	double half_p[DIMENSION];
 	double stress[DIMENSION][DIMENSION];
