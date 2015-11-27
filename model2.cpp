@@ -1154,8 +1154,8 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 	 ///////////////////////////////////////////モデル21　超弾性体///////////////////////////////////////////////////////////
 	 else if(model==21)	//越塚先生先行研究の角柱
 	 {
-		 double height=18;
-		 double base=3;
+		 double height=36;
+		 double base=6;
 
 		 for(int i=0;i<base;i++)
 		 {
@@ -1371,7 +1371,7 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 				 }
 			 }
 		 }
-		 for(int i=0;i<number2;i++)		 writedata2(fq,i+number,(X2[i]-1.5)*le2,(Y2[i]-1.5)*le2,(Z2[i]-1.0)*le2,WALL,1,w_suf[i],0,0,0,0,0,0,0,0,0,0);
+		 for(int i=0;i<number2;i++)		 writedata2(fq,i+number,(X2[i]-1.5)*le2,(Y2[i]-1.5)*le2,(Z2[i]-2.0)*le2,WALL,1,w_suf[i],0,0,0,0,0,0,0,0,0,0);
 		 cout<<"number2"<<number2<<endl;
 		number+=number2;/*
 		for(int k=0;k<3*2-1;k++)

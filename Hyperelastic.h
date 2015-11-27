@@ -6,12 +6,8 @@ class hyperelastic
 public:
 
 	unsigned ID;
-	int NEI[200];
-	int NEIw[200];
-	int tw[2000];
+	int NEI[500];
 	int N;
-	int Nw;
-	double bw_pz;
 
 	double lambda;
 	double half_p[DIMENSION];

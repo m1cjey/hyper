@@ -309,8 +309,11 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 
 		cout<<"hyper_number="<<hyper_number<<endl;
 
+		//”S’e«ŒvŽZ
+		if(CON.get_flag_vis()==ON)	calc_vis_f(CON,PART,HYPER,HYPER1,hyper_number,t);
+
 		//’´’e«ŒvŽZ
-		if(CON.get_flag_HYPER()==ON)	calc_hyper(CON,PART,HYPER,HYPER1,hyper_number,t);//if•ª‚Ì’Ç‰Á15/2/10
+		if(CON.get_flag_HYPER()==ON)	calc_hyper(CON,PART,HYPER,HYPER1,t);//if•ª‚Ì’Ç‰Á15/2/10
 
 		cout<<"hyper_calculation is ended."<<endl;
 
@@ -2754,6 +2757,8 @@ void file_initialization()
 	ofstream init22("stress.csv",ios::trunc);
 	ofstream init23("ti_Fi.csv", ios::trunc);
 	ofstream init24("Fi.csv", ios::trunc);
+	ofstream init25("time_log_newton.dat", ios::trunc);
+	ofstream init26("time_log_gauss.dat", ios::trunc);
 	system("mkdir Newton_raphson");
 
 
@@ -2781,6 +2786,8 @@ void file_initialization()
 	init22.close();
 	init23.close();
 	init24.close();
+	init25.close();
+	init26.close();
 
 }
 
