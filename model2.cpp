@@ -1154,8 +1154,8 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 	 ///////////////////////////////////////////モデル21　超弾性体///////////////////////////////////////////////////////////
 	 else if(model==21)	//越塚先生先行研究の角柱
 	 {
-		 double height=36;
-		 double base=6;
+		 double height=72;
+		 double base=12;
 
 		 for(int i=0;i<base;i++)
 		 {
@@ -1493,6 +1493,107 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 
 
 	 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	 //////ベッド//////
+	else if(model==25)
+	{
+
+		//円筒作成
+		double R=0.005;//半径	100*100mm	//4個作ってみる？
+		double height=0.017;//(6*le*A)*2;これは何？
+
+		//円作成
+		int circle_start_id=0; 
+		set_circle_edge(X,Y,Z,&number,le,R);//円外周　これがないと内部も作れない
+		set_circle_in_using_6_pieces(X,Y,Z,&number,le,R,0,number);//円内部    vector配列は参照渡ししている
+		int circle_end_id=number;	//円の粒子idを記憶
+		int top_flag=ON;		//円柱の上面も作成するからフラグをON
+		set_cylinder_face(X,Y,Z,&number,le,R,height,circle_start_id,circle_end_id,top_flag);//円柱表面座標作成
+		int face_n=number; //
+		set_cylinder_in(X,Y,Z,&number,le,R,height,1,circle_start_id);//内部にパッキング
+		int beforeNumber=number;
+		
+		vector<int>suf;
+		for(int i=0;i<circle_end_id;i++)	suf.push_back(1);
+		for(int i=circle_end_id;i<number;i++)	suf.push_back(0);
+		for(int i=0;i<number;i++)
+		{
+			writedata2(fq,i,X[i]-0.0055,Y[i]-0.0055,Z[i],MAGELAST,1,suf[i],0,0,0,0,0,0,0,0,0,1);//粒子は,FACE
+			writedata2(fq,i+number,X[i]+0.0055,Y[i]-0.0055,Z[i],MAGELAST,1,suf[i],0,0,0,0,0,0,0,0,0,1);//粒子は,FACE
+			writedata2(fq,i+number*2,X[i]-0.0055,Y[i]+0.0055,Z[i],MAGELAST,1,suf[i],0,0,0,0,0,0,0,0,0,1);//粒子は,FACE
+			writedata2(fq,i+number*3,X[i]+0.0055,Y[i]+0.0055,Z[i],MAGELAST,1,1,suf[i],0,0,0,0,0,0,0,0,1);//粒子は,FACE
+		}			
+		number+=number*3;
+		//下壁
+		int number2=0;
+		int w_base=0.025/le;
+		 vector<int> w_suf;
+		 for(int k=0;k<3*2-1;k++)
+		 {
+			 if(k%2==0)
+			 {
+				 for(int i=0;i<w_base*2-1;i++)
+				 {
+					 if(i%2==0)
+					 {
+						 for(int j=0;j<w_base;j++)
+						 {
+							 X2.push_back(i*0.5);
+							 Y2.push_back(j);
+							 Z2.push_back(k*0.5);
+							number2++;
+							if(i==0||j==0||k==0||i==w_base*2-2||j==w_base||k==3*2-2) w_suf.push_back(1);
+							else w_suf.push_back(0);
+						 }
+					 }
+					 else 
+					 {
+						 for(int j=0;j<w_base-1;j++)
+						 {
+							X2.push_back(i*0.5);
+							Y2.push_back(j+0.5);
+							Z2.push_back(k*0.5);
+							number2++;
+							if(i==0||j==0||k==0||i==w_base*2-2||j==w_base-2||k==3*2-2) w_suf.push_back(1);
+							else w_suf.push_back(0);
+						 }
+					 }
+				 }
+			 }
+			 else
+			{
+				 for(int i=0;i<w_base*2-1;i++)
+				 {
+					 if(i%2==1)
+					 {
+						 for(int j=0;j<w_base;j++)
+						 {
+							 X2.push_back(i*0.5);
+							 Y2.push_back(j);
+							 Z2.push_back(k*0.5);
+							number2++;
+							if(i==0||j==0||k==0||i==w_base*2-2||j==w_base-1||k==3*2-2) w_suf.push_back(1);
+							else w_suf.push_back(0);
+						 }
+					 }
+					 else 
+					 {
+						 for(int j=0;j<w_base-1;j++)
+						 {
+							X2.push_back(i*0.5);
+							Y2.push_back(j+0.5);
+							Z2.push_back(k*0.5);
+							number2++;
+							if(i==0||j==0||k==0||i==w_base*2-2||j==w_base-2||k==3*2-2) w_suf.push_back(1);
+							else w_suf.push_back(0);
+						 }
+					 }
+				 }
+			 }
+		 }
+		 for(int i=0;i<number2;i++) writedata2(fq,i+number,(X2[i]-(0.025/le-1)/2)*le,(Y2[i]-(0.025/le-1)/2)*le,(Z2[i]-4.0)*le,WALL,1,w_suf[i],0,0,0,0,0,0,0,0,0,0);
+		 number+=number2;
+	
+	}
 
 	//////////////////////////////////////////////例外処理///////////////////////////////////////
 	else cout<<"modelエラー"<<endl;

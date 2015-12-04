@@ -47,12 +47,10 @@ void calc_elastic(vector<mpselastic> &PART, elastic &ELAST, int t, double **F)
 		//仮の位置・速度から求めた内力（加速度）でu, rを修正
 		calc_post_velocity_and_position(PART, ELAST,t);
 
-
-
-
 /*		for(int i=0;i<PART.size();i++){
 		cout<<"i="<<i<<", rx="<<PART[i].r[A_X]<<", ry="<<PART[i].r[A_Y]<<", rz="<<PART[i].r[A_Z]<<endl;//
 	}//*/
+
 		//ハミルトニアンのファイル出力
 		calc_hamiltonian(ELAST, t);
 	}
@@ -733,8 +731,9 @@ void modify_acceleration(vector<mpselastic> &PART, elastic &ELAST, double **F)
 	#pragma omp parallel for
 	for(int i=0;i<PART.size();i++)
 	{
-		for(int D=0;D<3;D++) total_accel[D]=(PART[i].get_stress_accel(D)+PART[i].get_stress_visco_accel(D)+PART[i].get_pressure_accel(D)+PART[i].PAcc[D]+g[D]+F[D][i]/mass);
-
+//		for(int D=0;D<3;D++) total_accel[D]=(PART[i].get_stress_accel(D)+PART[i].get_stress_visco_accel(D)+PART[i].get_pressure_accel(D)+PART[i].PAcc[D]+g[D]+F[D][i]/mass);
+		if(PART[i].surface==ON)	for(int D=0;D<3;D++) total_accel[D]=(PART[i].get_stress_accel(D)+PART[i].get_stress_visco_accel(D)+PART[i].get_pressure_accel(D)+PART[i].PAcc[D]+g[D]+F[D][i]/mass-66*9.80665/mass);
+		else	for(int D=0;D<3;D++)	total_accel[D]=(PART[i].get_stress_accel(D)+PART[i].get_stress_visco_accel(D)+PART[i].get_pressure_accel(D)+PART[i].PAcc[D]+g[D]+F[D][i]/mass);
 		//下向き加速度が増加した場合←これは過拘束では？
 		if((PART[i].get_stop_on_floor()==true) && (total_accel[A_Z]<0.0))
 		{

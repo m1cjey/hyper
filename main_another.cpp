@@ -2788,7 +2788,6 @@ void file_initialization()
 	init24.close();
 	init25.close();
 	init26.close();
-
 }
 
 void Make_STL(){

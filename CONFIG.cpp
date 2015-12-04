@@ -19,21 +19,21 @@ mpsconfig::mpsconfig()
 	ss>>step;
 	fin.close();*/
 	
-	step=20000;				//全step数	step=20000;//40000;	//30000;//10000;;	//79*20+1;
+	step=40000;				//全step数	step=20000;//40000;	//30000;//10000;;	//79*20+1;
 	switch_FEM=false;		//FEMを実行するかしないか false
 	nonlinear_elastic=false;	//弾性体非線形計算するかtrue
 	switch_vis=OFF;			//粘性項計算するかしないか・・・これはあとで消す
 	FEMCG=2;				//FEMにおける行列解法 0:CG 1:ICCG 2:並列ICCG 3:MRTR 4:ICMRTR
 
 //	dt= (switch_FEM==OFF) ? 1.0e-5: 5.0e-6; //0.0001;不安定要因！ 0.00001:推奨(Courant数考えて) //Cf. dt_for_FEM=0.000001/2;
-	dt=5.0e-5;
+	dt=2.5e-5;
 	dt_for_FEM=1.0e-3;
 	//FEMだと0.000001で止まる・・・
 	current_step=1;
 	current_time=0.0;
 	dimension=3;
 
-	interval=20; //10	//particle_movie.mgfの出力間隔。2以上の整数にすること
+	interval=4; //10	//particle_movie.mgfの出力間隔。2以上の整数にすること
 	EM_interval=1;//1	//電磁場計算を何ステップに一回行うか。通常は1に設定
 	motion_interval=1;	//運動方程式を何回に一回解くか
 	
@@ -80,8 +80,8 @@ mpsconfig::mpsconfig()
 	RU=distancebp*10;*/
 	
 	//FRMcheck用	15/2/10
-	ZU=2.0;//0.10; //0.2
-	ZD=-2.0;//0.10; //0.2 				//液滴 -0.01 コイル:-0.15 るつぼ:-0.0002
+	ZU=2.5;//0.10; //0.2
+	ZD=-2.5;//0.10; //0.2 				//液滴 -0.01 コイル:-0.15 るつぼ:-0.0002
 	RU=2.0;//0.10;//0.1;				//解析領域が円筒形となるときのその半径
 
 //流体の物性値
@@ -107,7 +107,7 @@ mpsconfig::mpsconfig()
 	///////////////////
 //粒子配置用
 	fluidwidth=20; //30;//40//15[個]	//fluidwidth=20*2;
-	distancebp=0.05;///0.001/2;//0.005; //distancebp=0.0125;[mm]
+	distancebp=0.025;///0.001/2;//0.005; //distancebp=0.0125;[mm]
 	wlength=2;
 	height=0.0;//0.005;    
 
@@ -116,8 +116,8 @@ mpsconfig::mpsconfig()
 	minX=-2.0;//-0.1;	//-0.1/2;
 	maxY=2.0;//0.1;	//0.1/2;	//0.4;
 	minY=-2.0;//-0.1;	//-0.1/2;	//-0.6; //-1.0
-	maxZ=2.0;//0.1;	//0.1/2;	//0.3;
-	minZ=-2.0;//-0.1;	//-0.1/2;	//-0.6;  //indexの関係上、Z方向には余裕をもつこと。
+	maxZ=2.5;//0.1;	//0.1/2;	//0.3;
+	minZ=-2.5;//-0.1;	//-0.1/2;	//-0.6;  //indexの関係上、Z方向には余裕をもつこと。
 
 	//FEMcheck用15/2/10
 /*	maxX=0.2;	//0.1/2;	//

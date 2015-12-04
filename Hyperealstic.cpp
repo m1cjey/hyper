@@ -39,9 +39,9 @@ void calc_hyper(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HY
 
 	newton_raphson(CON,PART,HYPER,HYPER1,t);
 
-	calc_half_p(CON,PART,HYPER,HYPER1,0,t);
+	calc_half_p(CON,PART,HYPER,HYPER1,0);
 
-	calc_F(PART,HYPER,HYPER1,t);
+	calc_F(PART,HYPER,HYPER1);
 
 	calc_stress(CON,HYPER);
 	
@@ -49,7 +49,8 @@ void calc_hyper(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HY
 
 	renew_lambda(CON,HYPER,HYPER1,t);
 
-	calc_half_p(CON,PART,HYPER,HYPER1,1,t);
+
+	calc_half_p(CON,PART,HYPER,HYPER1,1);
 
 	cout<<"Hypercalculation ends."<<endl;
 }
@@ -579,7 +580,8 @@ void calc_newton_function(mpsconfig &CON,vector<mpselastic> PART,vector<hyperela
 			if(DFDlambda!=0)	DfDx[i*h_num+j]=-Dt*Dt*0.5/mi*DFDlambda;//-DFDlambda;//
 		}
 	}*/
-
+	
+	
 	for(int k=0;k<h_num;k++)
 	{
 		double DFDlambda=0;
@@ -597,7 +599,6 @@ void calc_newton_function(mpsconfig &CON,vector<mpselastic> PART,vector<hyperela
 		}
 		DfDx[k*h_num+k]-=Dt*Dt*0.5/mi*(n_DgDq_x[k][k]*HYPER1[k*h_num+k].DgDq[A_X]+n_DgDq_y[k][k]*HYPER1[k*h_num+k].DgDq[A_Y]+n_DgDq_z[k][k]*HYPER1[k*h_num+k].DgDq[A_Z]);		
 	}
-
 
 	////o—Í
 //	if(count%200==0 && count>CON.get_nr()/2)
@@ -628,7 +629,7 @@ void calc_newton_function(mpsconfig &CON,vector<mpselastic> PART,vector<hyperela
 	delete[]	n_rz;
 }
 
-void calc_half_p(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> HYPER1,bool repetation,int t)
+void calc_half_p(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> HYPER1,bool repetation)
 {
 	if(repetation==0)	cout<<"‰¼‚Ì‰^“®—Ê•ˆÊ’uÀ•WŒvŽZ";
 	else	cout<<"‰^“®—ÊŒvŽZ";
@@ -715,7 +716,7 @@ void calc_half_p(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &H
 	cout<<"----------OK"<<endl;
 }
 
-void calc_F(vector<mpselastic> PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t)
+void calc_F(vector<mpselastic> PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1)
 {
 	cout<<"FiŒvŽZ";
 	////Fi‚ÌXV
@@ -912,7 +913,15 @@ void renew_lambda(mpsconfig &CON,vector<hyperelastic> &HYPER,vector<hyperelastic
 		N_Right[i]=0;
 		for(int j=0;j<h_num;j++)	N_Left[j*h_num+i]=0;
 	}
-	/*
+
+/*	double *N_Left2=new double[h_num*h_num];
+	double *N_Right2=new double[h_num];
+	for(int i=0;i<h_num;i++)
+	{
+		N_Right2[i]=0;
+		for(int j=0;j<h_num;j++)	N_Left2[j*h_num+i]=0;
+	}
+	
 	for(int i=0;i<h_num;i++)
 	{
 		for(int j=0;j<h_num;j++)
@@ -952,7 +961,7 @@ void renew_lambda(mpsconfig &CON,vector<hyperelastic> &HYPER,vector<hyperelastic
 			}
 			N_Left[in*h_num+k]+=Dt*0.5*(HYPER1[in*h_num+k].DgDq[0]*HYPER1[k*h_num+k].DgDq[0]+HYPER1[in*h_num+k].DgDq[1]*HYPER1[k*h_num+k].DgDq[1]+HYPER1[in*h_num+k].DgDq[2]*HYPER1[k*h_num+k].DgDq[2]);
 			N_Left[k*h_num+in]+=Dt*0.5*(HYPER1[k*h_num+k].DgDq[0]*HYPER1[in*h_num+k].DgDq[0]+HYPER1[k*h_num+k].DgDq[1]*HYPER1[in*h_num+k].DgDq[1]+HYPER1[k*h_num+k].DgDq[2]*HYPER1[in*h_num+k].DgDq[2]);
-			N_right+=HYPER[k].differential_p[0]*HYPER1[in*h_num+k].DgDq[0]+HYPER[k].differential_p[1]*HYPER1[in*h_num+k].DgDq[1]+HYPER[k].differential_p[2]*HYPER1[in*h_num+k].DgDq[2];
+			N_right+=HYPER[in].differential_p[0]*HYPER1[k*h_num+in].DgDq[0]+HYPER[in].differential_p[1]*HYPER1[k*h_num+in].DgDq[1]+HYPER[in].differential_p[2]*HYPER1[k*h_num+in].DgDq[2];
 		}//j‚ÉŠÖ‚·‚éfor•¶‚ÌI‚í‚è
 		N_Right[k]=N_right+HYPER[k].differential_p[0]*HYPER1[k*h_num+k].DgDq[0]+HYPER[k].differential_p[1]*HYPER1[k*h_num+k].DgDq[1]+HYPER[k].differential_p[2]*HYPER1[k*h_num+k].DgDq[2];//1/mk*N_right;	
 		N_Left[k*h_num+k]+=Dt*0.5*(HYPER1[k*h_num+k].DgDq[0]*HYPER1[k*h_num+k].DgDq[0]+HYPER1[k*h_num+k].DgDq[1]*HYPER1[k*h_num+k].DgDq[1]+HYPER1[k*h_num+k].DgDq[2]*HYPER1[k*h_num+k].DgDq[2]);
@@ -968,6 +977,30 @@ void renew_lambda(mpsconfig &CON,vector<hyperelastic> &HYPER,vector<hyperelastic
 	}*/
 
 	//lambda‚ð‹‚ß‚é
+
+	/*ofstream fl("N_Left.csv");
+	ofstream fr("N_Reft.csv");
+
+	ofstream fl2("N_Left2.csv");
+	ofstream fr2("N_Reft2.csv");
+
+	for(int i=0;i<h_num;i++)
+	{
+		for(int j=0;j<h_num;j++)
+		{
+			fl<<N_Left[i*h_num+j]<<",";
+			fl2<<N_Left2[i*h_num+j]<<",";
+		}
+		fl<<endl;
+		fl2<<endl;
+		fr<<N_Right[i]<<endl;
+		fr2<<N_Right2[i]<<endl;
+	}
+	fl.close();
+	fr.close();
+	fl2.close();
+	fr2.close();*/
+		
 	gauss(N_Left,N_Right,h_num);
 
 	for(int i=0;i<h_num;i++)	HYPER[i].lambda=N_Right[i];
@@ -980,6 +1013,8 @@ void renew_lambda(mpsconfig &CON,vector<hyperelastic> &HYPER,vector<hyperelastic
 
 	delete [] N_Left;
 	delete [] N_Right;
+/*	delete [] N_Left2;
+	delete [] N_Right2;*/
 
 	cout<<"----------OK"<<endl;
 }
