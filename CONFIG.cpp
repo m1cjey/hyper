@@ -19,21 +19,21 @@ mpsconfig::mpsconfig()
 	ss>>step;
 	fin.close();*/
 	
-	step=40000;				//全step数	step=20000;//40000;	//30000;//10000;;	//79*20+1;
-	switch_FEM=false;		//FEMを実行するかしないか false
+	step=100000;				//全step数	step=20000;//40000;	//30000;//10000;;	//79*20+1;
+	switch_FEM=true;		//FEMを実行するかしないか false
 	nonlinear_elastic=false;	//弾性体非線形計算するかtrue
 	switch_vis=OFF;			//粘性項計算するかしないか・・・これはあとで消す
 	FEMCG=2;				//FEMにおける行列解法 0:CG 1:ICCG 2:並列ICCG 3:MRTR 4:ICMRTR
 
 //	dt= (switch_FEM==OFF) ? 1.0e-5: 5.0e-6; //0.0001;不安定要因！ 0.00001:推奨(Courant数考えて) //Cf. dt_for_FEM=0.000001/2;
-	dt=2.5e-5;
+	dt=1.0e-5;
 	dt_for_FEM=1.0e-3;
 	//FEMだと0.000001で止まる・・・
-	current_step=1;
+	current_step=2;
 	current_time=0.0;
 	dimension=3;
 
-	interval=4; //10	//particle_movie.mgfの出力間隔。2以上の整数にすること
+	interval=1; //10	//particle_movie.mgfの出力間隔。2以上の整数にすること
 	EM_interval=1;//1	//電磁場計算を何ステップに一回行うか。通常は1に設定
 	motion_interval=1;	//運動方程式を何回に一回解くか
 	
@@ -42,7 +42,7 @@ mpsconfig::mpsconfig()
 	ave_P_for_FEM_flag=8000000000;//80.0;//75.0;//70.0;
 
 //モデル
-	model_number=21;			//4:引っ張り試験片 7:MREアクチュエータ 12:剛体
+	model_number=23;			//4:引っ張り試験片 7:MREアクチュエータ 12:剛体
 	model_set_way=1;		//modelをセットする方法　0=正方格子 1=MD
 
 //モデル１,11専用
@@ -61,14 +61,14 @@ mpsconfig::mpsconfig()
 
 //電磁力計算
 	region_shape=1;//1;		//解析領域形状　0=立方体 1=円筒
-	EM_method=1;			//電磁場の解法 0=OFF 1=FEM 2=BEM 3=磁気ﾓｰﾒﾝﾄ法 4=FEM2
+	EM_method=3;			//電磁場の解法 0=OFF 1=FEM 2=BEM 3=磁気ﾓｰﾒﾝﾄ法 4=FEM2
 	EM_calc_type=2;			//0=デローニのみ 1=電場 2=静磁場 3=動磁場 4=磁位
 //	EM_interval=1;//1		//電磁場計算を何ステップに一回行うか。通常は1に設定
 	//解析領域
-	XR=2.0;
-	XL=-2.0;
-	YU=2.0;
-	YD=-2.0;
+	XR=0.2;
+	XL=-0.2;
+	YU=0.2;
+	YD=-0.2;
 	/*
 	XR=0.1;//0.01;		
 	XL=-0.1;//-0.01;
@@ -107,17 +107,17 @@ mpsconfig::mpsconfig()
 	///////////////////
 //粒子配置用
 	fluidwidth=20; //30;//40//15[個]	//fluidwidth=20*2;
-	distancebp=0.025;///0.001/2;//0.005; //distancebp=0.0125;[mm]
+	distancebp=2.5e-3;///0.001/2;//0.005; //distancebp=0.0125;[mm]
 	wlength=2;
 	height=0.0;//0.005;    
 
 //解析領域
-	maxX=2.0;//0.1;	//0.1/2;	//1
-	minX=-2.0;//-0.1;	//-0.1/2;
-	maxY=2.0;//0.1;	//0.1/2;	//0.4;
-	minY=-2.0;//-0.1;	//-0.1/2;	//-0.6; //-1.0
-	maxZ=2.5;//0.1;	//0.1/2;	//0.3;
-	minZ=-2.5;//-0.1;	//-0.1/2;	//-0.6;  //indexの関係上、Z方向には余裕をもつこと。
+	maxX=0.2;//0.1;	//0.1/2;	//1
+	minX=-0.2;//-0.1;	//-0.1/2;
+	maxY=0.2;//0.1;	//0.1/2;	//0.4;
+	minY=-0.2;//-0.1;	//-0.1/2;	//-0.6; //-1.0
+	maxZ=0.2;//0.1;	//0.1/2;	//0.3;
+	minZ=-0.2;//-0.1;	//-0.1/2;	//-0.6;  //indexの関係上、Z方向には余裕をもつこと。
 
 	//FEMcheck用15/2/10
 /*	maxX=0.2;	//0.1/2;	//
@@ -212,11 +212,11 @@ mpsconfig::mpsconfig()
 	m_force=1;//1			//電磁力計算方式 1=節点力法 2=kelvin 3=積分面 4=divT(マクスウェルの応力テンソル) 5=VAG 6=積分つき節点力法 7=MC
 	NLBHI=0;				//体積力において、要素Ｂから要素Ｈを求める際に非線形性を考慮するか、しないか(non linier B H inverter)
 	NLMH=OFF;				//Ｍの算出に非線形性を考慮するか、しないか
-	magnet_H=5.0*distancebp;			//永久磁石の高さ0.005
-	magnet_r=3.0*distancebp;//0.01	//永久磁石の半径0.005 　　　　　　　　　　　//J_input_way=2:半径ではなく直径、J_put_way=0:半径　と思われる。
-	magnet_Z=-(6*sqrt(2.0)+3.0)*distancebp;//-8*distancebp; //-45*0.0005-0.005; //-(fluidwidth)*distancebp-0.01; //-0.0125*0.8		//永久磁石の中心のZ座標 42*0.0005 //-magnet_H/2-(15*distancebp+0.002) モデル5:-0.035
+	magnet_H=1.62577821*distancebp;			//永久磁石の高さ0.005
+	magnet_r=1.62577821*distancebp;//0.01	//永久磁石の半径0.005 　　　　　　　　　　　//J_input_way=2:半径ではなく直径、J_put_way=0:半径　と思われる。
+	magnet_Z=-magnet_H-distancebp;//-8*distancebp; //-45*0.0005-0.005; //-(fluidwidth)*distancebp-0.01; //-0.0125*0.8		//永久磁石の中心のZ座標 42*0.0005 //-magnet_H/2-(15*distancebp+0.002) モデル5:-0.035
 	magnet_angle=0.0;			//永久磁石の着磁方向 0なら+Z方向となる。そこから角度をつけたいなら、その角度[deg]を入力する
-	magnet_B=1.25;//0.145;//1.20;			//永久磁石の強さ[T] Avector3D()で指定
+	magnet_B=0.5;//0.145;//1.20;			//永久磁石の強さ[T] Avector3D()で指定
 	magnetic_layers=1;	//永久磁石周辺の空気層の数1層はすでにある 1+
 	uniform_B=0.00; //0.01;	//一様磁場の大きさ[T]?
 	B_times=1;//0.1			//ファイル出力する際の、磁束密度の倍率
@@ -326,12 +326,13 @@ mpsconfig::mpsconfig()
 //超弾性計算 
 	flag_ELAST=OFF;
 	flag_HYPER=ON;
-	hyper_density=1000;          //water:997.04  エタノール:798[kg/m3]
+	flag_GRAVITY=ON;
+	hyper_density=2970;          //water:997.04  エタノール:798[kg/m3]
 	c10=30000;//30000;
 	c01=20000;//20000;
-	flag_wall=ON;
+	flag_wall=OFF;
 	h_dis=1.9*distancebp;
-	h_vis=1.0;
+	h_vis=1;
 	flag_vis=OFF;
 	nr_time=1000;	//15/2/8
 }

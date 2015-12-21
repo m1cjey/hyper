@@ -46,6 +46,7 @@ void Check::Out_put_config()
 	checkconfig<<"時間刻み="<<CON.get_dt()<<endl;
 	checkconfig<<"step="<<CON.get_step()<<endl;
 	checkconfig<<"interval="<<CON.get_interval()<<endl;
+	checkconfig<<"distancebp="<<CON.get_distancebp()<<endl;	
 	if(CON.get_FEM_flag()==0) checkconfig<<"FEM=OFF"<<endl;
 	else checkconfig<<"FEM=ON"<<endl;
 	if(CON.get_nonlinear_elastic_flag()==0) checkconfig<<"elastic nonlinearity=OFF"<<endl;
@@ -53,25 +54,37 @@ void Check::Out_put_config()
 	cout<<endl;
 	checkconfig<<"///////モデル条件////////"<<endl;
 	checkconfig<<"model_number="<<CON.get_model_number()<<endl;
-	if(CON.get_model_number()!=21)
+	if(CON.get_FEM_flag()==ON)
 	{
-		checkconfig<<"viscosity="<<CON.get_nensei()<<endl;
-		checkconfig<<"MREと磁石の距離[mm]="<<MMd<<endl;
-		checkconfig<<"MREの比透磁率="<<CON.get_RP()<<endl;
+		checkconfig<<"電磁場の解法="<<CON.get_EM_method()<<endl;
+		if(CON.get_EM_method()==1)
+		{
+			checkconfig<<"MREと磁石の距離[mm]="<<MMd<<endl;
+			checkconfig<<"MREの比透磁率="<<CON.get_RP()<<endl;
+			checkconfig<<"ICCG法FEMの解析度="<<CON.get_FEMCGep()<<"\n";
+			checkconfig<<"球の半径＝"<<CON.get_R1()<<"\n";
+		}
+	}
+	if(CON.get_flag_ELAST()==ON)
+	{
 		checkconfig<<"MREのヤング率="<<CON.get_E_m()<<endl;
 		checkconfig<<"MREのポアソン比="<<CON.get_v_m()<<endl;
-		checkconfig<<"ICCG法FEMの解析度="<<CON.get_FEMCGep()<<"\n";
-		checkconfig<<"球の半径＝"<<CON.get_R1()<<"\n";
-/*		if(CON.get_avoid_step()!=0)
-			checkconfig<<"避けているstep＝"<<CON.get_avoid_step()<<","<<CON.get_avoid_step2()<<","<<CON.get_avoid_step3()<<","<<CON.get_avoid_step4()<<","<<CON.get_avoid_step5()<<","<<CON.get_avoid_step6()<<","<<CON.get_avoid_step7()<<"\n";*/
+		checkconfig<<"viscosity="<<CON.get_nensei()<<endl;
 	}
-	if(CON.get_model_number()==21)
+	if(CON.get_flag_HYPER()==ON)
 	{
 		checkconfig<<"c10="<<CON.get_c10()<<endl;
 		checkconfig<<"c01="<<CON.get_c01()<<endl;
 		checkconfig<<"hyper_density="<<CON.get_hyper_density()<<endl;
+	
+		if(CON.get_flag_vis()==ON)
+		{
+			checkconfig<<"viscosity="<<CON.get_h_viscousity()<<endl;
+		}
 	}
 
+/*		if(CON.get_avoid_step()!=0)
+			checkconfig<<"避けているstep＝"<<CON.get_avoid_step()<<","<<CON.get_avoid_step2()<<","<<CON.get_avoid_step3()<<","<<CON.get_avoid_step4()<<","<<CON.get_avoid_step5()<<","<<CON.get_avoid_step6()<<","<<CON.get_avoid_step7()<<"\n";*/
 
 	checkconfig.close();
 }

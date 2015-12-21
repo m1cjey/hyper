@@ -295,6 +295,7 @@ class mpsconfig
 	//’´’e«ŒvZ
 	int flag_ELAST;
 	int flag_HYPER;
+	int flag_GRAVITY;
 	double hyper_density;
 	double c01;
 	double c10;
@@ -592,6 +593,7 @@ public:
 	//’´’e«ŒvZ
 	int get_flag_ELAST(){return flag_ELAST;}
 	int get_flag_HYPER(){return flag_HYPER;}
+	int get_flag_G(){return flag_GRAVITY;}
 	double get_hyper_density(){return hyper_density;}
 	double get_c10(){return c10;}
 	double get_c01(){return c01;}

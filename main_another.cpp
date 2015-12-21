@@ -45,6 +45,7 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
     double TIME=0; //解析時間
 	double Umax=0; //最大速度
 	double mindis; //CFLの最低粒子間距離 minimum distance
+	double lambda=calclambda(CON);
 
 
 	//超弾性
@@ -225,7 +226,7 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 		}
 		if(count>PART.size()) cout<<"INDEX error 粒子数増加?"<<endl;
 		if(count<PART.size()) cout<<"INDEX error 粒子数減少?"<<endl;
-		//reload_INDEX2(&CON, PART, MESH);
+		reload_INDEX2(&CON, PART, MESH);
 
 		//陽解析
 		unsigned timeA=GetTickCount();
@@ -235,6 +236,7 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 		//弾性計算用の関数を使う
 		cout<<"freeon_start"<<endl;
 		if(CON.get_flag_ELAST()==ON)	freeon(ELAST, PART, n0_4, INDEX, MESH, &mindis, t); //表面判定
+		freeon2(CON,PART,particle_number,n0_4,INDEX,MESH,&mindis,fluid_number,out);//表面判定
 
 		cout<<"陽解析前の粒子依存関係計算終了　－－time="<<(GetTickCount()-timeA)*0.001<<"[sec]"<<endl;
 
@@ -250,23 +252,8 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 
 		if(CON.get_FEM_flag()==true && t>wait)
 		{
-			///////HYPERの場合差分をFは足す & 初期化
-			if(CON.get_flag_HYPER()==ON)
+			if(CON.get_EM_method()==1)
 			{
-				if(t==1)
-				{
-					for(int i=0;i<hyper_number;i++)
-					{
-						for(int D=0;D<DIMENSION;D++)
-						{
-							HYPER[i].p[D]=0;
-							old_F[D][i]=0;
-						}
-					}
-				}
-				else{for(int i=0;i<hyper_number;i++)for(int D=0;D<DIMENSION;D++)old_F[D][i]=F[D][i];}
-			}
-
 			//ELASTからCONの関数呼び出せるので二系統要らない・・・
 			if(ELAST.get_FEM_switch()==true && CON.get_mesh_input()!=2)
 			{
@@ -286,21 +273,8 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 					TetGenInterface(CON, PART, F, fluid_number, dt, t, particle_number, n0, TIME);
 				}	
 			}
-
-			////////超弾性体計算の場合は、ローレンツ力の変化分を運動量に追加する15/05/23
-			if(CON.get_flag_HYPER()==ON)
-			{
-				double det_F[DIMENSION];
-				for(int i=0;i<hyper_number;i++)
-				{
-					for(int D=0;D<DIMENSION;D++)
-					{
-						det_F[D]=0;
-						det_F[D]=F[D][i]-old_F[D][i];
-						HYPER[i].p[D]+=Dt*det_F[D];
-					}
-				}
 			}
+			else if(CON.get_EM_method()==3) Magnetic_Moment_Methodv2(CON,PART,F, n0, lambda,hyper_number, particle_number, TIME, t);		
 		}
 		
 
@@ -313,7 +287,7 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 		if(CON.get_flag_vis()==ON)	calc_vis_f(CON,PART,HYPER,HYPER1,hyper_number,t);
 
 		//超弾性計算
-		if(CON.get_flag_HYPER()==ON)	calc_hyper(CON,PART,HYPER,HYPER1,t);//if分の追加15/2/10
+		if(CON.get_flag_HYPER()==ON)	calc_hyper(CON,PART,HYPER,HYPER1,t,F);//if分の追加15/2/10
 
 		cout<<"hyper_calculation is ended."<<endl;
 

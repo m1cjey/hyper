@@ -68,6 +68,7 @@ public:
 	//PND=particle_number_density
 	void set_PND(const double pnd){PND=pnd;}
 	double get_PND() const{return PND;}
+	double F[DIMENSION];
 };
 
 //’e«‘ÌŒvZ—p”h¶ƒNƒ‰ƒX

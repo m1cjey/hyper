@@ -57,3 +57,5 @@
 #define SIGNIFY 18		//ファイル出力の有効数字
 
 #define UNDEFINED -1	//未定義
+
+#define MU_0 4.0 * 3.14159265358979323846 * 1e-7

@@ -1154,8 +1154,8 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 	 ///////////////////////////////////////////モデル21　超弾性体///////////////////////////////////////////////////////////
 	 else if(model==21)	//越塚先生先行研究の角柱
 	 {
-		 double height=72;
-		 double base=12;
+		 double height=66;
+		 double base=11;
 
 		 for(int i=0;i<base;i++)
 		 {
@@ -1229,8 +1229,8 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 	 /////////////////////////////////ただの立方体////////////////////////////////////
 	 else if(model==23)
 	 {
-		int height=3;
-		int base=3;
+		int height=4;
+		int base=14;
 		vector<int>suf;
 		vector<int>num;
 		//writedata2内決め打ち有
@@ -1300,10 +1300,10 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 				}
 			 }
 		 }
-		 for(int i=0;i<number;i++)	writedata2(fq,i,(X[i]-1.0)*le2,(Y[i]-1.0)*le2,(Z[i]+2.0)*le2,HYPERELAST,1,suf[i],0,0,0,0,0,0,0,0,0,ON);
+		 for(int i=0;i<number;i++)	writedata2(fq,i,(X[i]-base/2+0.5)*le2,(Y[i]-base/2+0.5)*le2,Z[i]*le2,HYPERELAST,1,suf[i],0,0,0,0,0,0,0,0,0,ON);
 
 		 cout<<"超弾性体完成\n";
-		 
+		 /*
 		 int number2=0;
 	 	int number3=0;
 		 int w_base=4;
@@ -1594,7 +1594,60 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 		 number+=number2;
 	
 	}
+	//////////////////////////////////////モデル30　実験体円筒型////////////////////////////////////////
+	else if(model==30)
+	{
+		//円筒作成
+		double R=7*le;//半径	100*100mm	//4個作ってみる？
+		double height=4*le;//(6*le*A)*2;これは何？
 
+		//円作成
+		int circle_start_id=0; 
+		set_circle_edge(X,Y,Z,&number,le,R);//円外周　これがないと内部も作れない
+		set_circle_in_using_6_pieces(X,Y,Z,&number,le,R,0,number);//円内部    vector配列は参照渡ししている
+		int circle_end_id=number;	//円の粒子idを記憶
+		int top_flag=ON;		//円柱の上面も作成するからフラグをON
+		set_cylinder_face(X,Y,Z,&number,le,R,height,circle_start_id,circle_end_id,top_flag);//円柱表面座標作成
+		int face_n=number; //
+		set_cylinder_in(X,Y,Z,&number,le,R,height,1,circle_start_id);//内部にパッキング
+		int beforeNumber=number;
+		
+		vector<int>suf;
+		for(int i=0;i<circle_end_id;i++)	suf.push_back(1);
+		for(int i=circle_end_id;i<number;i++)	suf.push_back(0);
+		for(int i=0;i<number;i++)	writedata2(fq,i,X[i]-R/2*le,Y[i]-R/2*le,Z[i],HYPERELAST,1,suf[i],0,0,0,0,0,0,0,0,0,1);//粒子は,FACE
+
+		 cout<<"超弾性体完成\n";
+		
+		 /*
+		//円筒作成
+		double R2=11*le;//半径	100*100mm	//4個作ってみる？
+		double height2=3*le;//(6*le*A)*2;これは何？
+		int number2=0;
+
+		//円作成
+		int circle_start_id2=0; 
+		set_circle_edge(X2,Y2,Z2,&number2,le,R);//円外周　これがないと内部も作れない
+		set_circle_in_using_6_pieces(X2,Y2,Z2,&number2,le,R2,0,number2);//円内部    vector配列は参照渡ししている
+		int circle_end_id2=number2;	//円の粒子idを記憶
+		int top_flag2=ON;		//円柱の上面も作成するからフラグをON
+		set_cylinder_face(X2,Y2,Z2,&number2,le,R2,height2,circle_start_id2,circle_end_id2,top_flag2);//円柱表面座標作成
+		int face_n2=number2; //
+		set_cylinder_in(X2,Y2,Z2,&number2,le,R2,height2,1,circle_start_id2);//内部にパッキング
+		int beforeNumber2=number2;
+		
+		vector<int>suf2;
+		for(int i=0;i<circle_end_id2;i++)	suf2.push_back(1);
+		for(int i=circle_end_id2;i<number2;i++)	suf2.push_back(0);
+
+		for(int i=0;i<number2;i++)	writedata2(fq,i+number,X2[i]-R2/2*le,Y2[i]-R2/2*le,Z2[i]-height2-1*le,WALL,1,suf2[i],0,0,0,0,0,0,0,0,0,0);//粒子は,FACE
+					
+		cout<<"number2"<<number2<<endl;
+		number+=number2;
+
+		cout<<"壁完成\n";*/
+		cout<<"model完成\n";
+	}
 	//////////////////////////////////////////////例外処理///////////////////////////////////////
 	else cout<<"modelエラー"<<endl;
 	////////////////////////////////////////////////////////////////////////////////////////////////
