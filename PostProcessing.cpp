@@ -13,7 +13,7 @@ void post_processing(mpsconfig &CON, vector<mpselastic> &PART, elastic &ELAST, i
 		cout<<"AVS出力完了"<<endl;
 		
 	//AVS2に磁束密度、ローレンツ力出力
-		if((t==1 || t%CON.get_EM_interval()==0) && CON.get_FEM_flag()==ON) particle_movie_AVS2(CON,t,PART,TIME,fluid_number,particle_number,F);
+	if(CON.get_flag_ELAST()==ON)	if((t==1 || t%CON.get_EM_interval()==0) && CON.get_FEM_flag()==ON) particle_movie_AVS2(CON,t,PART,TIME,fluid_number,particle_number,F);
 		cout<<"AVS2出力完了\n";
 
 	//速度をプロット
