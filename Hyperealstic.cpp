@@ -87,6 +87,7 @@ void calc_constant(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> &
 	double mi=V*CON.get_hyper_density();
 	int h_num=HYPER.size();
 	int model=CON.get_model_number();
+	cout<<"V"<<V<<endl;
 
 	////初期運動量
 	//曲げねじり
@@ -405,6 +406,7 @@ void newton_raphson(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> 
 		}
 		else if(calc_type==1)//逆行列を用いない、安定するはずだが、遅くなるはず
 		{
+
 			gauss(DfDx,fx,h_num);
 			for(int i=0;i<h_num;i++)	XX[i]-=fx[i];/*0.5*mi/(Dt*Dt)*V*fx[i];
 		}
@@ -1367,7 +1369,7 @@ void momentum_movie_AVS(mpsconfig &CON,int t,vector<mpselastic> PART,vector<hype
 	double le=CON.get_distancebp();
 	int STEP=CON.get_step()/CON.get_interval()+1;		//出力する総ステップ数
 	int step;
-	int n=2;	//出力次元
+	int n=3;	//出力次元
 	double mi=get_volume(&CON)*CON.get_hyper_density();
 
 	if(CON.get_interval()==1)	step=t/CON.get_interval();
@@ -1435,7 +1437,7 @@ void momentum_movie_AVS(mpsconfig &CON,int t,vector<mpselastic> PART,vector<hype
 		//節点番号とその座標の出力 
 		for(int i=0;i<h_num;i++)
 		{
-			if(PART[i].r[A_Y]<1/2*le&&PART[i].r[A_Y]>-1/2*le)
+			if(PART[i].q0[A_Y]<1/2*le&&PART[i].q0[A_Y]>-1/2*le)
 			{
 				fp<<i<<" "<<PART[i].r[A_X]<<" "<<PART[i].r[A_Y]<<" "<<PART[i].r[A_Z]<<endl;
 				Nxz[num]=i;
@@ -1770,6 +1772,7 @@ void output_hyper_data(vector<mpselastic> PART,vector<hyperelastic> HYPER,vector
 {
 	int h_num=HYPER.size();
 
+
 	/*if(t==1)
 	{
 		////計算した各定数の出力
@@ -1824,15 +1827,16 @@ void output_hyper_data(vector<mpselastic> PART,vector<hyperelastic> HYPER,vector
 	lam<<HYPER[182].lambda<<","<<HYPER[911].lambda<<","<<HYPER[1640].lambda<<","<<HYPER[2369].lambda<<endl;
 	lam.close();
 
+	ofstream j("J.csv", ios::app);
+	j<<HYPER[182].J<<","<<HYPER[911].J<<","<<HYPER[1640].J<<","<<HYPER[2369].J<<endl;
+	j.close();
+
+
 	ofstream p("P.csv", ios::app);
-	if(HYPER[182].p[A_X]*HYPER[182].p[A_Z]<0)	p<<-1*sqrt(HYPER[182].p[A_X]*HYPER[182].p[A_X]+HYPER[182].p[A_Z]*HYPER[182].p[A_Z])<<",";
-	else	p<<sqrt(HYPER[182].p[A_X]*HYPER[182].p[A_X]+HYPER[182].p[A_Z]*HYPER[182].p[A_Z])<<",";
-	if(HYPER[911].p[A_X]*HYPER[911].p[A_Z]<0)	p<<-1*sqrt(HYPER[911].p[A_X]*HYPER[911].p[A_X]+HYPER[911].p[A_Z]*HYPER[911].p[A_Z])<<",";
-	else	p<<sqrt(HYPER[911].p[A_X]*HYPER[911].p[A_X]+HYPER[911].p[A_Z]*HYPER[911].p[A_Z])<<",";
-	if(HYPER[1640].p[A_X]*HYPER[1640].p[A_Z]<0)	p<<-1*sqrt(HYPER[1640].p[A_X]*HYPER[1640].p[A_X]+HYPER[1640].p[A_Z]*HYPER[1640].p[A_Z])<<",";
-	else	p<<sqrt(HYPER[1640].p[A_X]*HYPER[1640].p[A_X]+HYPER[1640].p[A_Z]*HYPER[1640].p[A_Z])<<",";	
-	if(HYPER[2369].p[A_X]*HYPER[2369].p[A_Z]<0)	p<<-1*sqrt(HYPER[2369].p[A_X]*HYPER[2369].p[A_X]+HYPER[2369].p[A_Z]*HYPER[2369].p[A_Z])<<endl;
-	else	p<<sqrt(HYPER[2369].p[A_X]*HYPER[2369].p[A_X]+HYPER[2369].p[A_Z]*HYPER[2369].p[A_Z])<<endl;
+	p<<sqrt(HYPER[182].p[A_X]*HYPER[182].p[A_X]+HYPER[182].p[A_Z]*HYPER[182].p[A_Z])<<",";
+	p<<sqrt(HYPER[911].p[A_X]*HYPER[911].p[A_X]+HYPER[911].p[A_Z]*HYPER[911].p[A_Z])<<",";
+	p<<sqrt(HYPER[1640].p[A_X]*HYPER[1640].p[A_X]+HYPER[1640].p[A_Z]*HYPER[1640].p[A_Z])<<",";	
+	p<<sqrt(HYPER[2369].p[A_X]*HYPER[2369].p[A_X]+HYPER[2369].p[A_Z]*HYPER[2369].p[A_Z])<<endl;
 	p.close();
 
 	/*
@@ -2206,8 +2210,8 @@ void output_energy(mpsconfig CON, vector<mpselastic> PART, vector<hyperelastic> 
 	for(int i=0;i<h_num;i++)
 	{
 		vv=HYPER[i].p[0]*HYPER[i].p[0]+HYPER[i].p[1]*HYPER[i].p[1]+HYPER[i].p[2]*HYPER[i].p[2];
-		energy=0.5/mi*vv+W[i]*V+HYPER[i].lambda*(1-HYPER[i].J)*V;
-		//energy=0.5/mi*vv+mi*9.8*PART[i].r[A_Z]+W[i]*V+HYPER[i].lambda*(1-HYPER[i].J)*V;
+		//energy=0.5/mi*vv+W[i]*V+HYPER[i].lambda*(1-HYPER[i].J)*V;
+		energy=0.5/mi*vv+mi*9.8*PART[i].r[A_Z]+W[i]*V+HYPER[i].lambda*(1-HYPER[i].J)*V;
 		sum_e_T+=0.5/mi*vv;
 		sum_e_g+=mi*9.8*PART[i].r[A_Z];
 		sum_e_lam+=HYPER[i].lambda*(1-HYPER[i].J)*V;
@@ -2254,6 +2258,187 @@ void transpose(double **M, double **N)
 	N[2][0]=M[0][2];
 	N[2][1]=M[1][2];
 }
+
+
+void BiCGStab2_method(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double *B,int number,double *X)
+{
+	//val :非ゼロ要素の値
+	//ind:非ゼロ要素の列番号格納配列
+	//ptr:各行の要素がvalの何番目からはじまるのかを格納
+	//X[n]:解
+	
+	int count=0;
+	double pk=1;
+	double E=1;//誤差
+	double alp,beta,rr,w,ita;
+
+	double *r=new double [pn];	//残差
+	double *P=new double [pn];	//探索ベクトル
+	double *Pj=new double [pn];
+	double *rj=new double [pn];
+	double *AP=new double [pn];
+	double *AtPj=new double [pn];
+	double *e=new double [pn];
+	double *Ae=new double [pn];
+	double *y=new double [pn];
+	double *u=new double [pn];
+	double *W=new double [pn];
+	double *Z=new double [pn];
+	double *e_pre=new double [pn];
+	beta=0;
+	w=0;
+	ita=0;
+
+	for(int n=0;n<pn;n++) //初期値
+	{
+		X[n]=0;
+		r[n]=B[n];
+	}
+
+	for(int n=0;n<pn;n++)
+	{
+		P[n]=r[n];//初期化
+		rj[n]=r[n];
+		Pj[n]=rj[n];
+		AP[n]=0;
+		y[n]=0;
+		u[n]=0;
+		W[n]=0;
+		Z[n]=0;
+		e[n]=0;
+		e_pre[n]=0;//1ステップ前のe[]
+	}
+	double rr0=0;
+	for(int n=0;n<pn;n++) rr0+=r[n]*r[n];
+	cout<<"rr0="<<rr0<<endl;
+	 cout<<"BiCGstab2法スタート  -----未知数="<<pn<<"  ---";
+	 unsigned int time=GetTickCount();
+	double ep=CON->get_FEMCGep();//収束判定
+	while(E>ep)// EP=CON->get_CGep();//収束判定(convergence test)
+	{
+		count++;
+
+		for(int n=0;n<pn;n++)
+		{
+			//P[n]=r[n]+beta*(P[n]-w*AP[n]);
+			P[n]=r[n]+beta*(P[n]-u[n]);
+		} 
+
+		////pk(rとrjの内積)を求める
+		pk=0;
+		for(int n=0;n<pn;n++) pk+=r[n]*rj[n];
+
+		//////////////alpを求める
+		for(int n=0;n<pn;n++)
+		{      
+			AP[n]=0;
+			for(int m=ptr[n];m<ptr[n+1];m++) AP[n]+=val[m]*P[ind[m]];
+			//for(int m=0;m<pn;m++) AP[n]+=A[n][m]*P[m];
+		}
+		double APrj=0;
+		for(int n=0;n<pn;n++)  APrj+=rj[n]*AP[n];
+		alp=pk/APrj;
+		//cout<<"alp="<<alp<<" APrj="<<APrj<<endl;
+		//////////////////////
+
+		for(int n=0;n<pn;n++) y[n]=e[n]-r[n]-alp*W[n]+alp*AP[n];
+
+		for(int n=0;n<pn;n++)
+		{
+			e_pre[n]=e[n];//変更前の値を記憶
+			e[n]=r[n]-alp*AP[n];
+		}
+
+		for(int n=0;n<pn;n++)
+		{
+			Ae[n]=0;
+			//for(int m=0;m<pn;m++) Ae[n]+=A[n][m]*e[m];
+			for(int m=ptr[n];m<ptr[n+1];m++) Ae[n]+=val[m]*e[ind[m]];
+		}
+
+		if(count%2!=0)
+		{
+			double e_dot_ae  = 0;
+			double ae_dot_ae = 0;
+			for(int n=0;n<pn;n++)
+			{
+				e_dot_ae+=e[n]*Ae[n];
+				ae_dot_ae+=Ae[n]*Ae[n];
+			}
+			w = e_dot_ae / ae_dot_ae;
+			ita=0;
+		}
+		else
+		{
+			double e_dot_ae  = 0;
+			double y_dot_y=0;
+			double y_dot_e=0;
+			double Ae_dot_y=0;
+			double Ae_dot_Ae=0;
+			for(int n=0;n<pn;n++) e_dot_ae+=e[n]*Ae[n];
+			for(int n=0;n<pn;n++) y_dot_y+=y[n]*y[n];
+			for(int n=0;n<pn;n++) y_dot_e+=y[n]*e[n];
+			for(int n=0;n<pn;n++) Ae_dot_y+=Ae[n]*y[n];
+			for(int n=0;n<pn;n++) Ae_dot_Ae+=Ae[n]*Ae[n];
+
+			double co=Ae_dot_Ae*y_dot_y-Ae_dot_y*Ae_dot_y;
+
+			w=y_dot_y*e_dot_ae-y_dot_e*Ae_dot_y;
+			w/=co;
+
+			ita=Ae_dot_Ae*y_dot_e-Ae_dot_y*e_dot_ae;
+			ita/=co;
+
+		}
+		
+
+		for(int n=0;n<pn;n++) 
+		{
+			u[n]=w*AP[n]+ita*(e_pre[n]-r[n]+beta*u[n]);
+			Z[n]=w*r[n]+ita*Z[n]-alp*u[n];
+			X[n]+=alp*P[n]+Z[n];
+			r[n]=e[n]-ita*y[n]-w*Ae[n];
+		}
+
+		///beta
+		beta=0;
+		for(int n=0;n<pn;n++) beta+=r[n]*rj[n];
+		beta/=w*APrj;
+		
+		//cout<<"beta="<<beta<<endl;
+		//////////////////////
+
+		//W[n]
+		for(int n=0;n<pn;n++) W[n]=Ae[n]+beta*AP[n];
+		
+		//////////////////誤差
+		rr=0;
+		for(int n=0;n<pn;n++) rr+=r[n]*r[n];
+		E=rr/rr0;
+		//E=sqrt(rr);
+		//cout<<"E="<<E<<" count="<<count<<endl;
+		////////////////////////
+	}
+	
+	cout<<"反復回数="<<count<<" time="<<(GetTickCount()-time)*0.001<<"[sec]"<<endl;
+
+	delete [] r;
+	delete [] Pj;
+	delete [] rj;
+	delete [] AP;
+	delete [] AtPj;
+	delete [] P;
+	delete [] e;
+	delete [] Ae;
+	delete [] y;
+	delete [] u;
+	delete [] W;
+	delete [] Z;
+	delete [] e_pre;
+}
+
+
+
 
 hyperelastic::hyperelastic()
 {
