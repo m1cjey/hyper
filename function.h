@@ -141,7 +141,7 @@ void move_particle(mpsconfig *CON,vector<mpselastic> &PART,int particle_number,i
 
 //”ñ‘ÎÌs—ñ‰ğ–@
 void BiCGStab_method(mpsconfig *CON,double *r,int pn,double *X,int *countN,double EP,double **A);
-void BiCGStab2_method(mpsconfig *CON,double *r,int pn,double *X,int *countN,double EP,double **A);
+//void BiCGStab2_method(mpsconfig *CON,double *r,int pn,double *X,int *countN,double EP,double **A);
 
 //‚ƒŒƒxƒ‹ŠÖ”
 double get_Legendre(int l,int m,double x);

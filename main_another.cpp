@@ -81,14 +81,16 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 	mpselastic PART0;
 	vector<mpselastic> PART1;	//粒子配列をtyoe毎に並べ替える。一時保管
 	vector<mpselastic> PART;
+	PART1.reserve(particle_number);
+	PART.reserve(particle_number);
 
 	cout<<"ベクトル作成完了"<<endl;
 
 	cout<<"1"<<endl;
 //	PART.reserve(20000);
 	for(int i=0;i<particle_number;i++){
-		PART1.push_back(PART0);
-		PART.push_back(PART0);
+		PART1.emplace_back(PART0);
+		PART.emplace_back(PART0);
 	}
 
 
@@ -118,14 +120,11 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 
 	//FEM3D
 	double **F=new double*[DIMENSION];//F[D][i]となっているがこれでOK??
-	double **old_F=new double*[DIMENSION];//F[D][i]となっているがこれでOK??
 
 	for(int D=0;D<DIMENSION;D++)
 	{
 		F[D]=new double [(unsigned)PART.size()]; //各粒子に働く電磁力//particle_numberはinitial_model_input()で求まる．
 		for(int i=0;i<PART.size();i++)	F[D][i]=0.0; //初期化
-		old_F[D]=new double [(unsigned)PART.size()]; 
-		for(int i=0;i<PART.size();i++)	old_F[D][i]=0.0; //初期化
 	}
 
 	//陽解析の前にreloadINDEX	
@@ -144,7 +143,6 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 	//表面判定（弾性計算の場合最初だけやればOK！）
 
 	freeon(CON, PART, n0_4, INDEX, MESH0, &mindis, t);
-	
 
 	for(int i=0;i<CON.get_number_of_mesh();i++) delete [] MESH0[i];
 	delete [] MESH0;
@@ -156,16 +154,18 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 
 	//HYPERクラスに粒子情報格納
 	hyperelastic HYPER0;
-	hyperelastic2 HYPER10;
 	vector<hyperelastic> HYPER;
-	vector<hyperelastic2> HYPER1;
+	HYPER.reserve(hyper_number);
+	for(int i=0;i<hyper_number;i++)	HYPER.emplace_back(HYPER0);
 
-		for(int i=0;i<hyper_number*hyper_number;i++)	HYPER1.push_back(HYPER10);
-		for(int i=0;i<hyper_number;i++)	HYPER.push_back(HYPER0);
+	hyperelastic2 HYPER10;
+	vector<hyperelastic2> HYPER1;
+	HYPER1.reserve(hyper_number*hyper_number);
+	for(int i=0;i<hyper_number*hyper_number;i++)	HYPER1.emplace_back(HYPER10);
 	//初期粒子配置で解析領域外に粒子がないかチェック
 
-
 	//プリプロセス終了
+
 
 
 	//file initialization
@@ -337,13 +337,11 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 
 	for(int D=0;D<DIMENSION;D++){
 		delete[] F[D];
-		delete[]old_F[D];
 //		delete [] laplacian[D];
 	}
 
 	delete [] INDEX;
 	delete [] F;
-	delete[]old_F;
 	clock_t t2=clock();
 	cout<<"CPU last time="<<(t2-t1)/CLOCKS_PER_SEC<<"[sec]"<<endl;
 //	MessageBeep(MB_ICONEXCLAMATION);//作業の終了を知らせるBEEP音 マングリングエラーが起こるのでコメントアウト
@@ -2595,6 +2593,7 @@ void TetGenInterface(mpsconfig &CON, vector<mpselastic> &PART, double **F, int f
 {
 	
 	vector<int>	flag_hyper;
+	flag_hyper.reserve(particle_number);
 
 	//HYPERELAST適用のための工夫
 	for(int i=0;i<particle_number;i++)
@@ -2602,11 +2601,11 @@ void TetGenInterface(mpsconfig &CON, vector<mpselastic> &PART, double **F, int f
 		if(PART[i].type==HYPERELAST)
 		{
 			PART[i].type=MAGELAST;
-			flag_hyper.push_back(ON);
+			flag_hyper.emplace_back(ON);
 		}
 		else
 		{
-			flag_hyper.push_back(OFF);
+			flag_hyper.emplace_back(OFF);
 		}
 	}
 

@@ -1,4 +1,4 @@
-#include "stdafx.h"		
+#include "stdafx.h"	
 
 void calc_half_p(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> HYPER1,bool repetation,double **F);
 void renew_lambda(mpsconfig &CON,vector<hyperelastic> &HYPER,vector<hyperelastic2> HYPER1,int t);
@@ -26,6 +26,7 @@ void calc_gravity(mpsconfig CON,vector<hyperelastic> &HYPER,int hyper_number);
 void calculation_vec_norm(vector<mpselastic> PART, vector<hyperelastic> &HYPER, int hyper_number,int particle_number,int t);
 void output_energy(mpsconfig CON, vector<mpselastic> PART, vector<hyperelastic> HYPER,int t);
 void contact_judge(mpsconfig &CON, vector<mpselastic> PART,vector<hyperelastic> &HYPER,double max_h,int t);
+void BiCGStab2_method(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double *B,int number,double *X);
 
 
 void calc_hyper(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t,double **F)
@@ -338,6 +339,14 @@ void newton_raphson(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> 
 
 	int calc_type=1;//ニュートラフソンの反復方法 0:偏微分項の逆行列をそのまま求める　1:線形方程式を利用
 
+	//OPENMPがオンであれば書き込まれる。threadsはpcで扱える最大スレッド数
+	#ifdef _OPENMP
+    printf("OpenMP : On, threads = %d\n", omp_get_max_threads());
+	#endif
+
+	//最大スレッド数で計算し続けると過負荷でCPUが非常に熱くなるため、並列化数を指定している
+	//なお、最大スレッドが12のときは8～10ぐらいが目安
+	omp_set_num_threads(8);
 	//pn=2;//test,とりあえず2元でとけるかどうか確認 
 	//////////////////　f1(x1,x2) = x1^2 + x2^2 -5 = 0 f2(x1,x2) = x1^2/9+ x2^2 -1 = 0  http://homepage1.nifty.com/gfk/excel_newton_ren.htm
 
@@ -360,6 +369,7 @@ void newton_raphson(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> 
 	double E_old=0;
 	int dec_flag=ON;
 
+	#pragma omp parallel for
 	for(int i=0;i<h_num;i++)
 	{
 		XX[i]=1;
@@ -405,10 +415,37 @@ void newton_raphson(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> 
 			}
 		}
 		else if(calc_type==1)//逆行列を用いない、安定するはずだが、遅くなるはず
-		{
+		{	
+			int *ind=new int [h_num];
+			double *val=new double [h_num*h_num];
+			int *ptr=new int [h_num+1];
+			int all_ind_num=0;
 
-			gauss(DfDx,fx,h_num);
-			for(int i=0;i<h_num;i++)	XX[i]-=fx[i];/*0.5*mi/(Dt*Dt)*V*fx[i];
+			ptr[0]=0;
+			for(int i=0;i<h_num;i++)
+			{
+				int ind_num=0;
+				for(int j=0;j<h_num;j++)
+				{
+					if(DfDx[i*h_num+j]!=0)
+					{
+						val[i*h_num+ind_num]=DfDx[i*h_num+j];
+						ind_num++;
+					}
+					ptr[i+1]=ind_num;
+				}
+				all_ind_num+=ind_num;
+				ind[i]=ind_num;	
+			}
+			ptr[h_num]=all_ind_num;
+			BiCGStab2_method(&CON,val,ind,ptr,h_num,fx,all_ind_num,XX);
+
+			delete[] ind;
+			delete[] val;
+			delete[] ptr;
+
+			/*gauss(DfDx,fx,h_num);
+			for(int i=0;i<h_num;i++)	XX[i]-=fx[i];//*0.5*mi/(Dt*Dt)*V*fx[i];*/
 		}
 
 		//誤差の評価
@@ -442,7 +479,7 @@ void newton_raphson(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> 
 //	newton_t=(end-start)/CLOCKS_PER_SEC;
 
 	cout<<"反復完了";
-
+	#pragma omp parallel for
 	for(int i=0;i<h_num;i++) HYPER[i].lambda=XX[i];
 
 //	for(int i=0;i<N;i++)	cout<<"lambda["<<i<<"]="<<HYPER[i].lambda<<endl;
@@ -1093,9 +1130,40 @@ void renew_lambda(mpsconfig &CON,vector<hyperelastic> &HYPER,vector<hyperelastic
 	fl.close();
 	fr.close();//*/
 		
-	gauss(N_Left,N_Right,h_num);
+//	gauss(N_Left,N_Right,h_num);
 
-	for(int i=0;i<h_num;i++)	HYPER[i].lambda=N_Right[i];
+	int *ind=new int [h_num];
+	double *val=new double [h_num*h_num];
+	int *ptr=new int [h_num];
+	int ptr_num=0;
+	int all_ind_num=0;
+
+	for(int i=0;i<h_num;i++)
+	{
+		int ind_num=0;
+		ptr[i]=ptr_num+1;
+		for(int j=0;j<h_num;j++)
+		{
+			if(N_Left[i*h_num+j]!=0)
+			{
+				val[i*h_num+ind_num]=N_Left[i*h_num+j];
+				ind_num++;
+				ptr_num++;
+			}
+		}
+		all_ind_num+=ind_num;
+		ind[i]=ind_num;	
+	}
+	double *X=new double [h_num];
+	BiCGStab2_method(&CON,val,ind,ptr,h_num,N_Right,all_ind_num,X);
+
+	delete[] ind;
+	delete[] val;
+	delete[] ptr;
+
+	for(int i=0;i<h_num;i++)	HYPER[i].lambda=X[i];
+
+	delete[] X;
 //	for(int i=0;i<h_num;i++)	cout<<"lambda["<<i<<"]="<<HYPER[i].lambda<<endl;
 
 	ofstream t_loge("time_log_gauss.dat", ios::app);
@@ -2042,7 +2110,8 @@ void output_energy(mpsconfig CON, vector<mpselastic> PART, vector<hyperelastic> 
 	double c10=CON.get_c10();
 	double c01=CON.get_c01();
 	vector<double>	W;
-	for(int i=0;i<h_num;i++)	W.push_back(0);
+	W.reserve(h_num);
+	for(int i=0;i<h_num;i++)	W.emplace_back(0);
 	double dC[DIMENSION][DIMENSION]={{0,0,0},{0,0,0},{0,0,0}};
 	double dC2[DIMENSION][DIMENSION]={{0,0,0},{0,0,0},{0,0,0}};
 	/*
@@ -2314,6 +2383,7 @@ void BiCGStab2_method(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double
 	 cout<<"BiCGstab2法スタート  -----未知数="<<pn<<"  ---";
 	 unsigned int time=GetTickCount();
 	double ep=CON->get_FEMCGep();//収束判定
+
 	while(E>ep)// EP=CON->get_CGep();//収束判定(convergence test)
 	{
 		count++;
@@ -2332,6 +2402,7 @@ void BiCGStab2_method(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double
 		for(int n=0;n<pn;n++)
 		{      
 			AP[n]=0;
+			cout<<"ptrn"<<ptr[n]<<"ptrn+1"<<ptr[n+1]<<endl;
 			for(int m=ptr[n];m<ptr[n+1];m++) AP[n]+=val[m]*P[ind[m]];
 			//for(int m=0;m<pn;m++) AP[n]+=A[n][m]*P[m];
 		}
@@ -2388,7 +2459,6 @@ void BiCGStab2_method(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double
 
 			ita=Ae_dot_Ae*y_dot_e-Ae_dot_y*e_dot_ae;
 			ita/=co;
-
 		}
 		
 
