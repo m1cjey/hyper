@@ -11,9 +11,11 @@ void post_processing(mpsconfig &CON, vector<mpselastic> &PART, elastic &ELAST, i
 	//AVSに粒子データ出力
 	if(t==1 || t%CON.get_interval()==0) particle_movie_AVS(CON,PART,ELAST,fluid_number,particle_number,t,TIME);
 		cout<<"AVS出力完了"<<endl;
-		
+	
+	if(CON.get_flag_ELAST()==ON)
+	{
 	//AVS2に磁束密度、ローレンツ力出力
-	if(CON.get_flag_ELAST()==ON)	if((t==1 || t%CON.get_EM_interval()==0) && CON.get_FEM_flag()==ON) particle_movie_AVS2(CON,t,PART,TIME,fluid_number,particle_number,F);
+	if((t==1 || t%CON.get_EM_interval()==0) && CON.get_FEM_flag()==ON) particle_movie_AVS2(CON,t,PART,TIME,fluid_number,particle_number,F);
 		cout<<"AVS2出力完了\n";
 
 	//速度をプロット
@@ -72,9 +74,6 @@ void post_processing(mpsconfig &CON, vector<mpselastic> &PART, elastic &ELAST, i
 	gnu1.close();
 	gnu2.close();
 	//*/
-		
-	if(CON.get_flag_ELAST()==ON)
-	{
 		//平均粒子密度&圧力を表示
 		double ave_n0=0;
 		double ave_P=0;

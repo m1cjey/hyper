@@ -27,6 +27,8 @@ void calculation_vec_norm(vector<mpselastic> PART, vector<hyperelastic> &HYPER, 
 void output_energy(mpsconfig CON, vector<mpselastic> PART, vector<hyperelastic> HYPER,int t);
 void contact_judge(mpsconfig &CON, vector<mpselastic> PART,vector<hyperelastic> &HYPER,double max_h,int t);
 void BiCGStab2_method(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double *B,int number,double *X);
+void iccg2(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double *B,int number,double *X);
+void CG3D(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double *B,int number,double *X);
 
 
 void calc_hyper(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t,double **F)
@@ -70,7 +72,6 @@ void calc_hyper(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HY
 	calc_differential_p(CON,PART,HYPER,HYPER1,F);
 
 	renew_lambda(CON,HYPER,HYPER1,t);
-
 
 	calc_half_p(CON,PART,HYPER,HYPER1,1,F);
 
@@ -416,12 +417,24 @@ void newton_raphson(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> 
 		}
 		else if(calc_type==1)//逆行列を用いない、安定するはずだが、遅くなるはず
 		{	
-			int *ind=new int [h_num];
-			double *val=new double [h_num*h_num];
+			
+			int *b_ind=new int [h_num*h_num];
+			double *b_val=new double [h_num*h_num];
 			int *ptr=new int [h_num+1];
 			int all_ind_num=0;
-
+			
 			ptr[0]=0;
+			for(int i=0;i<h_num;i++)
+			{
+				ptr[i+1]=0;
+				for(int j=0;j<h_num;j++)
+				{
+					b_ind[i*h_num+j]=0;
+					b_val[i*h_num+j]=0;
+				}
+			}
+
+			
 			for(int i=0;i<h_num;i++)
 			{
 				int ind_num=0;
@@ -429,17 +442,32 @@ void newton_raphson(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> 
 				{
 					if(DfDx[i*h_num+j]!=0)
 					{
-						val[i*h_num+ind_num]=DfDx[i*h_num+j];
+						b_ind[all_ind_num+ind_num]=j;	
+						b_val[all_ind_num+ind_num]=DfDx[i*h_num+j];
 						ind_num++;
-					}
-					ptr[i+1]=ind_num;
+						ptr[i+1]=ind_num+ptr[i];
+					}			
 				}
-				all_ind_num+=ind_num;
-				ind[i]=ind_num;	
+				//cout<<"ptr"<<i+1<<" "<<ptr[i+1]<<endl;
+				all_ind_num+=ind_num;			
 			}
-			ptr[h_num]=all_ind_num;
-			BiCGStab2_method(&CON,val,ind,ptr,h_num,fx,all_ind_num,XX);
 
+			cout<<all_ind_num<<endl;
+			int *ind=new int [all_ind_num];
+			double *val=new double [all_ind_num];
+			for(int i=0;i<all_ind_num;i++)
+			{
+				ind[i]=b_ind[i];
+				val[i]=b_val[i];
+			}
+			//for(int i=0;i<h_num;i++)	cout<<"ptr"<<i<<"	"<<ptr[i]<<endl;
+			CG3D(&CON,val,ind,ptr,h_num,fx,all_ind_num,XX);
+			///iccg2(&CON,val,ind,ptr,h_num,fx,all_ind_num,XX);
+			//BiCGStab2_method(&CON,val,ind,ptr,h_num,fx,all_ind_num,XX);
+			//for(int i=0;i<h_num;i++)	cout<<"lambda"<<i<<"="<<XX[i]<<endl;
+
+			delete[] b_ind;
+			delete[] b_val;
 			delete[] ind;
 			delete[] val;
 			delete[] ptr;
@@ -536,7 +564,7 @@ void calc_newton_function(mpsconfig &CON,vector<mpselastic> PART,vector<hyperela
 	////位置座標の更新	
 	for(int i=0;i<h_num;i++)
 	{
-		if(model_num==30||model_num==23)
+/*		if(model_num==30||model_num==23)
 		{
 			if(PART[i].q0[A_Z]!=0)
 			{
@@ -583,7 +611,7 @@ void calc_newton_function(mpsconfig &CON,vector<mpselastic> PART,vector<hyperela
 				n_rz[i]=PART[i].q0[A_Z];
 			}
 		}
-		else
+		else*/
 		{
 			//half_pの計算
 			double p_half_p[DIMENSION]={0,0,0};
@@ -800,7 +828,7 @@ void calc_half_p(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &H
 			HYPER[i].half_p[A_Y]=HYPER[i].p[A_Y]+Dt*0.5*p_half_p[A_Y];
 			HYPER[i].half_p[A_Z]=HYPER[i].p[A_Z]+Dt*0.5*p_half_p[A_Z];//
 			//位置座標の更新
-			if(model_num==30||model_num==23)
+			/*if(model_num==30||model_num==23)
 			{
 				if(PART[i].q0[A_Z]!=0)
 				{
@@ -815,7 +843,7 @@ void calc_half_p(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &H
 					PART[i].r[A_Z]=PART[i].q0[A_Z];
 				}
 			}
-			else
+			else*/
 			{
 				PART[i].r[A_X]+=Dt*HYPER[i].half_p[A_X]/mi;
 				PART[i].r[A_Y]+=Dt*HYPER[i].half_p[A_Y]/mi;
@@ -1130,32 +1158,56 @@ void renew_lambda(mpsconfig &CON,vector<hyperelastic> &HYPER,vector<hyperelastic
 	fl.close();
 	fr.close();//*/
 		
-//	gauss(N_Left,N_Right,h_num);
+	/*gauss(N_Left,N_Right,h_num);
+	for(int i=0;i<h_num;i++)	HYPER[i].lambda=N_Right[i];//*/
 
-	int *ind=new int [h_num];
-	double *val=new double [h_num*h_num];
-	int *ptr=new int [h_num];
-	int ptr_num=0;
+	
+	int *b_ind=new int [h_num*h_num];
+	double *b_val=new double [h_num*h_num];
+	int *ptr=new int [h_num+1];
+
 	int all_ind_num=0;
+	for(int i=0;i<h_num;i++)
+	{
+		ptr[i+1]=0;
+		for(int j=0;j<h_num;j++)
+		{
+			b_ind[i*h_num+j]=0;
+			b_val[i*h_num+j]=0;
+		}
+	}
 
+	ptr[0]=0;
 	for(int i=0;i<h_num;i++)
 	{
 		int ind_num=0;
-		ptr[i]=ptr_num+1;
 		for(int j=0;j<h_num;j++)
 		{
 			if(N_Left[i*h_num+j]!=0)
 			{
-				val[i*h_num+ind_num]=N_Left[i*h_num+j];
+				b_ind[all_ind_num+ind_num]=j;	
+				b_val[all_ind_num+ind_num]=N_Left[i*h_num+j];
 				ind_num++;
-				ptr_num++;
-			}
+				ptr[i+1]=ind_num+ptr[i];
+			}			
 		}
-		all_ind_num+=ind_num;
-		ind[i]=ind_num;	
+		//cout<<"ptr"<<i+1<<" "<<ptr[i+1]<<endl;
+		all_ind_num+=ind_num;			
 	}
+
+
+	int *ind=new int [all_ind_num];
+	double *val=new double [all_ind_num];
+	for(int i=0;i<all_ind_num;i++)
+	{
+		ind[i]=b_ind[i];
+		val[i]=b_val[i];
+	}
+
 	double *X=new double [h_num];
-	BiCGStab2_method(&CON,val,ind,ptr,h_num,N_Right,all_ind_num,X);
+	//BiCGStab2_method(&CON,val,ind,ptr,h_num,N_Right,all_ind_num,X);
+	//iccg2(&CON,val,ind,ptr,h_num,N_Right,all_ind_num,X);
+	CG3D(&CON,val,ind,ptr,h_num,N_Right,all_ind_num,X);
 
 	delete[] ind;
 	delete[] val;
@@ -1163,7 +1215,8 @@ void renew_lambda(mpsconfig &CON,vector<hyperelastic> &HYPER,vector<hyperelastic
 
 	for(int i=0;i<h_num;i++)	HYPER[i].lambda=X[i];
 
-	delete[] X;
+	delete[] X;//*/
+
 //	for(int i=0;i<h_num;i++)	cout<<"lambda["<<i<<"]="<<HYPER[i].lambda<<endl;
 
 	ofstream t_loge("time_log_gauss.dat", ios::app);
@@ -2402,7 +2455,7 @@ void BiCGStab2_method(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double
 		for(int n=0;n<pn;n++)
 		{      
 			AP[n]=0;
-			cout<<"ptrn"<<ptr[n]<<"ptrn+1"<<ptr[n+1]<<endl;
+			//cout<<"ptrn"<<ptr[n]<<"ptrn+1"<<ptr[n+1]<<endl;
 			for(int m=ptr[n];m<ptr[n+1];m++) AP[n]+=val[m]*P[ind[m]];
 			//for(int m=0;m<pn;m++) AP[n]+=A[n][m]*P[m];
 		}
@@ -2486,7 +2539,7 @@ void BiCGStab2_method(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double
 		for(int n=0;n<pn;n++) rr+=r[n]*r[n];
 		E=rr/rr0;
 		//E=sqrt(rr);
-		//cout<<"E="<<E<<" count="<<count<<endl;
+		if(count==1||count%10==0)	cout<<"E="<<E<<" count="<<count<<endl;
 		////////////////////////
 	}
 	
@@ -2508,7 +2561,306 @@ void BiCGStab2_method(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double
 }
 
 
+void iccg2(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double *B,int number,double *X)
+{
+	//val :ゼロ要素の値
+	//ind:非ゼロ要素の列番号格納配列
+	//ptr:各行の要素がvalの何番目からはじまるのかを格納
+	//X[n]:解
 
+	double accel=0.87;//CON->get_CGaccl();//加速ファクタ
+	
+	int num2=0;//対角成分を含む、下三角行列だけを考慮にいれた非ゼロ要素数
+	for(int k=0;k<pn;k++) for(int m=ptr[k];m<ptr[k+1];m++) if(ind[m]<=k) num2++;	
+	if(num2!=(number-pn)/2+pn) cout<<"ERROR"<<endl;
+	
+	double *val2=new double [num2];
+	int *ind2 = new int [num2];
+	int *ptr2 = new int [pn+1];
+	double *r=new double [pn];
+	double *P=new double [pn];
+
+	num2=0;
+	for(int k=0;k<pn;k++)
+	{	
+		ptr2[k]=num2;
+		r[k]=0;
+		P[k]=0;
+	    for(int m=ptr[k];m<ptr[k+1];m++)///k行目の非０要素
+	    {
+			if(ind[m]<=k)
+			{
+				val2[num2]=val[m];
+				ind2[num2]=ind[m];
+				if(ind[m]==k) val2[num2]*=accel;//加速ﾌｧｸﾀ
+				num2++;
+			}
+		}
+	}
+	ptr2[pn]=num2;//これをしておかないと、最後に(int m=ptr2[k];m<ptr2[k+1];m++)みたいなことができない
+
+	int *NUM = new int [pn];
+	for(int k=0;k<pn;k++) NUM[k]=0;
+	
+	for(int k=0;k<pn;k++)
+	{	
+	    for(int m=ptr2[k];m<ptr2[k+1];m++)///k行目の非０要素
+	    {
+			int J=ind2[m];
+			NUM[J]=NUM[J]+1;
+		}
+	}
+	double **VAL=new double *[pn];//ゼロ要素の値
+	for(int i=0;i<pn;i++) VAL[i]=new double [NUM[i]];
+	int **IND = new int *[pn];//非ゼロ要素の行番号格納配列
+	for(int i=0;i<pn;i++) IND[i]=new int [NUM[i]];
+	
+	/////////////////////////////////////iccg法
+	double alp,beta;
+	double rLDLt_r;
+	double E=1;//誤差
+	double *AP = new double [pn];
+	double *y=new double [pn];
+	double *LDLt_r= new double [pn];
+	double *D1 = new double [pn];//D行列
+	
+	/////不完全コレスキｰ分解
+	for(int k=0;k<pn;k++)
+	{	
+	    for(int m=ptr2[k];m<ptr2[k+1];m++)///k行目の非０要素
+	    {
+	        int i=ind2[m];//列番号
+	        if(i==0)
+			{
+				val2[m]=val2[m];
+				if(val2[m]<0.0001 &&val2[m]>=0) val2[m]=0.0001;
+				else if(val2[m]>-0.0001 &&val2[m]<=0) val2[m]=-0.0001;
+		    
+			}
+			if(i>0 && i<k)
+			{
+				double sum=0;
+				
+				for(int j=ptr2[k];j<m;j++)
+				{	
+					for(int J=ptr2[i];J<ptr2[i+1];J++)//i行目のなかから列の一致するものを探している。少し手間か？
+					{
+						if(ind2[J]==ind2[j]) sum+=val2[j]*val2[J]*D1[ind2[j]];
+					}
+				}
+				val2[m]=val2[m]-sum;
+			}
+			if(i==k)
+			{
+				double sum=0;
+				for(int j=ptr2[k];j<m;j++) sum+=val2[j]*val2[j]*D1[ind2[j]];
+				val2[m]=val2[m]-sum;
+				if(val2[m]<0.0001 &&val2[m]>=0) val2[m]=0.0001;
+				else if(val2[m]>-0.0001 &&val2[m]<=0) val2[m]=-0.0001;
+				D1[k]=1/val2[m];
+				//if(val2[m]>0) cout<<"EE"<<endl;
+            }
+	    }
+	}    
+	///不完全コレスキー分解完了/////////*/
+
+	///列を基準にした配列に値を代入
+	for(int k=0;k<pn;k++) NUM[k]=0;
+	for(int k=0;k<pn;k++)
+	{	
+	    for(int m=ptr2[k];m<ptr2[k+1];m++)///k行目の非０要素
+	    {
+			int J=ind2[m];
+			VAL[J][NUM[J]]=val2[m];
+			IND[J][NUM[J]]=k;
+			NUM[J]=NUM[J]+1;
+		}
+	}////////*/
+
+	/////////////////y[i]をもとめ、LDLt_r[i]をもとめる。
+	for(int i=0;i<pn;i++)
+	{
+		if(i==0) y[0]=r[0]/val2[0]; //式（3.77） 
+		else
+		{
+		    double sum=0;
+		    /////////        
+		    for(int m=ptr2[i];m<ptr2[i+1]-1;m++) sum+=val2[m]*y[ind2[m]];//式（3.78）
+		    int m=ptr2[i+1]-1;
+		    y[i]=(r[i]-sum)/val2[m];
+		}
+	}////y[i]がもとまった。
+	for(int i=pn-1;i>=0;i--)
+	{
+	    double sum=0;
+		for(int h=1;h<NUM[i];h++) sum+=VAL[i][h]*LDLt_r[IND[i][h]];
+	    LDLt_r[i]=y[i]-D1[i]*sum;	
+	}
+	/////////////////*/
+	
+	for(int n=0;n<pn;n++){ P[n]=LDLt_r[n];
+	cout<<"P"<<n<<"	"<<P[n]<<endl;
+	}
+
+	cout<<"ICCG法:未知数="<<pn<<" ---";
+	unsigned int time=GetTickCount();
+	int count=0;
+	double ep=CON->get_FEMCGep();//収束判定
+	rLDLt_r=0;
+	for(int n=0;n<pn;n++) rLDLt_r+=r[n]*LDLt_r[n];//最初のrLDLt_rだけここで求める
+	while(E>ep)
+	{
+		count++;
+		if(count==pn) cout<<"count=pn"<<endl;
+		//////////////alpを求める
+		double PAP=0;
+		#pragma omp parallel for reduction(+:PAP)
+		for(int n=0;n<pn;n++)
+		{
+			AP[n]=0;
+			for(int m=ptr[n];m<ptr[n+1];m++) AP[n]+=val[m]*P[ind[m]];
+			PAP+=P[n]*AP[n];
+		}
+		
+		//for(int n=0;n<pn;n++)  PAP+=P[n]*AP[n];
+		alp=rLDLt_r/PAP;
+		cout<<"alp="<<alp<<endl;
+		//////////////////////
+		E=0;
+		#pragma omp parallel for reduction(+:E)
+		for(int n=0;n<pn;n++)
+		{
+			X[n]+=alp*P[n];// X(k+1)=X(k)+alp*P 更新後の場所
+			r[n]-=alp*AP[n];// r=r-alp*AP       更新後の残差
+			E+=r[n]*r[n];						//更新後の誤差
+		}
+		E=sqrt(E);
+		cout<<"E="<<E<<endl;
+		////////////////////////
+		
+		///////////////////////beta
+		beta=1.0/rLDLt_r;
+		rLDLt_r=0;
+		
+        /////////////////y[i]をもとめ、LDLt_r[i]をもとめる。
+		for(int i=0;i<pn;i++)
+		{
+			if(i==0) y[0]=r[0]/val2[0]; //式（3.77） 新
+			else
+			{
+			    double sum=0;
+			    for(int m=ptr2[i];m<ptr2[i+1]-1;m++)//対角成分は除くからptr[i+1]-1
+			    {
+			        sum+=val2[m]*y[ind2[m]];//式（3.78）
+			    }
+			    int m=ptr2[i+1]-1;
+			    y[i]=(r[i]-sum)/val2[m];
+			}
+		}////y[i]がもとまった。
+	
+		/////////LDLt_r[i]を求める
+		for(int i=pn-1;i>=0;i--)
+		{
+		    double sum=0;
+			for(int h=1;h<NUM[i];h++) sum+=VAL[i][h]*LDLt_r[IND[i][h]];
+			
+		    LDLt_r[i]=y[i]-D1[i]*sum;	
+		}
+		/////////////////*/
+	
+		for(int n=0;n<pn;n++) rLDLt_r+=r[n]*LDLt_r[n];
+		
+		beta=beta*rLDLt_r;
+		/////////////////*/
+		
+		///////////////////// P=r+beta*P
+		for(int n=0;n<pn;n++) P[n]=LDLt_r[n]+beta*P[n];//iccg
+		if(count==1||count%10==0)	cout<<"E="<<E<<" count="<<count<<endl;
+	}
+	cout<<"反復回数="<<count<<" time="<<(GetTickCount()-time)*0.001<<"/";
+		
+	delete [] AP;
+
+	delete [] y;
+	delete [] LDLt_r;
+	delete [] D1;
+
+	delete [] val2;
+	delete [] ind2;
+	delete [] ptr2;
+	delete [] r;
+	delete [] P;
+	for(int i=0;i<pn;i++)
+	{
+		delete [] VAL[i];
+		delete [] IND[i];
+	}
+	delete [] VAL;
+	delete [] IND;
+	delete [] NUM;
+	//*count2=count;//反復回数を格納して返す
+}
+
+void CG3D(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double *B,int number,double *X)
+{
+	cout<<"CG法:未知数="<<pn<<" ---";
+	unsigned int time=GetTickCount();
+	int count=0;
+	double ep=CON->get_FEMCGep();//収束判定
+
+	double alp,beta;
+	double E=1;//誤差
+	double *AP = new double [pn];
+	double *r=new double [pn];
+	double *P=new double [pn];
+
+	while(E>ep)
+	{
+		count++;
+		if(count==pn) cout<<"count=pn"<<endl;
+		//////////////alpを求める
+		double PAP=0;
+		double Pr=0;
+		#pragma omp parallel for reduction(+:PAP)
+		for(int n=0;n<pn;n++)
+		{
+			AP[n]=0;
+			for(int m=ptr[n];m<ptr[n+1];m++) AP[n]+=val[m]*P[ind[m]];
+			PAP+=P[n]*AP[n];
+			Pr+=P[n]*r[n];
+		}
+		
+		//for(int n=0;n<pn;n++)  PAP+=P[n]*AP[n];
+		alp=Pr/PAP;
+		cout<<"alp="<<alp<<endl;
+		//////////////////////
+		E=0;
+		#pragma omp parallel for reduction(+:E)
+		for(int n=0;n<pn;n++)
+		{
+			X[n]+=alp*P[n];// X(k+1)=X(k)+alp*P 更新後の場所
+			r[n]-=alp*AP[n];// r=r-alp*AP       更新後の残差
+			E+=r[n]*r[n];						//更新後の誤差
+		}
+		E=sqrt(E);
+		if(count==1||count%10==0)	cout<<"E="<<E<<" count="<<count<<endl;
+		////////////////////////
+		
+		///////////////////////beta
+		double rAP=0;
+		for(int n=0;n<pn;n++)	rAP+=r[n]*AP[n];
+		beta=-rAP/PAP;
+		cout<<"beta="<<beta<<endl;
+		for(int n=0;n<pn;n++)	P[n]=r[n]+beta*P[n];
+
+	}
+	cout<<"反復回数="<<count<<" time="<<(GetTickCount()-time)*0.001<<"/";
+			
+	delete [] AP;
+	delete [] r;
+	delete [] P;
+
+}
 
 hyperelastic::hyperelastic()
 {
